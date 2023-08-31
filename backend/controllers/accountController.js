@@ -10,11 +10,11 @@ const createToken = (_id) => {
 
 // Login account
 const loginAccount = async (req, res) => {
-    const { email: newEmail, password } = req.body
+    const { email, password } = req.body
     try {
         // Validate login credentials
-        const account = await Account.login(newEmail, password)
-        const { _id, name, email } = account
+        const account = await Account.login(email, password)
+        const { _id, name } = account
 
         // Create JWT token
         const token = createToken(account._id)
