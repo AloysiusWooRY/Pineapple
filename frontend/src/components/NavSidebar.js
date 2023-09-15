@@ -22,8 +22,8 @@ const NavSidebar = () => {
     };
 
     return (
-        <div class="h-full px-4 py-4  rounded-lg overflow-y-auto bg-neutral-900">
-            <ul class="space-y-2 font-medium">
+        <div class="h-full px-4 py-4  rounded-l-lg overflow-y-auto bg-[#0A0A0A]">
+            <ul class="space-y-1 font-medium text-sm">
                 <li>
                     <NavLink
                         to="/"
