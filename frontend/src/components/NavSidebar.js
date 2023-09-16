@@ -19,7 +19,7 @@ const NavSidebar = () => {
     };
 
     return (
-        <div class="h-full px-4 py-4  rounded-l-lg overflow-y-auto bg-[#0A0A0A]">
+        <div class="h-full px-4 py-4 m-2 rounded-l-lg overflow-y-auto bg-theme-primary">
             <ul class="space-y-1 font-medium text-sm">
                 <li>
                     <NavLink
@@ -36,6 +36,15 @@ const NavSidebar = () => {
                     >
                         <HomeModernIcon className="w-5 h-5" />
                         <span class="ml-3">Organisation</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/organisation/123"
+                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                    >
+                        <ShieldExclamationIcon className="w-5 h-5" />
+                        <span class="ml-3">Org (Temp)</span>
                     </NavLink>
                 </li>
                 <li>

@@ -22,7 +22,7 @@ const Home = () => {
         <Layout>
             <section className="grid ">
                 <Banner image={BannerImage} title="Home" />
-                <div className="grid grid-cols-4 h-24 my-2 gap-2">
+                <div className="grid grid-cols-4 h-32 my-2 gap-2">
                     <CategoryButton image={CategoryAllImage} title="ALL" icon={GlobeAltIcon} />
                     <CategoryButton image={CategoryEventImage} title="EVENTS" icon={CalendarDaysIcon} />
                     <CategoryButton image={CategoryDiscussionImage} title="DISCUSSIONS" icon={ChatBubbleLeftRightIcon} />
@@ -30,13 +30,13 @@ const Home = () => {
                 </div>
                 <div className="scroll-px-0 overflow-auto w-full">
                     <div className="inline-flex gap-2 px-2">
-                        <button className="bg-white text-black text-xs font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
+                        <button className="bg-white text-black text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
                             RELATED
                         </button>
-                        <button className="bg-transparent hover:bg-white/5 text-white text-xs font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
+                        <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
                             NEW
                         </button>
-                        <button className="bg-transparent hover:bg-white/5 text-white text-xs font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
+                        <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
                             TOP
                         </button>
                     </div>
