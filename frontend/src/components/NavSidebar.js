@@ -49,6 +49,15 @@ const NavSidebar = () => {
                 </li>
                 <li>
                     <NavLink
+                        to="/organisation/123/post/new"
+                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                    >
+                        <ShieldExclamationIcon className="w-5 h-5" />
+                        <span class="ml-3">Post (Temp)</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
                         to="/profile"
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >

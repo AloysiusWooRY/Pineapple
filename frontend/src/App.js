@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Home from './pages/Home'
 import OrganisationHome from './pages/OrganisationHome'
 import Organisation from './pages/Organisation'
+import NewPost from './pages/NewPost'
 
 function App() {
   const { user } = useAuthContext();
@@ -31,6 +32,10 @@ function App() {
             <Route
               path="/organisation/:id"
               element={user ? <Organisation /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/:id/post/new"
+              element={user ? <NewPost /> : <Navigate to="/login" />}
             />
           </Routes>
         </div>
