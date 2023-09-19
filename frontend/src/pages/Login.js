@@ -2,12 +2,14 @@ import React from "react";
 import Logo from "../assets/logo-no-background.png";
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, error, isLoading } = useLogin();
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +22,10 @@ export default function Login() {
   const handleRecoverPass = () => {
     // window.location.href = "/forgot-password";
   };
+
+  const handleRegister = () => {
+    navigate("../register")
+  }
 
   return (
     <div
@@ -70,7 +76,7 @@ export default function Login() {
             <label className="flex items-center">
               Do not have an account?
               <a
-                onClick={handleRecoverPass}
+                onClick={handleRegister}
                 className="ml-1 cursor-pointer text-[#FFFF00]"
               >
                 Register

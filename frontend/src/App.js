@@ -3,6 +3,7 @@ import { useAuthContext } from "./hooks/useAuthContext";
 
 // Pages
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import Home from './pages/Home'
 import OrganisationHome from './pages/OrganisationHome'
 import Organisation from './pages/Organisation'
@@ -24,6 +25,10 @@ function App() {
             <Route
               path="/login"
               element={!user ? <Login /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/register"
+              element={!user ? <SignUp /> : <Navigate to="/" />}
             />
             <Route
               path="/organisation"
