@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
+import { Toaster } from 'react-hot-toast';
 
 // Pages
 import Login from "./pages/Login";
@@ -17,6 +18,10 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <div className="pages">
+          <Toaster
+            position="top-center"
+            reverseOrder={false}
+          />
           <Routes>
             <Route
               path="/"

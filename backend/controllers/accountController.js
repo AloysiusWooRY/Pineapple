@@ -26,7 +26,7 @@ const loginAccount = async (req, res) => {
 }
 
 // Create account
-const createAccount = async (req, res) => {
+const registerAccount = async (req, res) => {
 
     const { name, email, password } = req.body
     try {
@@ -34,11 +34,11 @@ const createAccount = async (req, res) => {
         const account = await Account.createNew(name, email, password)
         res.status(200).json({ account })
     } catch (err) {
-        res.status(400).json({ Error: err.message })
+        res.status(400).json({ error: err.message })
     }
 }
 
 module.exports = {
     loginAccount,
-    createAccount
+    registerAccount
 }

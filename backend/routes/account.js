@@ -1,6 +1,6 @@
 const express = require('express')
 const {
-    loginAccount, createAccount
+    loginAccount, registerAccount
 } = require('../controllers/accountController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -10,6 +10,6 @@ const router = express.Router()
 router.post('/login', loginAccount)
 
 // POST: create an account
-router.post('/create', createAccount)
+router.post('/register', registerAccount)
 
 module.exports = router

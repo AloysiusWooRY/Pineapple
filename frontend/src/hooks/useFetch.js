@@ -1,6 +1,6 @@
-import { useState, useEffect } from './useAuthContext'
+import { useState, useEffect } from "react";
 
-export const useFetch = (url) => {
+const useFetch = (url) => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
     const [data, setData] = useState(null)
@@ -23,3 +23,5 @@ export const useFetch = (url) => {
 
     return { data, isLoading, error }
 }
+
+export default useFetch;

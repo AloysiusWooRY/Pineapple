@@ -5,7 +5,7 @@ const requireAuth = async (req, res, next) => {
 
     // Verify authentication
     const { authorization } = req.headers
-    if (!authorization) return res.status(401).json({ Error: 'Invalid authorization token' })
+    if (!authorization) return res.status(401).json({ error: 'Invalid authorization token' })
 
     const token = authorization.split(' ')[1]
     try {
@@ -14,8 +14,8 @@ const requireAuth = async (req, res, next) => {
         req.account = account
         next()
     } catch (err) {
-        if (err.name === "TokenExpiredError") return res.status(401).json({ Error: "Unauthorized access (Expired Token)", Expired: true })
-        res.status(401).json({ Error: "Unauthorized access" })
+        if (err.name === "TokenExpiredError") return res.status(401).json({ error: "Unauthorized access (Expired Token)", Expired: true })
+        res.status(401).json({ error: "Unauthorized access" })
     }
 
 }
