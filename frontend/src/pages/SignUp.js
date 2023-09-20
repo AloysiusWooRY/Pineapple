@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import PasswordStrengthBar from 'react-password-strength-bar';
@@ -8,7 +7,6 @@ import validator from "validator";
 import Logo from "../assets/logo-no-background.png";
 
 export default function Login() {
-  const { user } = useAuthContext();
   const navigate = useNavigate();
 
   const [password, setPassword] = useState("")

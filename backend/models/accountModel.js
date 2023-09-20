@@ -3,14 +3,23 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 const zxcvbn = require('zxcvbn')
 
+const Organisation = require('./organisationModel')
 const Schema = mongoose.Schema
 
 const accountSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    isAdmin: { type: Boolean, required: true, default: false }
+    isAdmin: { type: Boolean, required: true, default: false },
+    moderation: [{ type: Schema.Types.ObjectId, required: false, ref: Organisation }],
+    paymentInfo: { type: paymentInfoSchema, required: true },
 }, { timestamps: true, versionKey: false })
+
+const paymentInfoSchema = new Schema({
+    cardNumber: { type: Number, required: true },
+    expirationDate: { type: String, required: true },
+    cvc: { type: Number, required: true },
+})
 
 // Login Method
 accountSchema.statics.login = async function (email, password) {
