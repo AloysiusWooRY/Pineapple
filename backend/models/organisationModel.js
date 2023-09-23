@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 const imagePathSchema = new Schema({
     banner: { type: String, required: false },
-    icon: { type: String, required: false }
+    poster: { type: String, required: false }
 })
 
 const organisationSchema = new Schema({
