@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
-const Account = require('./commentModel')
+const Comment = require('./commentModel')
 const Account = require('./accountModel')
-const Account = require('./accountModel')
+const Reply = require('./replyModel')
 const Schema = mongoose.Schema
 
 const likeSchema = new Schema({
