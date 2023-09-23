@@ -1,4 +1,7 @@
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
+import { MagnifyingGlassIcon, ChevronDownIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
+
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner"
 import CardHomeOrg from "../components/CardHomeOrg"
@@ -6,16 +9,19 @@ import CardHomeOrg from "../components/CardHomeOrg"
 import BannerImage from "../assets/home-banner-org.png"
 import Sample1 from "../assets/sample-nuts.jpg"
 
-import { MagnifyingGlassIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
-
-
 const Home = () => {
-    const { user } = useAuthContext();
+    const { user } = useAuthContext()
+    const navigate = useNavigate()
+
+    const handleClick = (e) => {
+        e.preventDefault()
+        navigate("../organisation/new")
+    }
 
     return (
         <Layout>
             <section className="grid">
-                <Banner image={BannerImage} title="Organisations" />
+                <Banner image={BannerImage} title="Organisations" custom={{ icon: PlusCircleIcon, text: "Create New", handleClick }} />
                 <div className="inline-block">
                     <div className="float-left flex sm:w-72 bg-white/5 border-white/10 rounded m-2 mb-0 relative">
                         <input className="h-9 w-full bg-transparent text-white border-none outline-none p-2 pr-8 font-medium" type="search" placeholder="Search by Categories" />
