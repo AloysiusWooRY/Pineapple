@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import OrganisationHome from './pages/OrganisationHome'
 import Organisation from './pages/Organisation'
 import NewPost from './pages/NewPost'
+import NewOrganisation from './pages/NewOrganisation'
 
 function App() {
   const { user } = useAuthContext();
@@ -38,6 +39,10 @@ function App() {
             <Route
               path="/organisation"
               element={user ? <OrganisationHome /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/new"
+              element={user ? <NewOrganisation /> : <Navigate to="/login" />}
             />
             <Route
               path="/organisation/:id"
