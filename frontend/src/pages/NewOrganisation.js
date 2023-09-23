@@ -19,6 +19,8 @@ const NewOrganisation = () => {
         setError(null)
         const toastId = toast.loading('Loading...')
 
+        // TODO: Check for field length and file type
+
         const name = e.target.name.value
         const description = e.target.description.value
         const banner = e.target.banner.files[0]
@@ -36,8 +38,7 @@ const NewOrganisation = () => {
             const response = await fetch(`http://localhost:4000/api/organisation/apply`, {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${user.token}`,
-                    "Content-Type": "multipart/form-data"
+                    Authorization: `Bearer ${user.token}`
                 },
                 body: formData,
             });
@@ -46,10 +47,16 @@ const NewOrganisation = () => {
             if (response.ok) {
                 toast.success("Success!", { id: toastId })
                 navigate("/organisation", { replace: true })
+            } else {
+                const errorMsg = json.error
+                toast.error(errorMsg, { id: toastId })
+                setError(errorMsg)
             }
 
         } catch (error) {
-            setError("Something went wrong, try again later!")
+            const errorMsg = "Something went wrong, try again later!"
+            toast.error(errorMsg, { id: toastId })
+            setError(errorMsg)
         } finally {
             setIsLoading(false)
         }
@@ -94,18 +101,17 @@ const NewOrganisation = () => {
                     accept=".png,.jpeg,.jpg"
                     className="p-2 bg-white/10 text-theme-placeholder rounded-lg"
                 />
-                <div className="text-neutral-500">
-                    Please give us at least 3 working days to review your request
-                </div>
-                <div className="flex gap-4">
-                    <button type="submit" className="w-24 py-1 rounded-full bg-white font-sans font-bold hover:bg-white/80">
+                <div className="flex gap-4 mt-2">
+                    <button type="submit" disabled={isLoading} className="w-24 py-1 rounded-full bg-white font-sans font-bold hover:bg-white/80">
                         Submit
                     </button>
                     <button type="button" className="w-24 py-1 rounded-full bg-white font-sans font-bold hover:bg-white/80" onClick={handleCancel}>
                         Cancel
                     </button>
                 </div>
-
+                <label className="text-red-600">
+                    {error ?? ""}
+                </label>
             </form>
         </Layout >
     )

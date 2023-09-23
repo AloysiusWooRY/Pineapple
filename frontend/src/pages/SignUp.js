@@ -68,7 +68,9 @@ export default function Login() {
         if (json.error === "Password not strong") setPasswordErr(errorMsg)
       }
     } catch (error) {
-      setError("Something went wrong, try again later!")
+      const errorMsg = "Something went wrong, try again later!"
+      toast.error(errorMsg, { id: toastId })
+      setError(errorMsg)
     } finally {
       setIsLoading(false)
     }

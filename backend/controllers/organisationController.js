@@ -7,6 +7,8 @@ const Organisation = require('../models/organisationModel')
 const applyOrganisation = async (req, res) => {
 
     const userId = req.account._id
+
+    if (!req.info) return res.status(400).json({ error: "Missing images" })
     const { name, description, banner, poster } = req.info
 
     try {
@@ -16,6 +18,8 @@ const applyOrganisation = async (req, res) => {
         // Fields validation
         if (!name) throw Error("Missing name")
         if (!description) throw Error("Missing description")
+        if (!banner) throw Error("Missing banner image")
+        if (!poster) throw Error("Missing poster image")
 
         // TODO: Check for fields length here
 
@@ -52,12 +56,12 @@ const applyOrganisation = async (req, res) => {
         fs.renameSync(`uploads/banner/${banner.filename}`, `public/${bannerPath}`)
         fs.renameSync(`uploads/poster/${poster.filename}`, `public/${posterPath}`)
 
-        res.status(200).send()
+        res.status(200).json({})
 
     } catch (err) {
         if (banner) fs.unlinkSync(`uploads/banner/${banner.filename}`)
         if (poster) fs.unlinkSync(`uploads/poster/${poster.filename}`)
-        res.status(400).json({ Error: err.message })
+        res.status(400).json({ error: err.message })
     }
 
 }
