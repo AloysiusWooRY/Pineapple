@@ -10,6 +10,7 @@ import OrganisationHome from './pages/OrganisationHome'
 import Organisation from './pages/Organisation'
 import NewPost from './pages/NewPost'
 import NewOrganisation from './pages/NewOrganisation'
+import AdminModeration from './pages/AdminModeration'
 
 function App() {
   const { user } = useAuthContext();
@@ -51,6 +52,10 @@ function App() {
             <Route
               path="/organisation/:id/post/new"
               element={user ? <NewPost /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/admin/moderation"
+              element={user ? <AdminModeration /> : <Navigate to="/login" />}
             />
           </Routes>
         </div>
