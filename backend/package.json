@@ -21,6 +21,7 @@
     "moment": "^2.29.4",
     "mongoose": "^7.4.5",
     "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.0.1",
     "validator": "^13.11.0",
     "zxcvbn": "^4.4.2"
   }
