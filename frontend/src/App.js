@@ -5,12 +5,14 @@ import { Toaster } from 'react-hot-toast';
 // Pages
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Home from './pages/Home'
-import OrganisationHome from './pages/OrganisationHome'
-import Organisation from './pages/Organisation'
-import NewPost from './pages/NewPost'
-import NewOrganisation from './pages/NewOrganisation'
-import AdminModeration from './pages/AdminModeration'
+import Profile from './pages/Profile';
+import Home from './pages/Home';
+import OrganisationHome from './pages/OrganisationHome';
+import Organisation from './pages/Organisation';
+import Post from './pages/Post';
+import NewPost from './pages/NewPost';
+import NewOrganisation from './pages/NewOrganisation';
+import AdminModeration from './pages/AdminModeration';
 
 function App() {
   const { user } = useAuthContext();
@@ -38,12 +40,20 @@ function App() {
               element={!user ? <SignUp /> : <Navigate to="/" />}
             />
             <Route
+              path="/profile"
+              element={user ? <Profile /> : <Navigate to="/login" />}
+            />
+            <Route
               path="/organisation"
               element={user ? <OrganisationHome /> : <Navigate to="/login" />}
             />
             <Route
               path="/organisation/new"
               element={user ? <NewOrganisation /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/:id/post/:id"
+              element={user ? <Post /> : <Navigate to="/login" />}
             />
             <Route
               path="/organisation/:id"

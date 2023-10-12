@@ -52,11 +52,20 @@ const NavSidebar = () => {
                 </li>
                 <li>
                     <NavLink
+                        to="/organisation/123/post/123"
+                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                    >
+                        <ShieldExclamationIcon className="w-5 h-5" />
+                        <span class="ml-3">Post (Temp)</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
                         to="/organisation/123"
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
-                        <span class="ml-3">Org (Temp)</span>
+                        <span class="ml-3">Specific Org (Temp)</span>
                     </NavLink>
                 </li>
                 <li>
@@ -65,7 +74,7 @@ const NavSidebar = () => {
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
-                        <span class="ml-3">Post (Temp)</span>
+                        <span class="ml-3">New Post (Temp)</span>
                     </NavLink>
                 </li>
                 <li>

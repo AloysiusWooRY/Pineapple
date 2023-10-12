@@ -47,7 +47,6 @@ const NewPost = () => {
 
 
                 <label for="title" className="text-white ">Title</label>
-
                 <input
                     id="title"
                     type="text"
