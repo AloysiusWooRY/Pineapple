@@ -45,7 +45,7 @@ export default function Login() {
     try {
       setIsLoading(true)
 
-      const response = await fetch(`http://localhost:4000/api/account/register`, {
+      const response = await fetch(`/api/account/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

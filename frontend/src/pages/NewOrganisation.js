@@ -35,7 +35,7 @@ const NewOrganisation = () => {
         try {
             setIsLoading(true)
 
-            const response = await fetch(`http://localhost:4000/api/organisation/apply`, {
+            const response = await fetch(`/api/organisation/apply`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${user.token}`
