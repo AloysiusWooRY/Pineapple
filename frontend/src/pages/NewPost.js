@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner"
+import { InputField, InputTextBox, InputFile } from "../components/Inputs";
 
 import BannerImage from "../assets/post-banner.png"
-import CategoryAllImage from "../assets/home-cat-all.png"
-import CategoryEventImage from "../assets/home-cat-event.png"
-import CategoryDiscussionImage from "../assets/home-cat-discussion.png"
-import CategoryDonationImage from "../assets/home-cat-donation.png"
 
 import { CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
-import Sample1 from "../assets/sample-nuts.jpg"
 
-const NewPost = () => {
+export default function NewPost(){
     const { user } = useAuthContext();
+
+    const [title, setTitle] = useState('');
+    const [message, setMessage] = useState('');
 
     return (
         <Layout>
@@ -45,27 +45,12 @@ const NewPost = () => {
                     </ul>
                 </div>
 
-
-                <label for="title" className="text-white ">Title</label>
-                <input
-                    id="title"
-                    type="text"
-                    placeholder="Post Title"
-                    onChange={(e) => { return }}
-                    className="p-2 rounded-sm  text-black bg-white/10 placeholder:text-theme-placeholder"
-                />
-                <label for="comment" className="text-white">Your message</label>
-                <textarea id="comment" className="p-2 rounded-sm bg-white/10 text-black placeholder:text-theme-placeholder h-32" placeholder="Write your thoughts here ..." />
-                <label for="file" className="text-white">Upload image</label>
-                <input
-                    id="file"
-                    type="file"
-                    onChange={(e) => { return }}
-                    className="p-2 bg-white/10 text-theme-placeholder rounded-lg"
-                />
+                <InputField title="Post Title" placeholder="Enter Post Title . . ." type="text" width='full'
+                    value={title} onChange={(e) => setTitle(e.target.value)} />
+                <InputTextBox title="Your Message" placeholder="Write your thoughts here . . ." width='full'
+                    value={message} onChange={(e) => setMessage(e.target.value)} />
+                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }}/>
             </div>
         </Layout >
     )
 }
-
-export default NewPost;
