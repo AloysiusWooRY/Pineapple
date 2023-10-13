@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const Comment = require('./commentModel')
 const Account = require('./accountModel')
 const Reply = require('./replyModel')
-const Schema = mongoose.Schema
 
 const likeSchema = new Schema({
     comment: { type: Schema.Types.ObjectId, required: false, ref: Comment },
