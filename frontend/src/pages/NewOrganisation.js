@@ -34,8 +34,6 @@ export default function NewOrganisation() {
         formData.append("banner", bannerImage[0]);
         formData.append("poster", posterImage[0]);
 
-        // console.log(bannerImage);
-
         try {
             setIsLoading(true);
 

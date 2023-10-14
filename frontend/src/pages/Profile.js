@@ -4,7 +4,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import { InputField, InputHeader } from '../components/Inputs';
-import { StandardButton } from '../components/Buttons';
+import { RectangleButton } from '../components/Buttons';
 
 import BannerImage from "../assets/post-banner.png";
 
@@ -50,9 +50,9 @@ export default function Profile() {
                     active={isAccountActive} value={email} onChange={(e) => setEmail(e.target.value)} />
 
                 <InputHeader title="Change Password" heroIcon={<KeyIcon />} />
-                <StandardButton title="Begin" heroIcon={<ArrowPathIcon />} onClick={(e) => { console.log("password!") }} />
+                <RectangleButton title="Begin" heroIcon={<ArrowPathIcon />} onClick={(e) => { console.log("password!") }} />
 
-                <div className="py-8"></div>
+                <div className="py-2"></div>
 
                 <InputHeader title="Payment Settings" heroIcon={<CreditCardIcon />} edit active={isPaymentActive}
                     onClick={() => {

@@ -13,6 +13,7 @@ import Post from './pages/Post';
 import NewPost from './pages/NewPost';
 import NewOrganisation from './pages/NewOrganisation';
 import AdminModeration from './pages/AdminModeration';
+import AdminApplicationReview from "./pages/AdminApplicationReview";
 
 function App() {
   const { user } = useAuthContext();
@@ -66,6 +67,10 @@ function App() {
             <Route
               path="/admin/moderation"
               element={user ? <AdminModeration /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/admin/application"
+              element={user ? <AdminApplicationReview /> : <Navigate to="/login" />}
             />
           </Routes>
         </div>

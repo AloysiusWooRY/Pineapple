@@ -1,17 +1,22 @@
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from "../components/SidebarOrganisationInfo";
-
 import DiscussionOverview from "../components/DiscussionOverview";
-import { StandardDropdown } from "../components/Buttons";
+import { StandardDropdown, Tabs } from "../components/Buttons";
+
+import { NewspaperIcon, ChatBubbleLeftRightIcon, CalendarDaysIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
 
 export default function Organisation() {
     const { user } = useAuthContext();
 
+    const [selectedCategory, setSelectedCategory] = useState('discussion');
+
     function OrganisationPosts() {
         let posts = [];
 
-        for (var i = 0; i < 10; i++) {
+        for (let i = 0; i < 10; i++) {
             posts.push(
                 <DiscussionOverview
                     title={"What if we could print a brain?"} discussionType={"Discussion"}
@@ -26,26 +31,18 @@ export default function Organisation() {
         <Layout>
             <div className="flex gap-2">
                 <section className="h-96 flex-grow">
-                    <div className="flex justify-between my-2 mb-0">
-                        <div className="inline-flex gap-2">
-                            <button className="bg-white text-black text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                                ALL
-                            </button>
-                            <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                                EVENTS
-                            </button>
-                            <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                                DISCUSSIONS
-                            </button>
-                            <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                                DONATIONS
-                            </button>
+                    <div className="flex flex-row justify-between my-2 mb-0">
+                        <div className="flex basis-4/5 gap-2">
+                            <Tabs tabs={['All', 'Discussion', 'Event', 'Donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                                onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
                         </div>
 
-                        <div className="inline-flex text-sm">
+                        <div className="basis-1/5">
                             <StandardDropdown title="Sort By" options={['Newest', 'Top']} onChange={(e) => { console.log(e.target.value); }} />
                         </div>
                     </div>
+
+                    <div class="border-b border-gray-700"></div>
 
                     <div className="flex flex-col py-2 gap-2">
                         {<OrganisationPosts />}

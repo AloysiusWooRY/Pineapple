@@ -19,7 +19,7 @@ export function InputHeader(props) {
 };
 
 export function InputField(props) {
-    const { title, placeholder, type, width = '2/3', active = true, value, onChange, pattern = '' } = props;
+    const { title, placeholder, type, width = '2/3', active = true, value, onChange, additional} = props;
 
     return (
         <div className="flex flex-col pb-4">
@@ -31,7 +31,8 @@ export function InputField(props) {
                 disabled={!active}
                 value={value}
                 onChange={onChange}
-                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'} 
+                {...additional}
+                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'}
                 p-2 text-gray-400 bg-black w-${width} placeholder:text-theme-placeholder`}
             />
         </div>
@@ -75,3 +76,23 @@ export function InputFile(props) {
         </div>
     );
 };
+
+
+export function InputDate(props) {
+    const { title, width = '2/3', active = true, value, onChange } = props;
+
+    return (
+        <div className="flex flex-col pb-4">
+            <label for={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="text-white pb-2">{title}</label>
+            <input
+                id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                type="date"
+                disabled={!active}
+                value={value}
+                onChange={onChange}
+                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'} 
+                p-2 text-gray-400 bg-black w-${width} placeholder:text-theme-placeholder`}
+            />
+        </div>
+    );
+}

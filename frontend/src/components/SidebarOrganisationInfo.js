@@ -2,6 +2,8 @@ import React from 'react';
 
 import { CakeIcon } from "@heroicons/react/24/solid";
 
+import { RoundedButton } from './Buttons';
+
 import Sample2 from "../assets/sample-mental.png";
 
 export default function SideBarOrganisationInfo(props) {
@@ -43,11 +45,11 @@ export default function SideBarOrganisationInfo(props) {
                     </div>
                 </div>
             </div>
+
             <hr className="m-2 border-t-neutral-600" />
-            <div className="px-4 py-2 mb-2">
-                <button className="w-full py-1 rounded-full bg-white font-sans font-bold">
-                    Join
-                </button>
+
+            <div className="px-2 py-2">
+                <RoundedButton title="Join" />
             </div>
         </section>
     );

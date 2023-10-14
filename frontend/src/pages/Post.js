@@ -4,7 +4,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
 import { InputTextBox } from '../components/Inputs';
-import { StandardButton, StandardDropdown } from '../components/Buttons';
+import { RectangleButton, StandardDropdown } from '../components/Buttons';
 import { PostType } from '../components/Miscellaneous';
 
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
@@ -42,8 +42,8 @@ export default function Post() {
     function PopulateComments() {
         let comments = [];
 
-        for (var i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
+        for (let i = 0; i < 10; i++) {
+            if (i % 2 === 0) {
                 comments.push(
                     // Comment
                     <div className="flex flex-col gap-2 p-2 border-l border-gray-500">
@@ -118,7 +118,7 @@ export default function Post() {
                         {postTitle}
                     </div>
 
-                    <PostType type="Discussion" />
+                    <PostType type="Donation" />
 
                     <div className="py-2"></div>
 
@@ -127,7 +127,7 @@ export default function Post() {
                     </div>
 
                     <div className="self-end">
-                        <StandardButton title="Edit" heroIcon={<PencilIcon />} onClick={(e) => { console.log("Edit me!") }} />
+                        <RectangleButton title="Edit" heroIcon={<PencilIcon />} onClick={(e) => { console.log("Edit me!") }} />
                     </div>
 
                     <hr className="h-px my-2 bg-gray-200 border-1"></hr>
@@ -137,7 +137,7 @@ export default function Post() {
 
                     <hr className="h-px my-2 bg-gray-200 border-1"></hr>
 
-                    <div>
+                    <div className="w-1/4">
                         <StandardDropdown title="Sort By" options={['Newest', 'Top']} onChange={(e) => { console.log(e.target.value); }} />
                     </div>
 

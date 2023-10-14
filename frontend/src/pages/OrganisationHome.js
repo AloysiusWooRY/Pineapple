@@ -31,7 +31,7 @@ export default function OrganisationHome() {
                         </button>
                     </div>
 
-                    <div className="float-right inline-block m-2 mb-0 text-sm">
+                    <div className="float-right w-1/5 m-2 mb-0">
                         <StandardDropdown title="Sort By" options={['Most Followed', 'Newest']} onChange={(e) => { console.log(e.target.value); }} />
                     </div>
                 </div>
