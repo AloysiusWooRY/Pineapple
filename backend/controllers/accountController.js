@@ -10,32 +10,43 @@ const sendEmail = require('../utils/sendEmail')
 const Account = require('../models/accountModel')
 const ResetCode = require('../models/resetCodeModel')
 
-const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: '1d' })
-}
+const logger = require("../utils/logger")
+const {
+    ValidationError,
+    MissingFieldError,
+    DataNotFoundError,
+    DuplicateRequestError
+} = require("../errors/customError")
+
 
 // Login account
 const loginAccount = async (req, res) => {
     const { email, password } = req.body
     try {
-        if (!email || !password) throw Error('Missing fields')
+        if (!email || !password) throw new MissingFieldError('Missing fields', req)
 
         // Validate login credentials
         const account = await Account.findOne({ email })
-        if (!account) throw Error('Incorrect email or password. Please try again.')
+        if (!account) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
         // Validate hashed password
         const match = await bcrypt.compare(password, account.password)
-        if (!match) throw Error('Incorrect email or password. Please try again.')
+        if (!match) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
         const { _id, name } = account
 
         // Create JWT token
         const token = createToken(_id)
 
+        logger.http(`Login successful, token: ${token}`, { actor: "USER", req })
         res.status(200).json({ _id, name, email, token })
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -45,30 +56,30 @@ const registerAccount = async (req, res) => {
     const { name, email, password } = req.body
     try {
 
-        if (!name || !email || !password) throw Error('Missing fields')
+        if (!name || !email || !password) throw new MissingFieldError('Missing fields', req)
 
         // Sanitize and validate credentials
         const sanitizedName = validator.escape(validator.trim(name))
         if (!validator.isLength(sanitizedName, { min: 2, max: 50 })) {
-            throw new Error('Name must be between 2 and 50 characters')
+            throw new ValidationError('Name must be between 2 and 50 characters', req)
         }
 
         const sanitizedEmail = validator.normalizeEmail(validator.trim(email))
         if (!validator.isLength(sanitizedEmail, { max: 100 })) {
-            throw new Error('Email is too long (max 100 characters)')
+            throw new ValidationError('Email is too long (max 100 characters)', req)
         }
         if (!validator.isEmail(sanitizedEmail)) {
-            throw new Error('Invalid email')
+            throw new ValidationError('Invalid email', req)
         }
 
         // Check if the email already exists
         const exists = await Account.findOne({ email: sanitizedEmail })
         if (exists) {
-            throw new Error('Email already exists');
+            throw new ValidationError('Email already exists', req);
         }
 
         // Validate password complexity score
-        if (zxcvbn(password).score < 2) throw Error('Password not strong')
+        if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
 
         // Hash password
         const salt = await bcrypt.genSalt(10)
@@ -81,9 +92,15 @@ const registerAccount = async (req, res) => {
             password: hash,
         })
 
-        res.status(200).json({ success: true })
+        logger.http(`Registration successful`, { actor: "USER", req })
+        res.status(200).json({ name: sanitizedName, email: sanitizedEmail })
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -93,43 +110,46 @@ const updateAccount = async (req, res) => {
     const { _id } = req.account
 
     try {
-        if (!name || !email) throw Error('Missing fields')
+        if (!name || !email) throw new MissingFieldError('Missing fields', req)
 
         // Sanitize and validate name
         const sanitizedName = validator.escape(validator.trim(name))
         if (!validator.isLength(sanitizedName, { min: 2, max: 50 })) {
-            throw new Error('Name must be between 2 and 50 characters')
+            throw new ValidationError('Name must be between 2 and 50 characters', req)
         }
 
         // Sanitize and validate email
         const sanitizedEmail = validator.normalizeEmail(validator.trim(email))
         if (!validator.isLength(sanitizedEmail, { max: 100 })) {
-            throw new Error('Email is too long (max 100 characters)')
+            throw new ValidationError('Email is too long (max 100 characters)', req)
         }
         if (!validator.isEmail(sanitizedEmail)) {
-            throw new Error('Invalid email')
-        }
-
-        if (!sanitizedName || !sanitizedEmail) {
-            throw new Error('Missing fields')
+            throw new ValidationError('Invalid email', req)
         }
 
         const account = await Account.findById(_id)
-        if (!account) throw new Error('Account not found')
+        if (!account) throw new DataNotFoundError('Account not found', req)
 
         // Check if no changes were made
         if (sanitizedName === account.name && sanitizedEmail === account.email) {
-            return res.status(200).json({ msg: "No changes made" })
+            logger.http(`No changes made`, { actor: "USER", req })
+            return res.status(204).send()
         }
 
         // Update the account details
         account.name = sanitizedName;
         account.email = sanitizedEmail;
-        const updatedAccount = await account.save();
+        await account.save();
 
-        res.status(200).json({ success: true });
+        logger.http(`Update successful`, { actor: "USER", req })
+        res.status(200).json({ name: sanitizedName, email: sanitizedEmail })
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -139,17 +159,17 @@ const updatePassword = async (req, res) => {
     const { _id } = req.account
 
     try {
-        if (!password) throw Error('Missing fields')
+        if (!password) throw new MissingFieldError('Missing fields', req)
 
         // Validate password complexity score
-        if (zxcvbn(password).score < 2) throw new Error('Password not strong')
+        if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
 
         const account = await Account.findById(_id).select('password')
-        if (!account) throw new Error('Account not found')
+        if (!account) throw new DataNotFoundError('Account not found', req)
 
         // Check if the new password matches the existing password
         const isPasswordUnchanged = await bcrypt.compare(password, account.password);
-        if (isPasswordUnchanged) throw new Error('Cannot change to an existing password')
+        if (isPasswordUnchanged) throw new ValidationError('Cannot change to an existing password', req)
 
         // Update the password
         const salt = await bcrypt.genSalt(10);
@@ -158,9 +178,15 @@ const updatePassword = async (req, res) => {
         account.password = hash;
         await account.save();
 
-        res.status(200).json({ success: true });
+        logger.http(`Update successful`, { actor: "USER", req })
+        res.status(200).send();
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -170,24 +196,24 @@ const forgotPassword = async (req, res) => {
 
     try {
         // Validate fields
-        if (!email) throw Error('Missing fields')
+        if (!email) throw new MissingFieldError('Missing fields', req)
 
         // Sanitize and validate email
         const sanitizedEmail = validator.normalizeEmail(validator.trim(email))
         if (!validator.isLength(sanitizedEmail, { max: 100 })) {
-            throw new Error('Email is too long (max 100 characters)')
+            throw new ValidationError('Email is too long (max 100 characters)', req)
         }
         if (!validator.isEmail(sanitizedEmail)) {
-            throw new Error('Invalid email')
+            throw new ValidationError('Invalid email', req)
         }
 
         const account = await Account.findOne({ email: sanitizedEmail })
-        if (!account) throw Error('No such account')
+        if (!account) throw new DataNotFoundError('No such account', req)
 
         const resetCode = await ResetCode.findOne({ account: account._id })
-        if (resetCode) throw Error('Reset code already sent, try again later')
+        if (resetCode) throw new DuplicateRequestError('Reset code already sent, try again later', req)
 
-        const randomCode = generateRandomCode();
+        const randomCode = generateRandomCode()
 
         // Create reset code
         await ResetCode.create({
@@ -202,9 +228,16 @@ const forgotPassword = async (req, res) => {
             name: account.name
         })
 
-        res.status(200).json({ success: true });
+        logger.http(`Reset code sent to ${email}`, { actor: "USER", req })
+        res.status(200).send()
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        console.log(err)
+        if (err.statusCode === 400 || err.statusCode === 404 || err.statusCode === 409)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -212,24 +245,30 @@ const validateCode = async (req, res) => {
     const { email, code } = req.body
 
     try {
-        if (!email || !code) throw Error('Missing fields')
+        if (!email || !code) throw new MissingFieldError('Missing fields', req)
 
         const resetCode = await ResetCode.findOne({ email }).select('code attempts')
-        if (!resetCode) throw new Error('Invalid email')
+        if (!resetCode) throw new DataNotFoundError('Invalid email', req)
 
         resetCode.attempts = resetCode.attempts - 1
         if (resetCode.code !== code) {
             if (resetCode.attempts <= 0) {
                 await ResetCode.deleteOne({ _id: resetCode._id });
-                throw new Error('Invalid code. Ran out of attempts, try again later.')
+                throw new ValidationError('Invalid code. Ran out of attempts, try again later.', req)
             }
             await resetCode.save();
-            throw new Error(`Invalid code. ${resetCode.attempts} attempts remaining`)
+            throw new ValidationError(`Invalid code. ${resetCode.attempts} attempts remaining`, req)
         }
 
-        res.status(200).json({ success: true });
+        logger.http(`Successful code validation`, { actor: "USER", req })
+        res.status(200).send()
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -238,39 +277,45 @@ const resetPassword = async (req, res) => {
     const { email, password, code } = req.body
 
     try {
-        if (!email || !password || !code) throw Error('Missing fields')
+        if (!email || !password || !code) throw new MissingFieldError('Missing fields', req)
 
         const resetCode = await ResetCode.findOne({ email }).select('code attempts')
-        if (!resetCode) throw new Error('Invalid email')
+        if (!resetCode) throw new DataNotFoundError('Invalid email', req)
 
         resetCode.attempts = resetCode.attempts - 1
         if (resetCode.code !== code) {
             if (resetCode.attempts <= 0) {
-                await ResetCode.deleteOne({ _id: resetCode._id });
-                throw new Error('Invalid code. Ran out of attempts, try again later.')
+                await ResetCode.deleteOne({ _id: resetCode._id })
+                throw new ValidationError('Invalid code. Ran out of attempts, try again later.', req)
             }
             await resetCode.save();
-            throw new Error(`Invalid code. ${resetCode.attempts} attempts remaining`)
+            throw new ValidationError(`Invalid code. ${resetCode.attempts} attempts remaining`, req)
         }
 
         // Validate password complexity score
-        if (zxcvbn(password).score < 2) throw new Error('Password not strong')
+        if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
 
         const account = await Account.findOne({ email }).select('password')
-        if (!account) throw new Error('Account not found')
+        if (!account) throw new DataNotFoundError('Account not found', req)
 
         // Update the password
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
+        const salt = await bcrypt.genSalt(10)
+        const hash = await bcrypt.hash(password, salt)
 
         account.password = hash;
         await account.save();
 
-        await ResetCode.deleteOne({ _id: resetCode._id });
+        await ResetCode.deleteOne({ _id: resetCode._id })
 
-        res.status(200).json({ success: true });
+        logger.http(`Reset successful`, { actor: "USER", req })
+        res.status(200).send()
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -280,8 +325,11 @@ const getPaymentInfo = async (req, res) => {
 
     try {
         const account = await Account.findById(_id).select("paymentInfo")
-        if (!account) throw Error('No such account')
-        if (!account.paymentInfo) throw Error('No existing payment info')
+        if (!account) throw new DataNotFoundError('No such account', req)
+        if (!account.paymentInfo) {
+            logger.http(`No existing payment information`, { actor: "USER", req })
+            return res.status(204).send()
+        }
 
         const decryptedPaymentInfo = JSON.parse(
             CryptoJS.AES.decrypt(
@@ -290,9 +338,15 @@ const getPaymentInfo = async (req, res) => {
             ).toString(CryptoJS.enc.Utf8)
         )
 
+        logger.http(`Successfully retrieved payment information`, { actor: "USER", req })
         res.status(200).json(decryptedPaymentInfo)
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
@@ -302,21 +356,21 @@ const setPaymentInfo = async (req, res) => {
     const { cardNumber, expirationDate, cvc } = req.body
 
     try {
-        if (!cardNumber || !expirationDate || !cvc) throw Error('Missing fields')
+        if (!cardNumber || !expirationDate || !cvc) throw new MissingFieldError('Missing fields', req)
 
         const sanitizedCardNumber = validator.trim(cardNumber)
         if (!validator.isCreditCard(sanitizedCardNumber)) {
-            throw new Error('Invalid credit card number')
+            throw new ValidationError('Invalid credit card number', req)
         }
 
         const sanitizedExpirationDate = validator.trim(expirationDate)
         if (!validator.isLength(sanitizedExpirationDate, { min: 5, max: 5 })) {
-            throw new Error('Invalid expiration date')
+            throw new ValidationError('Invalid expiration date', req)
         }
 
         const sanitizedCVC = validator.trim(cvc)
         if (!validator.isNumeric(sanitizedCVC) && validator.isLength(sanitizedCVC, { min: 3, max: 4 })) {
-            throw new Error('Invalid CVC number')
+            throw new ValidationError('Invalid CVC number', req)
         }
 
         const encryptedPaymentInfo = CryptoJS.AES.encrypt(
@@ -328,18 +382,38 @@ const setPaymentInfo = async (req, res) => {
         ).toString()
 
         const account = await Account.findByIdAndUpdate(_id, { paymentInfo: encryptedPaymentInfo })
-        if (!account) throw new Error('No such account')
+        if (!account) throw new DataNotFoundError('No such account', req)
 
-        res.status(200).json({ success: true });
+        logger.http(`Successfully set payment information`, { actor: "USER", req })
+        res.status(200).send();
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
     }
 }
 
-function generateRandomCode() {
+
+const test = async (req, res) => {
+    try {
+        throw new ValidationError("Invalid Email", req)
+    } catch (err) {
+        console.log(`${err.statusCode}: ${err.message}`)
+    }
+    res.status(200).send()
+}
+
+const createToken = (_id) => {
+    return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: '1d' })
+}
+
+const generateRandomCode = () => {
     const min = 100000; // Minimum 6-digit number
     const max = 999999; // Maximum 6-digit number
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 module.exports = {
@@ -351,5 +425,6 @@ module.exports = {
     validateCode,
     resetPassword,
     getPaymentInfo,
-    setPaymentInfo
+    setPaymentInfo,
+    test
 }

@@ -8,7 +8,8 @@ const {
     validateCode,
     resetPassword,
     getPaymentInfo,
-    setPaymentInfo
+    setPaymentInfo,
+    test
 } = require('../controllers/accountController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -23,10 +24,10 @@ router.post('/register', registerAccount)
 // POST: forgot password
 router.post('/forgot-password', forgotPassword)
 
-// POST: forgot password
+// POST: validate reset code
 router.post('/validate-code', validateCode)
 
-// POST: set payment info
+// POST: reset password (change)
 router.post('/reset-password', resetPassword)
 
 // PATCH: update account details
@@ -41,6 +42,9 @@ router.get('/payment-info', requireAuth(isAdmin = false), getPaymentInfo)
 // PUT: set payment info
 router.put('/payment-info', requireAuth(isAdmin = false), setPaymentInfo)
 
+
+// PUT: set payment info
+router.get('/test', test)
 
 
 module.exports = router

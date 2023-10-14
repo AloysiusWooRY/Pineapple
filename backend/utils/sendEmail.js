@@ -1,12 +1,13 @@
 const nodemailer = require('nodemailer')
 const passwordReset = require('./emailTemplate/passwordReset')
+const logger = require("../utils/logger")
 
 const sendEmail = async (type, email, payload) => {
 
     const emailTypes = {
         PasswordReset: {
             subject: "Pineapple Password Reset",
-            htmlString: async function (payload) { return await passwordReset(payload) }
+            htmlString: async function (payload) { return passwordReset(payload) }
         }
     }
 
@@ -30,10 +31,9 @@ const sendEmail = async (type, email, payload) => {
             html
         })
 
-        console.log("Email sent successfully")
+        logger.info(`Email successfully sent to ${email}`, { actor: "SERVER" })
     } catch (err) {
-        console.log("Email not sent")
-        console.log(err)
+        logger.error(`Email failed to send to ${email}`, { actor: "SERVER" })
     }
 }
 
