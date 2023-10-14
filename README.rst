@@ -20,13 +20,13 @@ An online forum website implemented as a MERN stack.
    * - `Jin Zhenglong <https://github.com/jzlong99>`_
      - 2101002
    * - `Chew Wei Jie <https://github.com/chewweije>`_
-     - 2102468
+     - 2101186
    * - `Dylan Teo <https://github.com/dylantjl>`_
-     - 2001188
+     - 2101920
    * - `Tan Jia Ding <https://github.com/jiaric>`_
-     - 2102468
+     - 2102238
    * - `Yap Jia Hao <https://github.com/YapJiaHao>`_
-     - 2001188
+     - 2100958
 
 🖥️ Quick Start
 ---------------
