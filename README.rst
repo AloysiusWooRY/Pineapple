@@ -66,4 +66,4 @@ Download and install `Node JS <https://nodejs.org/en/>`_.
 
 .. code-block:: console
 
-  ./start.bat
+  ./start.sh
