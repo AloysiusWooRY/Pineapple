@@ -24,6 +24,7 @@
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "validator": "^13.11.0",
+    "winston": "^3.11.0",
     "zxcvbn": "^4.4.2"
   }
 }
