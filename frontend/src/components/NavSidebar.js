@@ -31,8 +31,8 @@ const NavSidebar = () => {
     };
 
     return (
-        <div class="h-full px-4 py-4 m-2 rounded-l-lg overflow-y-auto bg-theme-primary select-none">
-            <ul class="space-y-1 font-medium text-sm">
+        <div className="h-full px-4 py-4 m-2 rounded-l-lg overflow-y-auto bg-theme-primary select-none">
+            <ul className="space-y-1 font-medium text-sm">
                 <li>
                     <NavLink
                         to="/"
@@ -47,7 +47,7 @@ const NavSidebar = () => {
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <HomeModernIcon className="w-5 h-5" />
-                        <span class="ml-3">Organisation</span>
+                        <span className="ml-3">Organisation</span>
                     </NavLink>
                 </li>
                 <li>
@@ -56,7 +56,7 @@ const NavSidebar = () => {
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
-                        <span class="ml-3">Post (Temp)</span>
+                        <span className="ml-3">Post (Temp)</span>
                     </NavLink>
                 </li>
                 <li>
@@ -65,7 +65,7 @@ const NavSidebar = () => {
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
-                        <span class="ml-3">Specific Org (Temp)</span>
+                        <span className="ml-3">Specific Org (Temp)</span>
                     </NavLink>
                 </li>
                 <li>
@@ -74,7 +74,7 @@ const NavSidebar = () => {
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
-                        <span class="ml-3">New Post (Temp)</span>
+                        <span className="ml-3">New Post (Temp)</span>
                     </NavLink>
                 </li>
                 <li>
@@ -83,7 +83,7 @@ const NavSidebar = () => {
                         className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                     >
                         <UserCircleIcon className="w-5 h-5" />
-                        <span class="ml-3">Profile</span>
+                        <span className="ml-3">Profile</span>
                     </NavLink>
                 </li>
 
@@ -109,7 +109,7 @@ const NavSidebar = () => {
                                 className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                             >
                                 <UserGroupIcon className="w-5 h-5 " />
-                                <span class="ml-3 ">Moderation</span>
+                                <span className="ml-3 ">Moderation</span>
                             </NavLink>
 
                         </li>
@@ -119,7 +119,7 @@ const NavSidebar = () => {
                                 className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
                             >
                                 <DocumentCheckIcon className="w-5 h-5 " />
-                                <span class="ml-3 ">Application</span>
+                                <span className="ml-3 ">Application</span>
                             </NavLink>
                         </li>
                     </ul>
@@ -129,7 +129,7 @@ const NavSidebar = () => {
                     onClick={handleLogout}
                 >
                     <ArrowLeftOnRectangleIcon className="w-5 h-5 " />
-                    <span class="ml-3 ">Logout</span>
+                    <span className="ml-3 ">Logout</span>
                 </li>
             </ul>
 

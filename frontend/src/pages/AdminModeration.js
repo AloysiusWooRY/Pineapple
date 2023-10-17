@@ -7,10 +7,8 @@ import { UserType } from "../components/Miscellaneous";
 import Table from "../components/Table";
 
 import BannerImage from "../assets/banner-admin-moderation.png"
-import Sample1 from "../assets/sample-nuts.jpg"
-import Sample2 from "../assets/sample-mental.png"
 
-import { ChevronDownIcon, PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/solid";
 
 export default function AdminModeration() {
     const { user } = useAuthContext();
@@ -29,6 +27,15 @@ export default function AdminModeration() {
         <Layout>
             <section className="flex flex-col">
                 <Banner image={BannerImage} title="Moderation" />
+
+                <div className="inline-block">
+                    <div className="float-left flex sm:w-72 bg-white/5 border-white/10 rounded m-2 mb-0 relative">
+                        <input className="h-9 w-full bg-transparent text-white border-none outline-none p-2 pr-8 font-medium" type="search" placeholder="Search By Name" />
+                        <button className="h-9 w-8 flex items-center justify-center bg-transparent border-none outline-none rounded p-0 absolute right-0 top-0" type="button">
+                            <MagnifyingGlassIcon className="h-5 text-white" />
+                        </button>
+                    </div>
+                </div>
 
                 <div className="flex flex-grow py-2 gap-2">
                     <div className="w-full">

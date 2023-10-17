@@ -7,7 +7,7 @@ export function ToggleButton(props) {
 
     return (
         <div>
-            <button type="button" className={`flex w-fit text-white px-4 py-2 rounded ${!active ? 'bg-neutral-800' : 'bg-green-800'} items-center`}
+            <button type="button" className={`flex w-fit items-center text-white px-4 py-2 rounded ${!active ? 'bg-neutral-800' : 'bg-green-800'}`}
                 onClick={onClick}>
                 {!active ? <><PencilIcon className="h-4 w-4 mr-2" />Edit</> : <><PaperAirplaneIcon className="h-4 w-4 mr-2" />Submit</>}
             </button>
@@ -16,11 +16,11 @@ export function ToggleButton(props) {
 };
 
 export function RectangleButton(props) {
-    const { title, heroIcon = <QuestionMarkCircleIcon />, colour = 'bg-neutral-800', onClick } = props;
+    const { title, forForm = null, heroIcon = <QuestionMarkCircleIcon />, colour = 'bg-neutral-800', onClick = null } = props;
 
     return (
-        <div>
-            <button type="button" className={`flex w-fit text-white px-4 py-2 rounded ${colour} items-center`}
+        <div className="align-middle">
+            <button type={!forForm ? "button" : "submit"} className={`flex w-full justify-center items-center text-white px-4 py-2 rounded ${colour}`}
                 value={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 onClick={onClick}>
                 {heroIcon && React.cloneElement(heroIcon, { className: "h-4 w-4 mr-2" })}
@@ -52,7 +52,8 @@ export function StandardDropdown(props) {
 
         for (let i = 0; i < options.length; i++) {
             formattedOptions.push(
-                <option className="text-white font-sans bg-theme-primary" 
+                <option className="text-white font-sans bg-theme-primary"
+                    key={options[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                     value={options[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 >{options[i]}</option>
             );
@@ -125,7 +126,10 @@ export function Tabs(props) {
 
         for (let i = 0; i < tabs.length; i++) {
             formattedTabs.push(
-                <li class="mr-2">
+                <li 
+                className="mr-2"
+                key={"tab-" + tabs[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                >
                     <a href="#" data-value={tabs[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} onClick={(e) => { setActiveTab(i); onClick(e); }}
                         className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 
                                 ${i === activeTab ? 'border-yellow-300 text-yellow-300 rounded-t-lg hover:text-yellow-300 hover:border-gray-300 bg-theme-primary' :
@@ -141,9 +145,9 @@ export function Tabs(props) {
     }
 
     return (
-        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-400">
+        <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-400">
             {/* {tabs && tabs.map((tab, i) => (
-                <li class="mr-2">
+                <li className="mr-2">
                     <a href="#" data-value={tab.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} onClick={(e) => { setActiveTab(i); onClick(e); }}
                         className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 
                             ${i === activeTab ? 'border-[#ffdc00] text-[#ffdc00] rounded-t-lg hover:text-gray-600 hover:border-gray-300 bg-theme-primary' :

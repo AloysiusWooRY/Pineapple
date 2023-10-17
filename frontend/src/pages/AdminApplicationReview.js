@@ -6,9 +6,7 @@ import Table from "../components/Table";
 import { StandardDropdown } from "../components/Buttons";
 import { ApprovalType } from "../components/Miscellaneous";
 
-import BannerImage from "../assets/banner-admin-moderation.png"
-import Sample1 from "../assets/sample-nuts.jpg"
-import Sample2 from "../assets/sample-mental.png"
+import BannerImage from "../assets/banner-admin-moderation.png";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 

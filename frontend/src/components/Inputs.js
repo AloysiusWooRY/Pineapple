@@ -19,11 +19,14 @@ export function InputHeader(props) {
 };
 
 export function InputField(props) {
-    const { title, placeholder, type, width = '2/3', active = true, value, onChange, additional} = props;
+    const { title, errorMsg, placeholder, type, width = '2/3', active = true, value, onChange, additionalProps } = props;
 
     return (
         <div className="flex flex-col pb-4">
-            <label for={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="text-white pb-2">{title}</label>
+            <div className="flex flex-wrap">
+                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-white pb-2">{title}</label>
+                <label className="text-red-600 ml-auto">{errorMsg ?? ''}</label>
+            </div>
             <input
                 id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 type={type}
@@ -31,47 +34,55 @@ export function InputField(props) {
                 disabled={!active}
                 value={value}
                 onChange={onChange}
-                {...additional}
-                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'}
-                p-2 text-gray-400 bg-black w-${width} placeholder:text-theme-placeholder`}
+                {...additionalProps}
+                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed text-gray-400' : 'rounded-sm bg-white/10 text-white'}
+                p-2 bg-black w-${width} placeholder:text-theme-placeholder`}
             />
         </div>
     );
 };
 
 export function InputTextBox(props) {
-    const { title, placeholder, width = '2/3', active = true, value, height = 32, onChange } = props;
+    const { title, errorMsg, placeholder, width = '2/3', active = true, value, height = 32, onChange, additionalProps } = props;
 
     return (
         <div className="flex flex-col pb-4">
-            <label for={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="text-white pb-2">{title}</label>
+            <div className="flex flex-wrap">
+                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-white pb-2">{title}</label>
+                <label className="text-red-600 ml-auto">{errorMsg ?? ''}</label>
+            </div>
             <textarea
                 id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 placeholder={placeholder}
                 disabled={!active}
                 value={value}
                 onChange={onChange}
-                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'} 
-                 p-2 h-${32} text-gray-400 bg-black w-${width} placeholder:text-theme-placeholder`}
+                {...additionalProps}
+                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed text-gray-400' : 'rounded-sm bg-white/10 text-white'} 
+                 p-2 h-${height} bg-black w-${width} placeholder:text-theme-placeholder`}
             />
         </div>
     );
 };
 
 export function InputFile(props) {
-    const { title, width = '2/3', accept, active = true, onChange } = props;
+    const { title, errorMsg, width = '2/3', accept, active = true, onChange, additionalProps } = props;
 
     return (
         <div className="flex flex-col pb-4">
-            <label for={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="text-white pb-2">{title}</label>
+            <div className="flex flex-wrap">
+                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-white pb-2">{title}</label>
+                <label className="text-red-600 ml-auto">{errorMsg ?? ''}</label>
+            </div>
             <input
                 id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 type='file'
                 accept={accept}
                 disabled={!active}
                 onChange={onChange}
-                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'} 
-                p-2 text-gray-400 bg-black w-${width} placeholder:text-theme-placeholder`}
+                {...additionalProps}
+                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed text-gray-400' : 'rounded-sm bg-white/10 text-white'} 
+                p-2  bg-black w-${width} placeholder:text-theme-placeholder`}
             />
         </div>
     );
@@ -79,19 +90,23 @@ export function InputFile(props) {
 
 
 export function InputDate(props) {
-    const { title, width = '2/3', active = true, value, onChange } = props;
+    const { title, errorMsg, width = '2/3', active = true, value, onChange, additionalProps } = props;
 
     return (
         <div className="flex flex-col pb-4">
-            <label for={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="text-white pb-2">{title}</label>
+            <div className="flex flex-wrap">
+                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-white pb-2">{title}</label>
+                <label className="text-red-600 ml-auto">{errorMsg ?? ''}</label>
+            </div>
             <input
                 id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 type="date"
                 disabled={!active}
                 value={value}
                 onChange={onChange}
-                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed' : 'rounded-sm bg-white/10'} 
-                p-2 text-gray-400 bg-black w-${width} placeholder:text-theme-placeholder`}
+                {...additionalProps}
+                className={`${!active ? 'border-l border-gray-500 cursor-not-allowed text-gray-400' : 'rounded-sm bg-white/10 text-white'} 
+                p-2  bg-black w-${width} placeholder:text-theme-placeholder`}
             />
         </div>
     );

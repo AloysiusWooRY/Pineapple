@@ -19,6 +19,7 @@ export default function Organisation() {
         for (let i = 0; i < 10; i++) {
             posts.push(
                 <DiscussionOverview
+                key={"post-" + i}
                     title={"What if we could print a brain?"} discussionType={"Discussion"}
                     votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
             );
@@ -42,7 +43,7 @@ export default function Organisation() {
                         </div>
                     </div>
 
-                    <div class="border-b border-gray-700"></div>
+                    <div className="border-b border-gray-700"></div>
 
                     <div className="flex flex-col py-2 gap-2">
                         {<OrganisationPosts />}

@@ -76,9 +76,9 @@ export default function NewOrganisation() {
             </section>
 
             <form className="flex flex-col p-4 gap-2" onSubmit={handleSubmit}>
-                <InputField title="Name" placeholder="Enter Organisation Name . . ." type="text" width='full'
+                <InputField title="Name" placeholder="Enter Organisation Name" type="text" width='full'
                     value={organisationName} onChange={(e) => setOrganisationName(e.target.value)} />
-                <InputTextBox title="Description" placeholder="Explain what your organisation does . . ." width='full'
+                <InputTextBox title="Description" placeholder="Explain what your organisation does" width='full'
                     value={organisationDescription} onChange={(e) => setOrganisationDescription(e.target.value)} />
                 <InputFile title="Upload Banner" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage([...bannerImage, e.target.files[0]]) }} />
                 <InputFile title="Upload Poster" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage([...posterImage, e.target.files[0]]) }} />

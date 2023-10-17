@@ -19,7 +19,7 @@ export const useLogin = () => {
 
     if (!response.ok) {
       setIsLoading(false);
-      setError(json.Error);
+      setError(json.error);
     }
     if (response.ok) {
       // Feedback to user

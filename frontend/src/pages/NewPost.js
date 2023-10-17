@@ -31,12 +31,12 @@ export default function NewPost() {
                 <Tabs tabs={['Discussion', 'Event', 'Donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                     onClick={(e) => setSelectedElement(e.target.getAttribute('data-value'))} />
 
-                <div class="border-b border-gray-700"></div>
+                <div className="border-b border-gray-700"></div>
 
-                <InputField title="Post Title" placeholder="Enter Post Title . . ." type="text" width='full'
+                <InputField title="Post Title" placeholder="Enter Post Title" type="text" width='full'
                     value={title} onChange={(e) => setTitle(e.target.value)} />
 
-                <InputTextBox title="Your Message" placeholder="Write your thoughts here . . ." width='full'
+                <InputTextBox title="Your Message" placeholder="Write your thoughts here" width='full'
                     value={message} onChange={(e) => setMessage(e.target.value)} />
 
                 {selectedElement === 'event' &&
@@ -50,7 +50,7 @@ export default function NewPost() {
                     </div>}
 
                 {selectedElement === 'donation' &&
-                    <InputField title="Donation Goal ($)" placeholder="Enter Donation Goal . . ." type="number" width='1/6' additional={{ min: '1', step: '0.01' }}
+                    <InputField title="Donation Goal ($)" placeholder="Enter Donation Goal" type="number" width='1/6' additionalProps={{ min: '1', step: '0.01' }}
                         value={donation} onChange={(e) => setDonation(e.target.value)} />}
 
                 <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }} />

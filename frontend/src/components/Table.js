@@ -17,8 +17,10 @@ export default function Table(props) {
                 </thead>
                 <tbody>
                     {rows && rows.map((row, i) => (
-                        <tr id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') + "-" + i}
-                            className={onClick ? "cursor-pointer" : ""} onClick={onClick}>
+                        <tr
+                            id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') + "-" + i}
+                            className={onClick ? "cursor-pointer" : ""}
+                            onClick={onClick}>
                             {Object.values(row).map((value) => (
                                 <td className="w-1/3 px-6 py-2 font-medium text-neutral-100">
                                     {value}

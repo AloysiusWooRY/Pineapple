@@ -46,7 +46,10 @@ export default function Post() {
             if (i % 2 === 0) {
                 comments.push(
                     // Comment
-                    <div className="flex flex-col gap-2 p-2 border-l border-gray-500">
+                    <div 
+                    className="flex flex-col gap-2 p-2 border-l border-gray-500"
+                    key={"comment-" + i}
+                    >
                         <div className="flex flex-row gap-2 items-center">
                             <div className="font-bold text-white text-sm">
                                 Bang Ding
@@ -68,7 +71,10 @@ export default function Post() {
             else {
                 comments.push(
                     // Reply
-                    <div className="pl-8">
+                    <div 
+                    className="pl-8"
+                    key={"comment-" + i}
+                    >
                         <div className="flex flex-col gap-2 p-2 border-l border-gray-500">
                             <div className="flex flex-row gap-2 items-center">
                                 <div className="font-bold text-white text-sm">
@@ -132,7 +138,7 @@ export default function Post() {
 
                     <hr className="h-px my-2 bg-gray-200 border-1"></hr>
 
-                    <InputTextBox title="Your Message" placeholder="Write your thoughts here . . ."
+                    <InputTextBox title="Your Message" placeholder="Write your thoughts here"
                         value={comment} width='full' onChange={(e) => setComment(e.target.value)} />
 
                     <hr className="h-px my-2 bg-gray-200 border-1"></hr>
