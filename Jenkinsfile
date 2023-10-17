@@ -1,22 +1,17 @@
 pipeline {
 	agent any
-
-	stage('Checkout SCM') {
-		steps {
-				git 'ICT3103/JenkinsDependencyCheckTest'
-		}
-	}
-	
 	stages {
-		stage('OWASP Dependency-Check Vulnerabilities') {
+		stage('Checkout SCM') {
 			steps {
-				dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
+				git '/ICT3103/JenkinsDependencyCheckTest'
 			}
 		}
-		
 
-
-
+		stage('OWASP DependencyCheck') {
+			steps {
+				dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
+			}
+		}
 	}	
 	post {
 		success {
