@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import validator from "validator";
+import ReCAPTCHA from "react-google-recaptcha"
 
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
@@ -33,6 +34,8 @@ export default function Login() {
     const [confirmPasswordErr, setConfirmPasswordErr] = useState(null);
     const [error, setError] = useState(null);
 
+    const [recaptchaToken, setRecaptchaToken] = useState(null);
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         clearAllErrorMsg();
@@ -58,7 +61,7 @@ export default function Login() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name, email, password
+                    name, email, password, recaptchaToken
                 }),
             });
             const json = await response.json();
@@ -125,6 +128,11 @@ export default function Login() {
 
                     <InputField title="Confirm Password" errorMsg={confirmPasswordErr} placeholder="Confirm Password" type="password" width='full'
                         value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+
+                    <ReCAPTCHA
+                        sitekey="6LeQDqooAAAAAHzIRnk97IoeBTb_JBFtY07NtW9b"
+                        onChange={(token) => setRecaptchaToken(token)}
+                    />
 
                     <div className="flex flex-row flex-wrap justify-between">
                         <label className="self-center text-red-600 text-right">

@@ -10,6 +10,8 @@ const sendEmail = require('../utils/sendEmail')
 const Account = require('../models/accountModel')
 const ResetCode = require('../models/resetCodeModel')
 
+const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
+
 const logger = require("../utils/logger")
 const {
     ValidationError,
@@ -53,10 +55,16 @@ const loginAccount = async (req, res) => {
 // Create account
 const registerAccount = async (req, res) => {
 
-    const { name, email, password } = req.body
+    const { name, email, password, token } = req.body
     try {
 
-        if (!name || !email || !password) throw new MissingFieldError('Missing fields', req)
+        if (!name || !email || !password || !token) throw new MissingFieldError('Missing fields', req)
+
+        // reCAPTCHA verification
+        const isTokenValid = await verifyRecaptchaToken(token);
+        if (!isTokenValid) {
+            throw new ValidationError('Invalid reCAPTCHA', req)
+        }
 
         // Sanitize and validate credentials
         const sanitizedName = validator.escape(validator.trim(name))
