@@ -1,5 +1,12 @@
 pipeline {
 	agent any
+
+	stage('Checkout SCM') {
+		steps {
+				git 'ICT3103/JenkinsDependencyCheckTest'
+		}
+	}
+	
 	stages {
 		stage('OWASP Dependency-Check Vulnerabilities') {
 			steps {
@@ -7,11 +14,7 @@ pipeline {
 			}
 		}
 		
-		stage('Checkout SCM') {
-			steps {
-				git 'ICT3103/JenkinsDependencyCheckTest'
-			}
-		}
+
 
 
 	}	
