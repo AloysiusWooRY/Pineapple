@@ -4,7 +4,7 @@ pipeline {
         stage('Checkout SCM') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: '3x03', variable: 'GITHUB_TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: '3x03', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                         sh "git clone https://github.com/AloysiusWooRY/ICT3103.git"
                     }
                 }
