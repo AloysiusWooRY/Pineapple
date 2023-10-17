@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 // Pages
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import Register from "./pages/Register";
 import Profile from './pages/Profile';
 import Home from './pages/Home';
 import OrganisationHome from './pages/OrganisationHome';
@@ -14,6 +14,7 @@ import NewPost from './pages/NewPost';
 import NewOrganisation from './pages/NewOrganisation';
 import AdminModeration from './pages/AdminModeration';
 import AdminApplicationReview from "./pages/AdminApplicationReview";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const { user } = useAuthContext();
@@ -38,7 +39,11 @@ function App() {
             />
             <Route
               path="/register"
-              element={!user ? <SignUp /> : <Navigate to="/" />}
+              element={!user ? <Register /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/forgot-password"
+              element={!user ? <ForgotPassword /> : <Navigate to="/" />}
             />
             <Route
               path="/profile"

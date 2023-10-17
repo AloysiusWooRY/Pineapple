@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
-import PasswordStrengthBar from 'react-password-strength-bar';
 import validator from "validator";
-import ReCAPTCHA from "react-google-recaptcha"
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
+import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
 
 import Logo from "../assets/logo-no-background.png";
 
@@ -21,12 +21,12 @@ export default function Login() {
     const [passwordScore, setPasswordScore] = useState(0);
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    let ERR_MISSING_FIELDS = "Missing fields";
-    let ERR_GENERIC = "Something went wrong, try again later!";
-    let ERR_EMAIL_INVALID = "Invalid email";
-    let ERR_EMAIL_DUPLICATE = "Email already exist";
-    let ERR_PASSWORD_WEAK = "Password not strong";
-    let ERR_PASSWORD_MISMATCH = "Passwords do not match";
+    const ERR_MISSING_FIELDS = "Missing fields";
+    const ERR_GENERIC = "Something went wrong, try again later!";
+    const ERR_EMAIL_INVALID = "Invalid email";
+    const ERR_EMAIL_DUPLICATE = "Email already exist";
+    const ERR_PASSWORD_WEAK = "Password not strong";
+    const ERR_PASSWORD_MISMATCH = "Passwords do not match";
 
     const [isLoading, setIsLoading] = useState(false);
     const [emailErr, setEmailErr] = useState(null);
@@ -103,36 +103,32 @@ export default function Login() {
                     <img src={Logo} alt="logo" className="h-44" />
                 </div>
                 <form
-                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg text-white"
+                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg"
                     onSubmit={handleFormSubmit}
                 >
-                    <p className="font-bold text-center text-2xl font-sans text-[#FFFF00]">Sign Up</p>
+                    <p className="font-bold text-center text-2xl text-[#FFFF00]">Sign Up</p>
 
-                    <div className="py-2"></div>
+                    <div className="py-4"></div>
 
-                    <InputField title="Email Address" errorMsg={emailErr} placeholder="Enter Email" type="email" width="full"
+                    <InputField title="Email Address" errorMsg={emailErr} placeholder="Enter Email" type="email" width="full" additionalProps={{ required: 'required' }}
                         value={email} onChange={(e) => setEmail(e.target.value)} />
 
-                    <InputField title="Name" placeholder="Enter Name" type="text" width="full"
+                    <InputField title="Name" placeholder="Enter Name" type="text" width="full" additionalProps={{ required: 'required' }}
                         value={name} onChange={(e) => setName(e.target.value)} />
 
-                    <InputField title="Password" errorMsg={passwordErr} placeholder="Enter Password" type="password" width="full"
+                    <InputField title="Password" errorMsg={passwordErr} placeholder="Enter Password" type="password" width="full" additionalProps={{ required: 'required' }}
                         value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <PasswordStrengthBar
-                        password={password}
-                        className="-mt-4"
-                        onChangeScore={(passwordScore, feedback) => { setPasswordScore(passwordScore) }}
-                        barColors={['#ddd', '#FF0000', '#FFA500', '#00FF00', '#0000FF']}
-                        scoreWords={['Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong']}
-                    />
+                    <CustomPasswordStrengthBar password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
-                    <InputField title="Confirm Password" errorMsg={confirmPasswordErr} placeholder="Confirm Password" type="password" width='full'
+                    <InputField title="Confirm Password" errorMsg={confirmPasswordErr} placeholder="Confirm Password" type="password" width='full' additionalProps={{ required: 'required' }}
                         value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                    <ReCAPTCHA
-                        sitekey="6LeQDqooAAAAAHzIRnk97IoeBTb_JBFtY07NtW9b"
-                        onChange={(token) => setRecaptchaToken(token)}
-                    />
+                    <div className="flex justify-center pt-2 pb-4">
+                        <ReCAPTCHA
+                            sitekey="6LeQDqooAAAAAHzIRnk97IoeBTb_JBFtY07NtW9b"
+                            onChange={(token) => setRecaptchaToken(token)}
+                        />
+                    </div>
 
                     <div className="flex flex-row flex-wrap justify-between">
                         <label className="self-center text-red-600 text-right">

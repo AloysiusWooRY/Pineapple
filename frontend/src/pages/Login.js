@@ -12,8 +12,8 @@ import { RectangleButton } from "../components/Buttons";
 import { KeyIcon, QuestionMarkCircleIcon, PencilIcon } from "@heroicons/react/24/solid";
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const { login, error, isLoading } = useLogin();
     const navigate = useNavigate();
@@ -29,11 +29,12 @@ export default function Login() {
     }, [error]);
 
     const handleRecoverPass = () => {
+        navigate('../forgot-password');
         // window.location.href = "/forgot-password";
     };
 
     const handleRegister = () => {
-        navigate("../register");
+        navigate('../register');
     }
 
     return (
@@ -47,17 +48,17 @@ export default function Login() {
                 </div>
 
                 <form
-                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg text-white"
+                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg"
                     onSubmit={handleFormSubmit}
                 >
-                    <p className="font-bold text-center text-2xl font-sans text-[#FFFF00]">Welcome Back!</p>
+                    <p className="font-bold text-center text-2xl text-[#FFFF00]">Welcome Back!</p>
 
-                    <div className="py-2"></div>
+                    <div className="py-4"></div>
 
-                    <InputField title="Email" placeholder="Enter Email" type="email" width="full"
+                    <InputField title="Email Address" placeholder="Enter Email Address" type="email" width="full" additionalProps={{ required: 'required' }}
                         value={email} onChange={(e) => setEmail(e.target.value)} />
 
-                    <InputField title="Password" placeholder="Enter Password" type="password" width="full"
+                    <InputField title="Password" placeholder="Enter Password" type="password" width="full" additionalProps={{ required: 'required' }}
                         value={password} onChange={(e) => setPassword(e.target.value)} />
 
                     <div>

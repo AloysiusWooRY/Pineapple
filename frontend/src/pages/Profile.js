@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import PasswordStrengthBar from 'react-password-strength-bar';
 
 import { useAuthContext } from "../hooks/useAuthContext";
 
@@ -8,6 +7,7 @@ import Banner from "../components/Banner";
 import Popup from '../components/Popup';
 import { InputField, InputHeader } from '../components/Inputs';
 import { RectangleButton } from '../components/Buttons';
+import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
 
 import BannerImage from "../assets/post-banner.png";
 
@@ -94,10 +94,7 @@ export default function Profile() {
                 <InputField title="New Password" placeholder="Enter New Password" type="password" width='full'
                     value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
 
-                <PasswordStrengthBar className="-mt-4" password={newPassword} onChangeScore={(passwordScore, feedback) => { setPasswordScore(passwordScore) }}
-                    barColors={['#ddd', '#FF0000', '#FFA500', '#00FF00', '#0000FF']}
-                    scoreWords={['Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong']}
-                />
+                <CustomPasswordStrengthBar password={newPassword} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
                 <InputField title="Confirm New Password" placeholder="Confirm New Password" type="password" width='full'
                     value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
