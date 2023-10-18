@@ -3,7 +3,7 @@ pipeline {
 	stages {
 		stage('Checkout SCM') {
             		steps {
-				git url: 'https://github.com/AloysiusWooRY/ICT3103.git', credentialsId: '3x03'
+				git branch: 'main', url: 'https://github.com/AloysiusWooRY/ICT3103.git', credentialsId: '3x03'
                 	}
 		}
 
