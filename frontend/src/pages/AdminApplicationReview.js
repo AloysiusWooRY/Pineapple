@@ -1,17 +1,24 @@
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
 
+// Components
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import Table from "../components/Table";
 import { StandardDropdown } from "../components/Buttons";
 import { ApprovalType } from "../components/Miscellaneous";
+import { SearchField } from "../components/Inputs";
 
+// Assets
 import BannerImage from "../assets/banner-admin-moderation.png";
 
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function AdminApplicationReview() {
     const { user } = useAuthContext();
+
+    const [searchField, setSearchField] = useState('');
 
     function GenerateReviews() {
         const tableData = [
@@ -28,16 +35,12 @@ export default function AdminApplicationReview() {
             <section className="flex flex-col">
                 <Banner image={BannerImage} title="Application Review" />
 
-                <div className="inline-block">
-                    <div className="float-left flex sm:w-72 bg-white/5 border-white/10 rounded m-2 mb-0 relative">
-                        <input className="h-9 w-full bg-transparent text-white border-none outline-none p-2 pr-8 font-medium" type="search" placeholder="Search" />
-                        <button className="h-9 w-8 flex items-center justify-center bg-transparent border-none outline-none rounded p-0 absolute right-0 top-0" type="button">
-                            <MagnifyingGlassIcon className="h-5 text-white" />
-                        </button>
+                <div className="flex flex-row items-center justify-between">
+                    <div className="w-1/5 my-2">
+                        <SearchField title="Search" bottomPadding={0} value={searchField} onChange={(e) => { setSearchField(e.target.value); }}/>
                     </div>
-
-                    <div className="float-right w-1/5 m-2 mb-0">
-                        <StandardDropdown title="Sort By" options={['Newest', 'Status']} onChange={(e) => { console.log(e.target.value); }} />
+                    <div className="w-1/5 my-2">
+                        <StandardDropdown title="Sort By" bottomPadding={0} options={['Newest', 'Status']} onChange={(e) => { console.log(e.target.value); }} />
                     </div>
                 </div>
 

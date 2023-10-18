@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
 
+// Components
 import Layout from "../layouts/Layout";
-import Banner from "../components/Banner"
+import Banner from "../components/Banner";
 import { InputField, InputTextBox, InputFile, InputDate } from "../components/Inputs";
 import { RectangleButton, Tabs } from "../components/Buttons";
+import { Divider } from "../components/Miscellaneous";
 
-import BannerImage from "../assets/post-banner.png"
-
+// Assets
 import { CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import BannerImage from "../assets/org-banner.png";
+
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function NewPost() {
     const { user } = useAuthContext();
@@ -31,7 +36,9 @@ export default function NewPost() {
                 <Tabs tabs={['Discussion', 'Event', 'Donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                     onClick={(e) => setSelectedElement(e.target.getAttribute('data-value'))} />
 
-                <div className="border-b border-gray-700"></div>
+                <div className="-mt-2">
+                    <Divider padding={0} />
+                </div>
 
                 <InputField title="Post Title" placeholder="Enter Post Title" type="text" width='full'
                     value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -55,8 +62,8 @@ export default function NewPost() {
 
                 <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }} />
 
-                <div className="self-end">
-                    <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-green-800" onClick={(e) => { console.log("Submit me!") }} />
+                <div className="self-start">
+                    <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
                 </div>
             </div>
         </Layout>

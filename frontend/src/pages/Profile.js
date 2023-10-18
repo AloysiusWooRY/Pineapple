@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// React / Packages
+import React, { useState } from "react";
 
-import { useAuthContext } from "../hooks/useAuthContext";
-
+// Components
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import Popup from '../components/Popup';
@@ -9,9 +9,12 @@ import { InputField, InputHeader } from '../components/Inputs';
 import { RectangleButton } from '../components/Buttons';
 import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
 
+// Assets
+import { UserCircleIcon, CreditCardIcon, KeyIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/post-banner.png";
 
-import { UserCircleIcon, CreditCardIcon, KeyIcon, ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Profile() {
     const { user } = useAuthContext();
@@ -49,7 +52,7 @@ export default function Profile() {
                 <Banner image={BannerImage} title="Profile" />
             </section>
 
-            <div className="flex flex-col p-4 gap-2 ">
+            <div className="flex flex-col p-4 gap-2">
                 <InputHeader title="Account Settings" heroIcon={<UserCircleIcon />} edit active={isAccountActive}
                     onClick={() => {
                         setIsAccountActive((currentIsAccountActive) => {
@@ -58,9 +61,9 @@ export default function Profile() {
                             return newIsAccountActive;
                         });
                     }} />
-                <InputField title="Name" placeholder="Enter Name" type="text"
+                <InputField title="Name" placeholder="Enter Name" type="text" width="2/3"
                     active={isAccountActive} value={name} onChange={(e) => setName(e.target.value)} />
-                <InputField title="Email Address" placeholder="Enter Email" type="email"
+                <InputField title="Email Address" placeholder="Enter Email" type="email" width="2/3"
                     active={isAccountActive} value={email} onChange={(e) => setEmail(e.target.value)} />
 
                 <InputHeader title="Change Password" heroIcon={<KeyIcon />} />
@@ -79,7 +82,7 @@ export default function Profile() {
                             return newIsPaymentActive;
                         });
                     }} />
-                <InputField title="Payment Info" placeholder="Enter Credit Card Information" type="tel"
+                <InputField title="Payment Info" placeholder="Enter Credit Card Information" type="tel" width="2/3"
                     active={isPaymentActive} value={paymentInfo} onChange={(e) => setPaymentInfo(e.target.value)} />
             </div>
 

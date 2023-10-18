@@ -1,26 +1,34 @@
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
+
+// Components
 import Layout from "../layouts/Layout";
-import Banner from "../components/Banner"
-import CategoryButton from "../components/CategoryButton"
-import CardHome from "../components/CardHome"
+import Banner from "../components/Banner";
+import CategoryButton from "../components/CategoryButton";
+import CardHome from "../components/CardHome";
+import { Tabs } from "../components/Buttons";
+import { Divider } from "../components/Miscellaneous";
 
-import BannerImage from "../assets/home-banner.png"
-import CategoryAllImage from "../assets/home-cat-all.png"
-import CategoryEventImage from "../assets/home-cat-event.png"
-import CategoryDiscussionImage from "../assets/home-cat-discussion.png"
-import CategoryDonationImage from "../assets/home-cat-donation.png"
+// Assets
+import { NewspaperIcon, SparklesIcon, ArrowUpIcon, GlobeAltIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
+import BannerImage from "../assets/home-banner.png";
+import CategoryAllImage from "../assets/home-cat-all.png";
+import CategoryEventImage from "../assets/home-cat-event.png";
+import CategoryDiscussionImage from "../assets/home-cat-discussion.png";
+import CategoryDonationImage from "../assets/home-cat-donation.png";
+import Sample1 from "../assets/sample-nuts.jpg";
 
-import { GlobeAltIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
-import { Navigate } from "react-router-dom";
-import Sample1 from "../assets/sample-nuts.jpg"
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
-const Home = () => {
+export default function Home() {
     const { user } = useAuthContext();
+
+    const [selectedCategory, setSelectedCategory] = useState('related');
 
     return (
         <Layout>
-            <section className="grid ">
+            <section className="grid">
                 <Banner image={BannerImage} title="Home" />
                 <div className="grid grid-cols-4 h-32 my-2 gap-2">
                     <CategoryButton image={CategoryAllImage} title="ALL" icon={GlobeAltIcon} />
@@ -28,24 +36,16 @@ const Home = () => {
                     <CategoryButton image={CategoryDiscussionImage} title="DISCUSSIONS" icon={ChatBubbleLeftRightIcon} />
                     <CategoryButton image={CategoryDonationImage} title="DONATIONS" icon={CurrencyDollarIcon} />
                 </div>
-                <div className="scroll-px-0 overflow-auto w-full">
-                    <div className="inline-flex gap-2 px-2">
-                        <button className="bg-white text-black text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                            RELATED
-                        </button>
-                        <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                            NEW
-                        </button>
-                        <button className="bg-transparent hover:bg-white/5 text-white text-sm font-medium border-1 border-white/10 rounded-full outline-none py-1 px-4 text-center">
-                            TOP
-                        </button>
-                    </div>
 
-                </div>
+                <Tabs tabs={['Related', 'New', 'Top']} heroIconsArr={[<NewspaperIcon />, <SparklesIcon />, <ArrowUpIcon />]}
+                    onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
+
+                <Divider padding={0} />
+
                 <div className="grid grid-cols-2 max-lg:grid-cols-1 p-2">
                     {
                         [...Array(9)].map((_, index) => (
-                            <CardHome key={index} image={Sample1} title="Save deez nutz" organisation="Nut Allergy Foundation" category="Discussion" type="Health" />
+                            <CardHome key={index} image={Sample1} title="Save deez nutz" organisation="Nut Allergy Foundation" category="Health" />
                         ))
                     }
                 </div>
@@ -53,5 +53,3 @@ const Home = () => {
         </Layout >
     )
 }
-
-export default Home;

@@ -1,17 +1,25 @@
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
 
+// Components
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
-import { RoundedButton, StandardDropdown } from "../components/Buttons";
-import { UserType } from "../components/Miscellaneous";
 import Table from "../components/Table";
+import { RoundedButton, StandardDropdown } from "../components/Buttons";
+import { SearchField } from "../components/Inputs";
+import { UserType } from "../components/Miscellaneous";
 
-import BannerImage from "../assets/banner-admin-moderation.png"
+// Assets
+import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/solid";
+import BannerImage from "../assets/banner-admin-moderation.png";
 
-import { MagnifyingGlassIcon, PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/solid";
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function AdminModeration() {
     const { user } = useAuthContext();
+
+    const [searchField, setSearchField] = useState('');
 
     function GenerateUsers() {
         const tableData = [
@@ -28,23 +36,18 @@ export default function AdminModeration() {
             <section className="flex flex-col">
                 <Banner image={BannerImage} title="Moderation" />
 
-                <div className="inline-block">
-                    <div className="float-left flex sm:w-72 bg-white/5 border-white/10 rounded m-2 mb-0 relative">
-                        <input className="h-9 w-full bg-transparent text-white border-none outline-none p-2 pr-8 font-medium" type="search" placeholder="Search By Name" />
-                        <button className="h-9 w-8 flex items-center justify-center bg-transparent border-none outline-none rounded p-0 absolute right-0 top-0" type="button">
-                            <MagnifyingGlassIcon className="h-5 text-white" />
-                        </button>
+                <div className="w-1/5 pt-2">
+                        <SearchField title="Search By Name" bottomPadding={0} value={searchField} onChange={(e) => { setSearchField(e.target.value); }}/>
                     </div>
-                </div>
 
-                <div className="flex flex-grow py-2 gap-2">
+                <div className="flex flex-grow pt-2 gap-2">
                     <div className="w-full">
                         <Table rows={GenerateUsers()} title="Users" onClick={(e) => { console.log(e.target.parentElement.id); }} />
                     </div>
 
                     <section className="flex flex-col gap-2 p-2 rounded-tr-lg rounded-br-lg h-fit w-[32rem] bg-theme-primary overflow-hidden whitespace-nowrap">
                         <div className="flex w-full gap-2 items-center">
-                            <h2 className="text-white text-3xl font-semibold flex-grow truncate">
+                            <h2 className="text-text-primary text-3xl font-semibold flex-grow truncate">
                                 John Xina
                             </h2>
                         </div>
@@ -57,9 +60,9 @@ export default function AdminModeration() {
 
                             <div className="flex flex-col py-2">
                                 <div className="flex flex-row p-2 items-center">
-                                    <span className="grow text-sm text-white">Moderator Of</span>
-                                    <button><PlusCircleIcon className="h-8 text-white" /></button>
-                                    <button><MinusCircleIcon className="h-8 text-white" /></button>
+                                    <span className="grow text-sm text-text-primary">Moderator Of</span>
+                                    <button><PlusCircleIcon className="h-8 text-text-primary" /></button>
+                                    <button><MinusCircleIcon className="h-8 text-text-primary" /></button>
                                 </div>
 
                                 <StandardDropdown title="Moderator 1" titleLocation="none"

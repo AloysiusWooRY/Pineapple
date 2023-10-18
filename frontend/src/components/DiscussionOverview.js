@@ -1,32 +1,37 @@
-import React from 'react';
+// React / Packages
+import React from "react";
 
+// Components
 import { PostType } from './Miscellaneous';
 
-import Sample1 from "../assets/sample-nuts.jpg";
-
+// Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon } from "@heroicons/react/24/solid";
+import Sample1 from "../assets/sample-nuts.jpg";
+
+// API
+// ~
 
 export default function DiscussionOverview(props) {
     const { title, discussionType, votes, timeSincePost, posterUsername, upvoted = null } = props;
 
     return (
-        <a className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-white/5">
+        <a className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor">
             <div className="w-full flex flex-col justify-start gap-1 flex-shrink">
-                <span className="w-full text-white text-2xl overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="w-full text-text-primary text-2xl overflow-hidden text-ellipsis whitespace-nowrap">
                     {title}
                 </span>
 
                 <PostType type={discussionType} />
 
-                <div className="flex mt-auto gap-2 text-white items-center">
+                <div className="flex mt-auto gap-2 text-text-primary items-center">
                     {upvoted !== null ? (upvoted ? <ArrowUpCircleSolidIcon className="h-7" /> : <ArrowUpCircleOutlineIcon className="h-7" />)
                         : <ArrowUpCircleOutlineIcon className="h-7" />}
                     {votes}
                     {upvoted !== null ? (!upvoted ? <ArrowDownCircleSolidIcon className="h-7" /> : <ArrowDownCircleOutlineIcon className="h-7" />)
                         : <ArrowDownCircleOutlineIcon className="h-7" />}
                     •
-                    <div className="flex text-sm text-neutral-400">
+                    <div className="flex text-sm text-text-secondary">
                         Posted by {posterUsername}, {timeSincePost} ago
                     </div>
                 </div>

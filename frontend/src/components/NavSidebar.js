@@ -1,21 +1,22 @@
+// React / Packages
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import Logo from "../assets/logo-no-background.png"
+
+// Components
+// ~
+
+// Assets
 import {
-    HomeModernIcon,
-    CogIcon,
-    ArrowLeftOnRectangleIcon,
-    ShieldExclamationIcon,
-    ChevronDownIcon,
-    ChevronUpIcon,
-    UserCircleIcon,
-    UserGroupIcon,
-    DocumentCheckIcon
+    HomeModernIcon, CogIcon, ArrowLeftOnRectangleIcon, ShieldExclamationIcon,
+    ChevronDownIcon, ChevronUpIcon, UserCircleIcon, UserGroupIcon, DocumentCheckIcon
 } from "@heroicons/react/24/solid";
+import Logo from "../assets/logo-no-background.png";
+
+// API
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
 
-const NavSidebar = () => {
+export default function NavSideBar() {
     const { logout } = useLogout();
     const { user } = useAuthContext();
 
@@ -31,12 +32,12 @@ const NavSidebar = () => {
     };
 
     return (
-        <div className="h-full px-4 py-4 m-2 rounded-l-lg overflow-y-auto bg-theme-primary select-none">
+        <div className="h-full px-4 py-4 m-2 rounded-l-lg overflow-y-auto bg-background-minor select-none">
             <ul className="space-y-1 font-medium text-sm">
                 <li>
                     <NavLink
                         to="/"
-                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                     >
                         <img src={Logo} />
                     </NavLink>
@@ -44,7 +45,7 @@ const NavSidebar = () => {
                 <li>
                     <NavLink
                         to="/organisation"
-                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                     >
                         <HomeModernIcon className="w-5 h-5" />
                         <span className="ml-3">Organisation</span>
@@ -53,7 +54,7 @@ const NavSidebar = () => {
                 <li>
                     <NavLink
                         to="/organisation/123/post/123"
-                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
                         <span className="ml-3">Post (Temp)</span>
@@ -62,7 +63,7 @@ const NavSidebar = () => {
                 <li>
                     <NavLink
                         to="/organisation/123"
-                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
                         <span className="ml-3">Specific Org (Temp)</span>
@@ -71,7 +72,7 @@ const NavSidebar = () => {
                 <li>
                     <NavLink
                         to="/organisation/123/post/new"
-                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                     >
                         <ShieldExclamationIcon className="w-5 h-5" />
                         <span className="ml-3">New Post (Temp)</span>
@@ -80,7 +81,7 @@ const NavSidebar = () => {
                 <li>
                     <NavLink
                         to="/profile"
-                        className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                     >
                         <UserCircleIcon className="w-5 h-5" />
                         <span className="ml-3">Profile</span>
@@ -88,7 +89,7 @@ const NavSidebar = () => {
                 </li>
 
                 <li
-                    className="flex items-center p-2 gap-2 text-neutral-400 rounded-lg hover:cursor-pointer hover:text-neutral-200 transition duration-300 group"
+                    className="flex items-center p-2 gap-2 text-text-secondary rounded-lg hover:cursor-pointer hover:text-text-primary transition duration-300 group"
                     onClick={toggleAdminMenu}
                 >
                     <div className="flex items-center">
@@ -106,7 +107,7 @@ const NavSidebar = () => {
                         <li>
                             <NavLink
                                 to="/admin/moderation"
-                                className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                                className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                             >
                                 <UserGroupIcon className="w-5 h-5 " />
                                 <span className="ml-3 ">Moderation</span>
@@ -116,7 +117,7 @@ const NavSidebar = () => {
                         <li>
                             <NavLink
                                 to="/admin/application"
-                                className="flex items-center p-2 text-neutral-400 rounded-lg hover:text-neutral-200 transition duration-300 group"
+                                className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
                             >
                                 <DocumentCheckIcon className="w-5 h-5 " />
                                 <span className="ml-3 ">Application</span>
@@ -125,7 +126,7 @@ const NavSidebar = () => {
                     </ul>
                 )}
                 <li
-                    className="flex items-center p-2 text-red-400 rounded-lg hover:cursor-pointer hover:text-red-600 transition duration-300 group"
+                    className="flex items-center p-2 text-text-warn-light rounded-lg hover:cursor-pointer hover:text-text-warn transition duration-300 group"
                     onClick={handleLogout}
                 >
                     <ArrowLeftOnRectangleIcon className="w-5 h-5 " />
@@ -136,5 +137,3 @@ const NavSidebar = () => {
         </div>
     );
 }
-
-export default NavSidebar;

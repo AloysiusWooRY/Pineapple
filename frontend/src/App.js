@@ -34,9 +34,9 @@ function App() {
               path="/"
               element={user ? <Home /> : <Navigate to="/login" />}
             />
-            <Route 
-            path="*" 
-            element={<NotFound />} 
+            <Route
+              path="*"
+              element={<NotFound />}
             />
             <Route
               path="/login"

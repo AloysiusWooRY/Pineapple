@@ -1,15 +1,20 @@
-import React from "react";
-import toast from 'react-hot-toast';
-import { useState, useEffect } from "react";
-import { useLogin } from "../hooks/useLogin";
+// React / Packages
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
-import Logo from "../assets/logo-no-background.png";
-
+// Components
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
+import { Divider } from "../components/Miscellaneous";
 
-import { KeyIcon, QuestionMarkCircleIcon, PencilIcon } from "@heroicons/react/24/solid";
+// Assets
+import { KeyIcon, PencilIcon } from "@heroicons/react/24/solid";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import Logo from "../assets/logo-no-background.png";
+
+// API
+import { useLogin } from "../hooks/useLogin";
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -25,12 +30,11 @@ export default function Login() {
     };
     // 'error' is a useState, so it's not guaranteed that it is updated by the time handleFormSubmit is complete.
     useEffect(() => {
-        if (error) toast.error(error);            
+        if (error) toast.error(error);
     }, [error]);
 
     const handleRecoverPass = () => {
         navigate('../forgot-password');
-        // window.location.href = "/forgot-password";
     };
 
     const handleRegister = () => {
@@ -40,42 +44,32 @@ export default function Login() {
     return (
         <div
             id="login"
-            className="flex items-center justify-between min-h-screen bg-[#161618]"
+            className="flex items-center justify-between min-h-screen bg-background-minor"
         >
             <section className="flex flex-col items-center justify-center w-full p-5">
-                <div className="flex flex-col items-center justify-center text-center">
-                    <img src={Logo} alt="logo" className="h-44" />
-                </div>
+                <img src={Logo} alt="logo" className="h-44" />
 
                 <form
-                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg"
+                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 text-text-primary"
                     onSubmit={handleFormSubmit}
                 >
-                    <p className="font-bold text-center text-2xl text-[#FFFF00]">Welcome Back!</p>
+                    <p className="font-bold text-center text-2xl text-text-yellow-pineapple pb-8">Welcome Back!</p>
 
-                    <div className="py-4"></div>
-
-                    <InputField title="Email Address" placeholder="Enter Email Address" type="email" width="full" additionalProps={{ required: 'required' }}
+                    <InputField title="Email Address" placeholder="Enter Email Address" type="email" additionalProps={{ required: 'required' }}
                         value={email} onChange={(e) => setEmail(e.target.value)} />
 
-                    <InputField title="Password" placeholder="Enter Password" type="password" width="full" additionalProps={{ required: 'required' }}
+                    <InputField title="Password" placeholder="Enter Password" type="password"  additionalProps={{ required: 'required' }}
                         value={password} onChange={(e) => setPassword(e.target.value)} />
 
-                    <div>
-                        <RectangleButton title="Log In" forForm heroIcon={<KeyIcon />} colour="bg-green-800" />
-                    </div>
+                    <RectangleButton title="Log In" forForm heroIcon={<KeyIcon />} colour="bg-button-green" />
 
-                    <div className="py-4"></div>
-                    <div className="border-b border-gray-700"></div>
-                    <div className="py-4"></div>
+                    <Divider />
 
-                    <div>
-                        <RectangleButton title="Forgot Password" onClick={handleRecoverPass} heroIcon={<QuestionMarkCircleIcon />} colour="bg-red-600" />
-                    </div>
+                    <RectangleButton title="Forgot Password" onClick={handleRecoverPass} heroIcon={<QuestionMarkCircleIcon />} colour="bg-button-red" />
+
                     <div className="py-2"></div>
-                    <div>
-                        <RectangleButton title="Register" onClick={handleRegister} heroIcon={<PencilIcon />} colour="bg-blue-500" />
-                    </div>
+
+                    <RectangleButton title="Register" onClick={handleRegister} heroIcon={<PencilIcon />} colour="bg-button-blue" />
                 </form>
             </section>
         </div>

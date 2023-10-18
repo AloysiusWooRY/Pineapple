@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
+// Components
 import Layout from "../layouts/Layout";
-import Banner from "../components/Banner"
+import Banner from "../components/Banner";
 import { InputField, InputTextBox, InputFile } from "../components/Inputs";
+import { RectangleButton } from "../components/Buttons";
 
-import BannerImage from "../assets/org-banner.png"
+// Assets
+import { PaperAirplaneIcon, NoSymbolIcon } from "@heroicons/react/24/solid";
+import BannerImage from "../assets/org-banner.png";
+
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function NewOrganisation() {
     const { user } = useAuthContext();
@@ -83,17 +90,15 @@ export default function NewOrganisation() {
                 <InputFile title="Upload Banner" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage([...bannerImage, e.target.files[0]]) }} />
                 <InputFile title="Upload Poster" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage([...posterImage, e.target.files[0]]) }} />
 
-                <div className="flex gap-4 mt-2">
-                    <button type="submit" disabled={isLoading} className="w-24 py-1 rounded-full bg-white font-sans font-bold hover:bg-white/80">
-                        Submit
-                    </button>
-                    <button type="button" className="w-24 py-1 rounded-full bg-white font-sans font-bold hover:bg-white/80" onClick={handleCancel}>
-                        Cancel
-                    </button>
+                <div className="flex flex-row gap-2 items-center">
+                    <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
+                    <RectangleButton title="Cancel" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={handleCancel} />
+                    <label className="text-text-warn">
+                        {error ?? ''}
+                    </label>
                 </div>
-                <label className="text-red-600">
-                    {error ?? ""}
-                </label>
+
+
             </form>
         </Layout >
     )

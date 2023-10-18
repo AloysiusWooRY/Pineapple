@@ -1,14 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+// Components
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
 import { InputTextBox } from '../components/Inputs';
 import { RectangleButton, StandardDropdown } from '../components/Buttons';
-import { PostType } from '../components/Miscellaneous';
+import { Divider, PostType } from '../components/Miscellaneous';
 
+// Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, PencilIcon } from "@heroicons/react/24/solid";
+
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Post() {
     const { user } = useAuthContext();
@@ -46,21 +52,21 @@ export default function Post() {
             if (i % 2 === 0) {
                 comments.push(
                     // Comment
-                    <div 
-                    className="flex flex-col gap-2 p-2 border-l border-gray-500"
-                    key={"comment-" + i}
+                    <div
+                        className="flex flex-col gap-2 p-2 border-l-2 border-divider-color"
+                        key={"comment-" + i}
                     >
                         <div className="flex flex-row gap-2 items-center">
-                            <div className="font-bold text-white text-sm">
+                            <div className="font-bold text-text-primary text-sm">
                                 Bang Ding
                             </div>
-                            <p className="text-center text-white text-2xl">•</p>
-                            <div className="text-gray-400 text-sm">
+                            <p className="text-center text-text-primary text-2xl">•</p>
+                            <div className="text-text-secondary text-sm">
                                 {i} min ago
                             </div>
                         </div>
-                        <p className="text-white">How long can this go on?</p>
-                        <div className="flex mt-auto gap-2 text-white items-center">
+                        <p className="text-text-primary">How long can this go on?</p>
+                        <div className="flex mt-auto gap-2 text-text-primary items-center">
                             <ArrowUpCircleSolidIcon className="h-7" />
                             {69}
                             <ArrowDownCircleOutlineIcon className="h-7" />
@@ -71,22 +77,22 @@ export default function Post() {
             else {
                 comments.push(
                     // Reply
-                    <div 
-                    className="pl-8"
-                    key={"comment-" + i}
+                    <div
+                        className="pl-8"
+                        key={"comment-" + i}
                     >
-                        <div className="flex flex-col gap-2 p-2 border-l border-gray-500">
+                        <div className="flex flex-col gap-2 p-2 border-l-2 border-divider-color">
                             <div className="flex flex-row gap-2 items-center">
-                                <div className="font-bold text-white text-sm">
+                                <div className="font-bold text-text-primary text-sm">
                                     Ho Li
                                 </div>
-                                <p className="text-center text-white text-2xl">•</p>
-                                <div className="text-gray-400 text-sm">
+                                <p className="text-center text-text-primary text-2xl">•</p>
+                                <div className="text-text-secondary text-sm">
                                     {i} min ago
                                 </div>
                             </div>
-                            <p className="text-white">Seeing Triple?</p>
-                            <div className="flex mt-auto gap-2 text-white items-center">
+                            <p className="text-text-primary">Seeing Triple?</p>
+                            <div className="flex mt-auto gap-2 text-text-primary items-center">
                                 <ArrowUpCircleSolidIcon className="h-7" />
                                 {69}
                                 <ArrowDownCircleOutlineIcon className="h-7" />
@@ -103,7 +109,7 @@ export default function Post() {
     return (
         <Layout>
             <div className="flex flex-row items-start gap-2">
-                <div className="flex flex-none flex-col gap-2 p-2 text-white text-sm border-2 rounded-full border-gray-500">
+                <div className="flex flex-none flex-col gap-2 p-2 text-text-primary text-sm">
                     <ArrowUpCircleSolidIcon className="h-7" />
                     <p className="text-center text-2xl">{69}</p>
                     <ArrowDownCircleOutlineIcon className="h-7" />
@@ -111,16 +117,16 @@ export default function Post() {
 
                 <div className="flex flex-col gap-2 p-2">
                     <div className="flex flex-row gap-2 items-center">
-                        <div className="font-bold text-white text-sm">
+                        <div className="font-bold text-text-primary text-sm">
                             {organisationName}
                         </div>
-                        <p className="text-center text-white text-2xl">•</p>
-                        <div className="text-gray-400 text-sm">
+                        <p className="text-center text-text-primary text-2xl">•</p>
+                        <div className="text-text-secondary text-sm">
                             Posted by {poster}, {postTime} ago
                         </div>
                     </div>
 
-                    <div className="text-white text-2xl">
+                    <div className="text-text-primary text-2xl">
                         {postTitle}
                     </div>
 
@@ -128,22 +134,24 @@ export default function Post() {
 
                     <div className="py-2"></div>
 
-                    <div className="text-white">
+                    <div className="text-text-primary">
                         {postContent}
                     </div>
 
-                    <div className="self-end">
+                    <div className="py-2"></div>
+
+                    <div className="self-start">
                         <RectangleButton title="Edit" heroIcon={<PencilIcon />} onClick={(e) => { console.log("Edit me!") }} />
                     </div>
 
-                    <hr className="h-px my-2 bg-gray-200 border-1"></hr>
+                    <Divider padding={2} />
 
                     <InputTextBox title="Your Message" placeholder="Write your thoughts here"
                         value={comment} width='full' onChange={(e) => setComment(e.target.value)} />
 
-                    <hr className="h-px my-2 bg-gray-200 border-1"></hr>
+                    <Divider padding={2} />
 
-                    <div className="w-1/4">
+                    <div className="w-1/5">
                         <StandardDropdown title="Sort By" options={['Newest', 'Top']} onChange={(e) => { console.log(e.target.value); }} />
                     </div>
 
@@ -162,8 +170,6 @@ export default function Post() {
                     />
                 </div>
             </div>
-
-            <div className="py-8"></div>
         </Layout>
     );
 }

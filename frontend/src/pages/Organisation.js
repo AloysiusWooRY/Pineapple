@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+// React / Packages
+import React, { useState } from "react";
 
+// Components
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from "../components/SidebarOrganisationInfo";
 import DiscussionOverview from "../components/DiscussionOverview";
 import { StandardDropdown, Tabs } from "../components/Buttons";
+import { Divider } from "../components/Miscellaneous";
 
+// Assets
 import { NewspaperIcon, ChatBubbleLeftRightIcon, CalendarDaysIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
+
+// API
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Organisation() {
     const { user } = useAuthContext();
@@ -19,7 +25,7 @@ export default function Organisation() {
         for (let i = 0; i < 10; i++) {
             posts.push(
                 <DiscussionOverview
-                key={"post-" + i}
+                    key={"post-" + i}
                     title={"What if we could print a brain?"} discussionType={"Discussion"}
                     votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
             );
@@ -30,10 +36,10 @@ export default function Organisation() {
 
     return (
         <Layout>
-            <div className="flex gap-2">
+            <div className="flex flex-row gap-2">
                 <section className="h-96 flex-grow">
-                    <div className="flex flex-row justify-between my-2 mb-0">
-                        <div className="flex basis-4/5 gap-2">
+                    <div className="flex flex-row justify-between mt-2">
+                        <div className="flex basis-4/5">
                             <Tabs tabs={['All', 'Discussion', 'Event', 'Donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                                 onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
                         </div>
@@ -43,7 +49,9 @@ export default function Organisation() {
                         </div>
                     </div>
 
-                    <div className="border-b border-gray-700"></div>
+                    <div className="-mt-2">
+                        <Divider padding={0} />
+                    </div>
 
                     <div className="flex flex-col py-2 gap-2">
                         {<OrganisationPosts />}

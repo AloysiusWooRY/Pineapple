@@ -1,15 +1,20 @@
-import React from "react";
-import toast from 'react-hot-toast';
-import { useState, useEffect } from "react";
+// React / Packages
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "../assets/logo-no-background.png";
 
+// Components
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
+import { Divider } from "../components/Miscellaneous";
 import SteppedProgressBar from "../components/SteppedProgressBar";
 import CustomPasswordStrengthBar from "../components/CustomPasswordStrengthBar";
 
+// Assets
 import { PaperAirplaneIcon, ArrowLeftOnRectangleIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import Logo from "../assets/logo-no-background.png";
+
+// API
+// ~
 
 export default function ForgotPassword() {
     const navigate = useNavigate();
@@ -49,76 +54,66 @@ export default function ForgotPassword() {
     return (
         <div
             id="forgot-password"
-            className="flex items-center justify-between min-h-screen bg-[#161618]"
+            className="flex items-center justify-between min-h-screen bg-background-minor"
         >
             <section className="flex flex-col items-center justify-center w-full p-5">
-                <div className="flex flex-col items-center justify-center text-center">
-                    <img src={Logo} alt="logo" className="h-44" />
-                </div>
+                <img src={Logo} alt="logo" className="h-44" />
 
-                <div className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg text-white">
-                    <p className="font-bold text-center text-2xl text-[#FFFF00]">Account Recovery</p>
+                <div className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 text-text-primary">
+                    <p className="font-bold text-center text-2xl text-text-yellow-pineapple pb-8">Account Recovery</p>
 
-                    <div className="py-4"></div>
-
-                    <div>
+                    <div className="py-2">
                         <SteppedProgressBar title="Password Forget" steps={3} currentPhase={stage} />
                     </div>
 
                     {stage == 1 && <>
-                        <p className="pt-4 pb-2">Enter the Email Address associated with your account, and we'll send you a recovery code.</p>
+                        <p className="pt-4">Enter the Email Address associated with your account, and we'll send you a recovery code.</p>
 
-                        <div className="border-b border-gray-700"></div>
-                        <div className="py-2"></div>
+                        <Divider padding={4} />
 
                         <form onSubmit={handleRecoveryRequest}>
-                            <InputField title="Email Address" placeholder="Enter Email Address" type="email" width="full" additionalProps={{ required: 'required' }}
+                            <InputField title="Email Address" placeholder="Enter Email Address" type="email" additionalProps={{ required: 'required' }}
                                 value={email} onChange={(e) => setEmail(e.target.value)} />
 
-                            <RectangleButton title="Send Recovery Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-green-800" />
+                            <RectangleButton title="Send Recovery Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
                         </form>
                     </>}
 
                     {stage == 2 && <>
-                        <p className="pt-4 pb-2">A recovery code has been dispatched to your email! Enter the 6-digit code here:</p>
+                        <p className="pt-4">A recovery code has been dispatched to your email! Enter the 6-digit code here:</p>
 
-                        <div className="border-b border-gray-700"></div>
-                        <div className="py-2"></div>
+                        <Divider padding={4} />
 
                         <form onSubmit={handleRecoveryCheck}>
-                            <InputField title="Recovery Code" placeholder="Enter Recovery Code" type="text" width="full" additionalProps={{ pattern: '[0-9]{6}', required: 'required' }}
+                            <InputField title="Recovery Code" placeholder="Enter Recovery Code" type="text" additionalProps={{ pattern: '[0-9]{6}', required: 'required' }}
                                 value={recoveryCode} onChange={(e) => setRecoveryCode(e.target.value)} />
 
-                            <RectangleButton title="Submit Recovery Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-green-800" />
+                            <RectangleButton title="Submit Recovery Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
                         </form>
                     </>}
 
                     {stage == 3 && <>
-                        <p className="pt-4 pb-2">Recovery code accepted! Please change your password:</p>
+                        <p className="pt-4">Recovery code accepted! Please change your password:</p>
 
-                        <div className="border-b border-gray-700"></div>
-                        <div className="py-2"></div>
+                        <Divider padding={4} />
 
                         <form onSubmit={handleChangePassword}>
-                            <InputField title="Password" placeholder="Enter Password" type="password" width="full"
+                            <InputField title="Password" placeholder="Enter Password" type="password"
                                 value={password} onChange={(e) => setPassword(e.target.value)} />
                             <CustomPasswordStrengthBar password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
                             <InputField title="Confirm Password" placeholder="Confirm Password" type="password" width='full'
                                 value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                            <RectangleButton title="Change Password" forForm heroIcon={<ArrowPathIcon />} colour="bg-green-800" />
+                            <RectangleButton title="Change Password" forForm heroIcon={<ArrowPathIcon />} colour="bg-button-green" />
                         </form>
                     </>}
 
-                    <div className="py-4"></div>
-                    <div className="border-b border-gray-700"></div>
+                    <Divider />
 
-                    <p className="pt-4 pb-2">Suddenly remember your password?</p>
+                    <p className="pb-2">Suddenly remember your password?</p>
 
-                    <div>
-                        <RectangleButton title="Back to Login" onClick={handleReturnToLogin} heroIcon={<ArrowLeftOnRectangleIcon />} colour="bg-blue-500" />
-                    </div>
+                    <RectangleButton title="Back to Login" onClick={handleReturnToLogin} heroIcon={<ArrowLeftOnRectangleIcon />} colour="bg-button-blue" />
                 </div>
             </section>
         </div>

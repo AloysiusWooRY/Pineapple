@@ -1,16 +1,21 @@
+// React / Packages
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import validator from "validator";
 import ReCAPTCHA from "react-google-recaptcha";
 
+// Components
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
 import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
 
+// Assets
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import Logo from "../assets/logo-no-background.png";
 
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+// API
+// ~
 
 export default function Login() {
     const navigate = useNavigate();
@@ -96,27 +101,23 @@ export default function Login() {
     return (
         <div
             id="login"
-            className="flex items-center justify-between min-h-screen bg-[#161618]"
+            className="flex items-center justify-between min-h-screen bg-background-major"
         >
             <section className="flex flex-col items-center justify-center w-full p-5">
-                <div className="flex flex-col items-center justify-center text-center">
                     <img src={Logo} alt="logo" className="h-44" />
-                </div>
                 <form
-                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 bg-[#] border-[#FFFF00] border-0 rounded-lg"
+                    className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 text-text-primary"
                     onSubmit={handleFormSubmit}
                 >
-                    <p className="font-bold text-center text-2xl text-[#FFFF00]">Sign Up</p>
+                    <p className="font-bold text-center text-2xl text-text-yellow-pineapple pb-8">Sign Up</p>
 
-                    <div className="py-4"></div>
-
-                    <InputField title="Email Address" errorMsg={emailErr} placeholder="Enter Email" type="email" width="full" additionalProps={{ required: 'required' }}
+                    <InputField title="Email Address" errorMsg={emailErr} placeholder="Enter Email" type="email" additionalProps={{ required: 'required' }}
                         value={email} onChange={(e) => setEmail(e.target.value)} />
 
-                    <InputField title="Name" placeholder="Enter Name" type="text" width="full" additionalProps={{ required: 'required' }}
+                    <InputField title="Name" placeholder="Enter Name" type="text" additionalProps={{ required: 'required' }}
                         value={name} onChange={(e) => setName(e.target.value)} />
 
-                    <InputField title="Password" errorMsg={passwordErr} placeholder="Enter Password" type="password" width="full" additionalProps={{ required: 'required' }}
+                    <InputField title="Password" errorMsg={passwordErr} placeholder="Enter Password" type="password" additionalProps={{ required: 'required' }}
                         value={password} onChange={(e) => setPassword(e.target.value)} />
                     <CustomPasswordStrengthBar password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
@@ -131,11 +132,11 @@ export default function Login() {
                     </div>
 
                     <div className="flex flex-row flex-wrap justify-between">
-                        <label className="self-center text-red-600 text-right">
+                        <label className="self-center text-text-warn text-right">
                             {error ?? ''}
                         </label>
                         <div>
-                            <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-green-800" />
+                            <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
                         </div>
                     </div>
                 </form>

@@ -1,5 +1,15 @@
-import React from 'react';
+// React / Packages
+import React from "react";
 import PasswordStrengthBar from 'react-password-strength-bar';
+
+// Components
+// ~
+
+// Assets
+// ~
+
+// API
+// ~
 
 export default function CustomPasswordStrengthBar(props) {
     const { password, passwordScore, setPasswordScore } = props;
