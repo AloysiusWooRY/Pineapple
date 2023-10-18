@@ -15,6 +15,7 @@ import NewOrganisation from './pages/NewOrganisation';
 import AdminModeration from './pages/AdminModeration';
 import AdminApplicationReview from "./pages/AdminApplicationReview";
 import ForgotPassword from "./pages/ForgotPassword";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const { user } = useAuthContext();
@@ -32,6 +33,10 @@ function App() {
             <Route
               path="/"
               element={user ? <Home /> : <Navigate to="/login" />}
+            />
+            <Route 
+            path="*" 
+            element={<NotFound />} 
             />
             <Route
               path="/login"
