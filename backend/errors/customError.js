@@ -66,6 +66,16 @@ class CaptchaValidationError extends Error {
     }
 }
 
+class RateLimitError extends Error {
+    constructor(message, req) {
+        super(message)
+        this.statusCode = 429
+        this.name = this.constructor.name
+
+        logger.warn(`${this.name} - ${message}`, { actor: "USER", req })
+        Error.captureStackTrace(this, this.constructor)
+    }
+}
 
 module.exports = {
     ValidationError,
@@ -73,5 +83,6 @@ module.exports = {
     DataNotFoundError,
     DuplicateRequestError,
     AuthenticationError,
-    CaptchaValidationError
+    CaptchaValidationError,
+    RateLimitError
 } 

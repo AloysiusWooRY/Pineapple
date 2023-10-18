@@ -406,7 +406,6 @@ const setPaymentInfo = async (req, res) => {
     }
 }
 
-
 const test = async (req, res) => {
     try {
         throw new ValidationError("Invalid Email", req)
