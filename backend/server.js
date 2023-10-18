@@ -11,6 +11,12 @@ const organisationRoutes = require('./routes/organisation')
 const logger = require("./utils/logger")
 
 app.use(express.json())
+
+const corsOptions = {
+    origin: process.env.URL,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    optionsSuccessStatus: 204,
+}
 app.use(cors())
 
 // Middleware: for logging
