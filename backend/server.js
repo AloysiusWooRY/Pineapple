@@ -10,7 +10,6 @@ const organisationRoutes = require('./routes/organisation')
 
 const logger = require("./utils/logger")
 
-
 app.use(express.json())
 app.use(cors())
 

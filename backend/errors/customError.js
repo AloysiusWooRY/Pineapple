@@ -55,6 +55,16 @@ class AuthenticationError extends Error {
     }
 }
 
+class CaptchaValidationError extends Error {
+    constructor(message, req) {
+        super(message)
+        this.statusCode = 400
+        this.name = this.constructor.name
+
+        logger.warn(`${this.name} - ${message}`, { actor: "USER", req })
+        Error.captureStackTrace(this, this.constructor)
+    }
+}
 
 
 module.exports = {
@@ -62,5 +72,6 @@ module.exports = {
     MissingFieldError,
     DataNotFoundError,
     DuplicateRequestError,
-    AuthenticationError
+    AuthenticationError,
+    CaptchaValidationError
 } 
