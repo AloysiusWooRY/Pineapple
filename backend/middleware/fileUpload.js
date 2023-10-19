@@ -31,31 +31,32 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = async (req, file, cb) => {
-    try {
-        if (file.mimetype !== 'image/png' &&
-            file.mimetype !== 'image/jpg' &&
-            file.mimetype !== 'image/jpeg'
-        ) throw Error('Invalid file type')
-
-        cb(null, true)
-    } catch (err) {
-        req.fileValidationError = err.message
+    if (file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image/jpeg'
+    ) cb(null, true)
+    else {
+        req.errorCode = 'LIMIT_UNEXPECTED_FILE_TYPE'
         cb(null, false)
     }
 }
 
-const checkUploadPath = (path) => {
+const checkUploadPath = (path, next) => {
     if (!fs.existsSync("uploads")) {
-        console.log("New folder created: uploads")
-        fs.mkdirSync("uploads", (err) => {
-            if (err) console.log("Error in folder creation", err)
-        })
+        logger.info("New folder created: 'uploads'", { actor: "SERVER" });
+        try {
+            fs.mkdirSync("uploads");
+        } catch (err) {
+            next(err);
+        }
     }
     if (!fs.existsSync(path)) {
-        console.log("New path " + path)
-        fs.mkdirSync(path, (err) => {
-            if (err) console.log("Error in folder creation", err)
-        })
+        logger.info(`New path created: '${path}'`, { actor: "SERVER" });
+        try {
+            fs.mkdirSync(path);
+        } catch (err) {
+            next(err);
+        }
     }
 }
 

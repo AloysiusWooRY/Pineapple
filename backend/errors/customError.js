@@ -77,6 +77,17 @@ class RateLimitError extends Error {
     }
 }
 
+class InfectedFileError extends Error {
+    constructor(message, req) {
+        super(message)
+        this.statusCode = 400
+        this.name = this.constructor.name
+
+        logger.warn(`${this.name} - ${message}`, { actor: "USER", req })
+        Error.captureStackTrace(this, this.constructor)
+    }
+}
+
 module.exports = {
     ValidationError,
     MissingFieldError,
@@ -84,5 +95,6 @@ module.exports = {
     DuplicateRequestError,
     AuthenticationError,
     CaptchaValidationError,
-    RateLimitError
+    RateLimitError,
+    InfectedFileError
 } 

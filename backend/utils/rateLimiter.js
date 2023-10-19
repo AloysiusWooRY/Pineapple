@@ -1,7 +1,7 @@
 const { RateLimitError } = require("../errors/customError")
 const { rateLimit: RateLimit } = require("express-rate-limit");
 
-const rateLimit = (window = 5, max = 20) => {
+const rateLimit = (window = 10, max = 20) => {
     return RateLimit({
         windowMs: window * 60 * 1000, // 5 minutes
         max: max, // Requests per window

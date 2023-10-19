@@ -26,6 +26,10 @@ const requireAuth = (isAdmin = false) => async (req, res, next) => {
             logger.http(`${err.name} - ${err.message}`, { actor: "USER", req })
             res.status(401).json({ error: "Unauthorized access (Expired Token)", Expired: true })
         }
+        else if (err.name === "JsonWebTokenError") {
+            logger.http(`${err.name} - ${err.message}`, { actor: "USER", req })
+            res.status(401).json({ error: "Invalid token" })
+        }
         else if (err.name === "AuthenticationError")
             res.status(err.statusCode).json({ error: err.message })
         else {
