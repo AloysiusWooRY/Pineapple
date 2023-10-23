@@ -6,7 +6,7 @@ describe('Login Test', () => {
     // Replace this URL with the URL you want to test
     const apiUrl = 'http://localhost:4000/api/account/login';
     const email = 'admin'
-    const password = '123'
+    const password = '123456'
 
     try {
       const response = await fetch(apiUrl, {
