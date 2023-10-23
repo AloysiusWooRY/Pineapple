@@ -12,7 +12,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 // ~
 
 export default function Popup(props) {
-    const { title, onSubmit, children,
+    const { title, onSubmit, children, overrideButton = false,
         setVariableThatDeterminesIfPopupIsActive = null,
         variableThatDeterminesIfPopupIsActive = null } = props;
     {/* e.currentTarget === e.target ensures that child elements dont trigger modal toggling */ }
@@ -26,8 +26,8 @@ export default function Popup(props) {
             <div className="flex flex-col items-center justify-center min-h-full"
                 onClick={(e) => e.currentTarget === e.target ? setVariableThatDeterminesIfPopupIsActive(!variableThatDeterminesIfPopupIsActive) : undefined}
             >
-                <div className="mx-auto p-6 w-96 rounded-xl bg-background-minor">
-                    <div className="flex-auto px-4 py-10 pt-0 mt-6">
+                <div className="mx-auto p-6 min-w-[32rem] w-fit rounded-xl bg-background-minor">
+                    <div className="flex-auto px-4 py-4 pt-0 mt-6">
                         <div className="text-center mb-3">
                             <div className="text-text-primary text-3xl">
                                 {title}
@@ -39,9 +39,13 @@ export default function Popup(props) {
                         <form className="flex flex-col py-4" onSubmit={onSubmit}>
                             {children}
 
-                            <div className="self-end">
-                                <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
-                            </div>
+                            {!overrideButton ?
+                                <div className="self-end">
+                                    <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
+                                </div>
+                                :
+                                <></>
+                            }
                         </form>
                     </div>
                 </div>

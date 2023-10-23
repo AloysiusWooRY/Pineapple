@@ -29,6 +29,7 @@ export default function Table(props) {
                     {rows && rows.map((row, i) => (
                         <tr
                             id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') + "-" + i}
+                            data-index={i}
                             className={`bg-background-minor ${onClick ? "cursor-pointer" : ""}`}
                             onClick={onClick}>
                             {Object.values(row).map((value) => (

@@ -43,7 +43,7 @@ export function InputField(props) {
                 {...additionalProps}
                 className={`p-2 w-${width} placeholder:text-theme-placeholder 
                         ${!active ?
-                        'border-l-2 border-divider-color bg-black cursor-not-allowed text-text-disabled' :
+                        'border-l-2 border-divider-color bg-transparent cursor-not-allowed text-text-disabled' :
                         'rounded-sm bg-input-background-neutral text-text-primary'}`}
             />
         </div>
@@ -51,7 +51,7 @@ export function InputField(props) {
 };
 
 export function InputTextBox(props) {
-    const { title, errorMsg, placeholder, width = 'full', bottomPadding = 4, active = true, value, height = 32, onChange, additionalProps } = props;
+    const { title, errorMsg, placeholder, width = 'full', bottomPadding = 4, active = true, value, height = '32', onChange, additionalProps } = props;
 
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
@@ -68,7 +68,7 @@ export function InputTextBox(props) {
                 {...additionalProps}
                 className={`p-2 h-${height} w-${width} placeholder:text-theme-placeholder
                         ${!active ?
-                        'border-l-2 border-divider-color bg-black cursor-not-allowed text-text-disabled' :
+                        'border-l-2 border-divider-color bg-transparent cursor-not-allowed text-text-disabled' :
                         'rounded-sm bg-input-background-neutral text-text-primary'}`}
             />
         </div>
@@ -93,7 +93,7 @@ export function InputFile(props) {
                 {...additionalProps}
                 className={`p-2 w-${width} placeholder:text-theme-placeholder
                         ${!active ?
-                        'border-l-2 border-divider-color bg-black cursor-not-allowed text-text-disabled' :
+                        'border-l-2 border-divider-color bg-transparent cursor-not-allowed text-text-disabled' :
                         'rounded-sm bg-input-background-neutral text-text-primary'}`}
             />
         </div>
@@ -112,14 +112,14 @@ export function InputDate(props) {
             </div>
             <input
                 id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
-                type="date"
+                type="datetime-local"
                 disabled={!active}
                 value={value}
                 onChange={onChange}
                 {...additionalProps}
                 className={`p-2 w-${width} placeholder:text-theme-placeholder
                     ${!active ?
-                        'border-l-2 border-divider-color bg-black cursor-not-allowed text-text-disabled' :
+                        'border-l-2 border-divider-color bg-transparent cursor-not-allowed text-text-disabled' :
                         'rounded-sm bg-input-background-neutral text-text-primary'}`}
             />
         </div>

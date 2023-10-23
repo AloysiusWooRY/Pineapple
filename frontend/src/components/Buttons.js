@@ -45,7 +45,7 @@ export function RoundedButton(props) {
 
     return (
         <div>
-            <button className={`w-full py-1 rounded-full ${colour} font-sans font-bold`}
+            <button className={`w-full px-2 py-1 rounded-full ${colour} border border-transparent hover:border-divider-color font-bold`}
                 value={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 onClick={onClick}>
                 {title}

@@ -78,7 +78,7 @@ export default function NewOrganisation() {
 
     return (
         <Layout>
-            <section className="grid ">
+            <section className="grid">
                 <Banner image={BannerImage} title="New Organisation Application" />
             </section>
 
@@ -97,8 +97,6 @@ export default function NewOrganisation() {
                         {error ?? ''}
                     </label>
                 </div>
-
-
             </form>
         </Layout >
     )

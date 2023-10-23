@@ -12,6 +12,7 @@ module.exports = {
         'background-major': '#000000', // black
         'background-minor': '#18181b', // zinc-900
         'background-blue': '#082f49', // blue-950
+        'background-transparent': '#00000000',
 
         'text-yellow-pineapple': '#fbbf24', // amber-400
         'text-green-pineapple': '#a3e635', // lime-400
