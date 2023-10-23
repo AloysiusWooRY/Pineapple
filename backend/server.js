@@ -28,6 +28,9 @@ app.use((req, res, next) => {
 // API Routes
 app.use('/api/account', accountRoutes)
 app.use('/api/organisation', organisationRoutes)
+app.get('/api/ping', (req,res) => {
+    res.status(200).send("pong")
+})
 app.use(express.static(__dirname + '/public'))
 
 app.use((req, res, next) => {
