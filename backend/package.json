@@ -29,5 +29,9 @@
     "validator": "^13.11.0",
     "winston": "^3.11.0",
     "zxcvbn": "^4.4.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0"
   }
 }
