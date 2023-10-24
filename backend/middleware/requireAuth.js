@@ -6,10 +6,9 @@ const requireAuth = (isAdmin = false) => async (req, res, next) => {
 
     try {
         // Verify authentication
-        const { authorization } = req.headers
-        if (!authorization) throw new AuthenticationError('Invalid authorization token', req)
+        if (!req.cookies || !req.cookies.jwt) throw new AuthenticationError('Unauthorized access', req)
 
-        const token = authorization.split(' ')[1]
+        const token = req.cookies.jwt;
 
         // Validate JWT
         const { _id } = jwt.verify(token, process.env.JWT_SECRET)

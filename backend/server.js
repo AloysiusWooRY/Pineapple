@@ -2,22 +2,33 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require("cors")
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+
+const csurf = require('csurf');
+const csrfErrorHandler = require('./middleware/csrfErrorHandler')
 
 const app = express()
 
 const accountRoutes = require('./routes/account')
 const organisationRoutes = require('./routes/organisation')
+const miscellaneousRoutes = require('./routes/miscellaneous')
 
 const logger = require("./utils/logger")
 
 app.use(express.json())
+app.use(cookieParser());
 
 const corsOptions = {
-    origin: process.env.URL,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: process.env.WEBPAGE_URL,
+    credentials: true,
     optionsSuccessStatus: 204,
 }
-app.use(cors())
+app.use(cors(corsOptions))
+
+const csrfProtection = csurf({ cookie: true });
+app.use(csrfProtection)
+app.use(csrfErrorHandler)
 
 // Middleware: for logging
 app.use((req, res, next) => {
@@ -28,12 +39,10 @@ app.use((req, res, next) => {
 // API Routes
 app.use('/api/account', accountRoutes)
 app.use('/api/organisation', organisationRoutes)
-app.get('/api/ping', (req,res) => {
-    res.status(200).send("pong")
-})
+app.use('/api', miscellaneousRoutes)
 app.use(express.static(__dirname + '/public'))
 
-app.use((req, res, next) => {
+app.use((req, res) => {
     logger.http(`Attempted access to non-existing route: ${req.url}`, { actor: "USER", req });
     res.status(404).json({ error: 'Not Found' });
 });

@@ -41,7 +41,13 @@ const loginAccount = async (req, res) => {
         const token = createToken(_id)
 
         logger.http(`Login successful, token: ${token}`, { actor: "USER", req })
-        res.status(200).json({ _id, name, email, token })
+
+        const csrfToken = req.csrfToken();
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // Set the expiration time (1 day)
+        });
+        res.status(200).json({ _id, name, email, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
             res.status(err.statusCode).json({ error: err.message })
@@ -407,11 +413,9 @@ const setPaymentInfo = async (req, res) => {
 }
 
 const test = async (req, res) => {
-    try {
-        throw new ValidationError("Invalid Email", req)
-    } catch (err) {
-        console.log(`${err.statusCode}: ${err.message}`)
-    }
+
+    console.log(req.csrfToken())
+    console.log(req.body._csrf)
     res.status(200).send()
 }
 

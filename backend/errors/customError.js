@@ -55,6 +55,17 @@ class AuthenticationError extends Error {
     }
 }
 
+class SessionValidationError extends Error {
+    constructor(message, req) {
+        super(message)
+        this.statusCode = 403
+        this.name = this.constructor.name
+
+        logger.http(`${this.name} - ${message}`, { actor: "USER", req })
+        Error.captureStackTrace(this, this.constructor)
+    }
+}
+
 class CaptchaValidationError extends Error {
     constructor(message, req) {
         super(message)
@@ -96,5 +107,6 @@ module.exports = {
     AuthenticationError,
     CaptchaValidationError,
     RateLimitError,
-    InfectedFileError
+    InfectedFileError,
+    SessionValidationError
 } 

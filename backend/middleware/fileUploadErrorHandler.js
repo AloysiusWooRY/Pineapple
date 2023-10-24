@@ -1,8 +1,8 @@
 const { ValidationError } = require("../errors/customError")
+const logger = require("../utils/logger")
 
 const fileUploadErrorHandler = async (err, req, res, next) => {
 
-    console.log(req)
     if (err || req.errorCode) {
         try {
             if (err.code === 'LIMIT_UNEXPECTED_FILE')
@@ -18,7 +18,6 @@ const fileUploadErrorHandler = async (err, req, res, next) => {
             if (banner) fs.unlinkSync(`uploads/banner/${banner.filename}`)
             if (poster) fs.unlinkSync(`uploads/poster/${poster.filename}`)
 
-            res.status(400).json({ error: err.message })
             if (err.statusCode === 400)
                 res.status(err.statusCode).json({ error: err.message })
             else {
