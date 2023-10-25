@@ -28,8 +28,9 @@ export const useLogin = () => {
       setError(json.error)
     }
     if (response.ok) {
+
       // Update new csrf
-      setCsrfToken(response.csrfToken)
+      setCsrfToken(json.csrfToken)
 
       // Save the user to local storage
       localStorage.setItem("user", JSON.stringify(json));
