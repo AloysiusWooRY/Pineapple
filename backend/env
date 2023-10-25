@@ -1,0 +1,12 @@
+URL=https://pineapple.work.gd
+PORT=4000
+MONGO_URI=mongodb+srv://reformed:newadminpasswordfeelsreformedman@ict3103.8jggqyt.mongodb.net/dev?retryWrites=true&w=majority
+
+JWT_SECRET=theprevioussecretcodeisnolongerasecret
+ENCRYPTION_SECRET=pleasedonthackuspleaseilazychange
+
+EMAIL_USER=pineapplehelpdesk@gmail.com
+EMAIL_PASS=bmqeuxyprjqbsydd
+
+reCAPTCHA_SECRET_KEY=6LdJ7KkoAAAAAEWfdrkMYJJht28Ep__UjsKBgxKE
+reCAPTCHA_SITE_KEY=6LdJ7KkoAAAAAOhrvagDhBYzpYVl1OcTC7PNew2E
