@@ -24,7 +24,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function Home() {
     const { user } = useAuthContext();
 
-    const [selectedCategory, setSelectedCategory] = useState('related');
+    const [selectedCategory, setSelectedCategory] = useState('Related');
 
     return (
         <Layout>
