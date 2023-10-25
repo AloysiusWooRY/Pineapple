@@ -4,7 +4,6 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js"
@@ -38,9 +37,5 @@
   "devDependencies": {
     "chai": "^4.3.10",
     "mocha": "^10.2.0"
-  },
-  "resolutions": {
-    "nth-check": "latest",
-    "postcss": "latest"
   }
 }
