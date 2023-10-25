@@ -6,6 +6,7 @@ const requireAuth = (isAdmin = false) => async (req, res, next) => {
 
     try {
         // Verify authentication
+        if (!req.session || !req.session.isAuthenticated) throw new AuthenticationError("Unauthorized access", req)
         if (!req.cookies || !req.cookies.jwt) throw new AuthenticationError('Unauthorized access', req)
 
         const token = req.cookies.jwt;

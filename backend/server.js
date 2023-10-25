@@ -19,6 +19,13 @@ const logger = require("./utils/logger")
 app.use(express.json())
 app.use(cookieParser());
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 3600000 }
+}));
+
 const corsOptions = {
     origin: process.env.WEBPAGE_URL,
     credentials: true,

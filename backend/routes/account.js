@@ -9,7 +9,7 @@ const {
     resetPassword,
     getPaymentInfo,
     setPaymentInfo,
-    test
+    logoutAccount
 } = require('../controllers/accountController')
 const rateLimit = require('../utils/rateLimiter')
 const requireAuth = require('../middleware/requireAuth')
@@ -44,6 +44,6 @@ router.get('/payment-info', rateLimit(5, 20), requireAuth(isAdmin = false), getP
 router.put('/payment-info', rateLimit(5, 10), requireAuth(isAdmin = false), setPaymentInfo)
 
 // PUT: set payment info
-router.get('/test', test)
+router.post('/logout', rateLimit(5, 10), requireAuth(isAdmin = false), logoutAccount)
 
 module.exports = router

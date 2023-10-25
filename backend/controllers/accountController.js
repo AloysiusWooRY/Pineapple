@@ -38,14 +38,15 @@ const loginAccount = async (req, res) => {
         const { _id, name } = account
 
         // Create JWT token
-        const token = createToken(_id)
+        const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
 
         logger.http(`Login successful, token: ${token}`, { actor: "USER", req })
 
+        req.session.isAuthenticated = true
         const csrfToken = req.csrfToken();
         res.cookie('jwt', token, {
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000, // Set the expiration time (1 day)
+            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         });
         res.status(200).json({ _id, name, email, csrfToken })
     } catch (err) {
@@ -401,7 +402,7 @@ const setPaymentInfo = async (req, res) => {
         if (!account) throw new DataNotFoundError('No such account', req)
 
         logger.http(`Successfully set payment information`, { actor: "USER", req })
-        res.status(200).send();
+        res.status(200).send()
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -412,15 +413,21 @@ const setPaymentInfo = async (req, res) => {
     }
 }
 
-const test = async (req, res) => {
+const logoutAccount = async (req, res) => {
+    try {
+        if (!req.session) throw new ValidationError("Invalid session")
+        req.session.destroy()
 
-    console.log(req.csrfToken())
-    console.log(req.body._csrf)
-    res.status(200).send()
-}
-
-const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: '1d' })
+        logger.http(`Successfully logout`, { actor: "USER", req })
+        res.status(200).send()
+    } catch (err) {
+        if (err.statusCode === 401)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
 }
 
 const generateRandomCode = () => {
@@ -439,5 +446,5 @@ module.exports = {
     resetPassword,
     getPaymentInfo,
     setPaymentInfo,
-    test
+    logoutAccount
 }
