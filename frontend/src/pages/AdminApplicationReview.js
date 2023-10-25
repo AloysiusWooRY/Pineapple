@@ -20,7 +20,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function AdminApplicationReview() {
     const { user } = useAuthContext();
 
-    const [selectedCategory, setSelectedCategory] = useState('discussion');
+    const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchField, setSearchField] = useState('');
 
     const [viewingApplicationMode, setViewingApplicationMode] = useState(false);

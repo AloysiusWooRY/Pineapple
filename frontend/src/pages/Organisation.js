@@ -21,7 +21,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function Organisation() {
     const { user } = useAuthContext();
 
-    const [selectedCategory, setSelectedCategory] = useState('discussion');
+    const [selectedCategory, setSelectedCategory] = useState('All');
 
     const [organisation, setOrganisation] = useState({
         name: 'Mental Health Hoax',

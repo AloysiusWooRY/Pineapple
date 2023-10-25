@@ -54,7 +54,7 @@ export default function Login() {
             id="login"
             className="flex items-center justify-between min-h-screen bg-background-minor"
         >
-            {stage == 1 && <>
+            {stage === 1 && <>
                 <section className="flex flex-col items-center justify-center w-full p-5">
                     <img src={Logo} alt="logo" className="h-44" />
 
@@ -83,7 +83,7 @@ export default function Login() {
                 </section>
             </>}
 
-            {stage == 2 && <>
+            {stage === 2 && <>
                 <section className="flex flex-col items-center justify-center w-full p-5">
                     <img src={Logo} alt="logo" className="h-44" />
 

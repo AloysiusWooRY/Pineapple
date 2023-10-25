@@ -55,16 +55,16 @@ export function RoundedButton(props) {
 }
 
 export function StandardDropdown(props) {
-    const { title, titleLocation = 'side', width = 'full', bottomPadding = 4, options = ['Uninitialised!'], onChange } = props;
+    const { title, titleLocation = 'side', width = 'full', bottomPadding = 4, options = ['Uninitialised!'], selected, onChange } = props;
 
     function IterateOptions() {
         let formattedOptions = [];
 
         for (let i = 0; i < options.length; i++) {
             formattedOptions.push(
-                <option className="text-text-primary font-sans bg-input-background-neutral"
+                <option className="text-text-primary capitalize font-sans bg-input-background-neutral"
                     key={options[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
-                    value={options[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                    value={options[i]}
                 >{options[i]}</option>
             );
         }
@@ -76,13 +76,14 @@ export function StandardDropdown(props) {
         case 'side':
             return (
                 <div className={`flex flex-row items-center pb-${bottomPadding}`}>
-                    <span className="min-w-fit grow-0 px-2 text-sm text-text-primary">{title}</span>
+                    <span className="min-w-fit grow-0 px-2 text-text-primary">{title}</span>
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
                             <select id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                                value={selected}
                                 onChange={onChange}
-                                className={`p-2 w-${width} bg-transparent appearance-none`}>
+                                className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
                             </select>
                         </div>
@@ -95,13 +96,14 @@ export function StandardDropdown(props) {
         case 'top':
             return (
                 <div className={`flex flex-col pb-${bottomPadding}`}>
-                    <span className="min-w-fit grow-0 py-2 text-sm text-text-primary">{title}</span>
+                    <span className="min-w-fit grow-0 py-2 text-text-primary">{title}</span>
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
                             <select id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                                value={selected}
                                 onChange={onChange}
-                                className={`p-2 w-${width} bg-transparent appearance-none`}>
+                                className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
                             </select>
                         </div>
@@ -117,8 +119,9 @@ export function StandardDropdown(props) {
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
                             <select id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                                value={selected}
                                 onChange={onChange}
-                                className={`p-2 w-${width} bg-transparent appearance-none`}>
+                                className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
                             </select>
                         </div>
@@ -145,7 +148,7 @@ export function Tabs(props) {
                     className="mr-2"
                     key={"tab-" + tabs[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 >
-                    <a href="#" data-value={tabs[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} onClick={(e) => { setActiveTab(i); onClick(e); }}
+                    <a href="#" data-value={tabs[i]} onClick={(e) => { setActiveTab(i); onClick(e); }}
                         className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 
                                 ${i === activeTab ? 'border-text-yellow-pineapple text-text-yellow-pineapple' :
                                 'border-transparent text-text-disabled hover:border-text-green-pineapple hover:text-text-green-pineapple'}`}

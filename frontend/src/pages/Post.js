@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // Components
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
+import Comment from "../components/Comment";
 import { InputTextBox } from '../components/Inputs';
 import { ToggleButton, RoundedButton, StandardDropdown, RectangleButton } from '../components/Buttons';
 import { Divider, PostType } from '../components/Miscellaneous';
@@ -20,6 +21,11 @@ export default function Post() {
     const { user } = useAuthContext();
 
     const [organisationName, setOrganisationName] = useState('Mental Health Hoax');
+    const [organisationDescription, setOrganisationDescription] = useState('Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.');
+    const [organisationCreateDate, setOrganisationCreateDate] = useState('July 22, 1999');
+    const [organisationPosts, setOrganisationPosts] = useState(30);
+    const [organisationMembers, setOrganisationMembers] = useState(60);
+
     const [poster, setPoster] = useState('Wi Tu');
     const [postTime, setPostTime] = useState('6 days');
     const [postTitle, setPostTitle] = useState('On the beach at night');
@@ -44,60 +50,26 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
         for (let i = 0; i < 10; i++) {
             if (i % 2 === 0) {
                 comments.push(
-                    // Comment
-                    <div
-                        className="flex flex-col gap-2 p-2 border-l-2 border-divider-color"
-                        key={"comment-" + i}
-                    >
-                        <div className="flex flex-row gap-2 items-center">
-                            <div className="font-bold text-text-primary text-sm">
-                                Bang Ding
-                            </div>
-                            <p className="text-center text-text-primary text-2xl">•</p>
-                            <div className="text-text-secondary text-sm">
-                                {i} min ago
-                            </div>
-                        </div>
-                        <p className="text-text-primary">How long can this go on?</p>
-                        <div className="flex mt-auto gap-2 text-text-primary items-center">
-                            <ArrowUpCircleSolidIcon className="h-7" />
-                            {69}
-                            <ArrowDownCircleOutlineIcon className="h-7" />
-                            <div className="px-2 py-2">
-                                <RoundedButton title="Reply" colour="bg-background-transparent" />
-                            </div>
-                        </div>
-                    </div>
+                    <Comment isReply={false} commentContent={{
+                        '_id': i,
+                        'owner': { 'name': 'Ho Li' },
+                        'createdAt': '01-01-1970',
+                        'content': 'Get em\', boys!',
+                        'likeValue': i * 2,
+                        'userIsLiked': true,
+                    }} />
                 );
             }
             else {
                 comments.push(
-                    // Reply
-                    <div
-                        className="pl-8"
-                        key={"comment-" + i}
-                    >
-                        <div className="flex flex-col gap-2 p-2 border-l-2 border-divider-color">
-                            <div className="flex flex-row gap-2 items-center">
-                                <div className="font-bold text-text-primary text-sm">
-                                    Ho Li
-                                </div>
-                                <p className="text-center text-text-primary text-2xl">•</p>
-                                <div className="text-text-secondary text-sm">
-                                    {i} min ago
-                                </div>
-                            </div>
-                            <p className="text-text-primary">Seeing Triple?</p>
-                            <div className="flex mt-auto gap-2 text-text-primary items-center">
-                                <ArrowUpCircleSolidIcon className="h-7" />
-                                {69}
-                                <ArrowDownCircleOutlineIcon className="h-7" />
-                                <div className="px-2 py-2">
-                                    <RoundedButton title="Reply" colour="bg-background-transparent" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Comment isReply={true} commentContent={{
+                        '_id': i,
+                        'owner': { 'name': 'Bang Ding' },
+                        'createdAt': '01-01-1980',
+                        'content': 'Seeing Triple?',
+                        'likeValue': i * 2,
+                        'userIsLiked': false,
+                    }} />
                 );
             }
         }
@@ -171,11 +143,11 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
 
                 <div className="flex-none">
                     <SideBarOrganisationInfo
-                        organisationName="Mental Health Hoax"
-                        organisationDescription="Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy."
-                        createDate="July 22, 1999"
-                        numberPosts={30}
-                        numberMembers={60}
+                        organisationName={organisationName}
+                        organisationDescription={organisationDescription}
+                        createDate={organisationCreateDate}
+                        numberPosts={organisationPosts}
+                        numberMembers={organisationMembers}
                     />
                 </div>
             </div>

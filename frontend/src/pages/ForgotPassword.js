@@ -66,7 +66,7 @@ export default function ForgotPassword() {
                         <SteppedProgressBar title="Password Forget" steps={3} currentPhase={stage} />
                     </div>
 
-                    {stage == 1 && <>
+                    {stage === 1 && <>
                         <p className="pt-4">Enter the Email Address associated with your account, and we'll send you a recovery code.</p>
 
                         <Divider padding={4} />
@@ -79,7 +79,7 @@ export default function ForgotPassword() {
                         </form>
                     </>}
 
-                    {stage == 2 && <>
+                    {stage === 2 && <>
                         <p className="pt-4">A recovery code has been dispatched to your email! Enter the 6-digit code here:</p>
 
                         <Divider padding={4} />
@@ -92,7 +92,7 @@ export default function ForgotPassword() {
                         </form>
                     </>}
 
-                    {stage == 3 && <>
+                    {stage === 3 && <>
                         <p className="pt-4">Recovery code accepted! Please change your password:</p>
 
                         <Divider padding={4} />

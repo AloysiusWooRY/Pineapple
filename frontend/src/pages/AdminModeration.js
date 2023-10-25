@@ -22,8 +22,12 @@ export default function AdminModeration() {
 
     const [searchField, setSearchField] = useState('');
 
+    const [allOrganisations, setAllOrganisations] = useState(['Org-1', 'Org-2', 'Org-3']);
+
     const [viewingUserMode, setViewingUserMode] = useState(false);
     const [username, setUsername] = useState('John Xina');
+    const [userRole, setUserRole] = useState('Administrator');
+    const [userModerates, setUserModerates] = useState(['Org-1', 'Org-3']);
 
     function GenerateUsers() {
         const tableData = [
@@ -35,7 +39,7 @@ export default function AdminModeration() {
         return tableData;
     }
 
-    function HandleLoadUser(e){
+    function HandleLoadUser(e) {
         setUsername(e);
 
         setViewingUserMode(true);
@@ -61,21 +65,50 @@ export default function AdminModeration() {
                 variableThatDeterminesIfPopupIsActive={viewingUserMode}
                 setVariableThatDeterminesIfPopupIsActive={setViewingUserMode}
             >
-                <StandardDropdown title="Role" titleLocation="top"
-                    options={['User', 'Moderator', 'Administrator']} onChange={(e) => { console.log(e.target.value); }} />
+                <StandardDropdown title="Role" titleLocation="top" options={['User', 'Moderator', 'Administrator']}
+                    selected={userRole} onChange={(e) => { setUserRole(e.target.value); }} />
 
-                <div className="flex flex-col py-2">
-                    <div className="flex flex-row p-2 items-center">
-                        <span className="grow text-sm text-text-primary">Moderator Of</span>
-                        <button><PlusCircleIcon className="h-8 text-text-primary" /></button>
-                        <button><MinusCircleIcon className="h-8 text-text-primary" /></button>
+                {userRole === 'Moderator' &&
+                    <div className="flex flex-col space-y-2 py-2">
+                        <div className="flex flex-row space-x-2 justify-center items-center">
+                            <span className="grow text-text-primary">Moderator Of</span>
+                            <button onClick={(e) => {
+                                e.preventDefault();
+                                let workingArray = [...userModerates];
+                                workingArray.push(allOrganisations[0]);
+                                setUserModerates(workingArray);
+                            }}><PlusCircleIcon className="h-8 w-8 text-text-primary" /></button>
+                        </div>
+
+                        {userModerates.map((organisation, i) => (
+                            <div className="flex flex-row space-x-2 justify-center items-center">
+                                <div className="grow">
+                                    <StandardDropdown
+                                        title={'moderator ' + i}
+                                        selected={organisation}
+                                        titleLocation="none"
+                                        bottomPadding={0}
+                                        options={allOrganisations}
+                                        onChange={(e) => {
+                                            let workingArray = [...userModerates];
+                                            workingArray[i] = e.target.value;
+                                            setUserModerates(workingArray);
+                                        }}
+                                    />
+                                </div>
+
+                                <button onClick={(e) => {
+                                    e.preventDefault();
+                                    let workingArray = [...userModerates];
+                                    workingArray.splice(i, 1);
+                                    setUserModerates(workingArray);
+                                }}>
+                                    <MinusCircleIcon className="h-8 text-text-primary" />
+                                </button>
+                            </div>
+                        ))}
                     </div>
-
-                    <StandardDropdown title="Moderator 1" titleLocation="none"
-                        options={['Organisation-1', 'Organisation-2', 'Organisation-3']} onChange={(e) => { console.log(e.target.value); }} />
-                    <StandardDropdown title="Moderator 2" titleLocation="none"
-                        options={['Organisation-1', 'Organisation-2', 'Organisation-3']} onChange={(e) => { console.log(e.target.value); }} />
-                </div>
+                }
             </Popup>
         </Layout >
     )

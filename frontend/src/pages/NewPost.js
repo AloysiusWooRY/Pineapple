@@ -18,7 +18,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function NewPost() {
     const { user } = useAuthContext();
 
-    const [selectedElement, setSelectedElement] = useState('discussion');
+    const [selectedElement, setSelectedElement] = useState('Discussion');
 
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
