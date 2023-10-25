@@ -1,6 +1,7 @@
 const express = require('express')
 const {
     loginAccount,
+    loginOTP,
     registerAccount,
     updateAccount,
     updatePassword,
@@ -9,18 +10,27 @@ const {
     resetPassword,
     getPaymentInfo,
     setPaymentInfo,
-    logoutAccount
+    logoutAccount,
+    verify2FA
 } = require('../controllers/accountController')
 const rateLimit = require('../utils/rateLimiter')
 const requireAuth = require('../middleware/requireAuth')
+const requireAuthSetup = require('../middleware/requireAuthSetup')
+const requireAuthLogin = require('../middleware/requireAuthLogin')
 
 const router = express.Router()
 
 // POST: login account
 router.post('/login', rateLimit(), loginAccount)
 
+// POST: login otp
+router.post('/login-otp', rateLimit(), requireAuthLogin, loginOTP)
+
 // POST: create an account
 router.post('/register', rateLimit(), registerAccount)
+
+// POST: create an account
+router.post('/verify-otp', rateLimit(), requireAuthSetup, verify2FA)
 
 // POST: forgot password
 router.post('/forgot-password', rateLimit(), forgotPassword)
