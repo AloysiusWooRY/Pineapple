@@ -12,6 +12,7 @@ const app = express()
 
 const accountRoutes = require('./routes/account')
 const organisationRoutes = require('./routes/organisation')
+const postRoutes = require('./routes/post')
 const miscellaneousRoutes = require('./routes/miscellaneous')
 
 const logger = require("./utils/logger")
@@ -46,6 +47,7 @@ app.use((req, res, next) => {
 // API Routes
 app.use('/api/account', accountRoutes)
 app.use('/api/organisation', organisationRoutes)
+app.use('/api/post', postRoutes)
 app.use('/api', miscellaneousRoutes)
 app.use(express.static(__dirname + '/public'))
 
