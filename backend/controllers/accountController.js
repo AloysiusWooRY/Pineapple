@@ -11,7 +11,6 @@ const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
 const Account = require('../models/accountModel')
 const ResetCode = require('../models/resetCodeModel')
 
-
 const logger = require("../utils/logger")
 const {
     ValidationError,
@@ -386,7 +385,7 @@ const setPaymentInfo = async (req, res) => {
         }
 
         const sanitizedCVC = validator.trim(cvc)
-        if (!validator.isNumeric(sanitizedCVC) && validator.isLength(sanitizedCVC, { min: 3, max: 4 })) {
+        if (!validator.isNumeric(sanitizedCVC) || !validator.isLength(sanitizedCVC, { min: 3, max: 4 })) {
             throw new ValidationError('Invalid CVC number', req)
         }
 
