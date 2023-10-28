@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const zxcvbn = require('zxcvbn')
 const validator = require('validator')
+const moment = require('moment');
 
 const sendEmail = require('../utils/sendEmail')
 const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
@@ -380,9 +381,11 @@ const setPaymentInfo = async (req, res) => {
         }
 
         const sanitizedExpirationDate = validator.trim(expirationDate)
-        if (!validator.isLength(sanitizedExpirationDate, { min: 5, max: 5 })) {
-            throw new ValidationError('Invalid expiration date', req)
-        }
+        const timeFormatted = moment(sanitizedExpirationDate, 'MM/YY', true)
+        if (!timeFormatted.isValid()) throw new ValidationError("Invalid time format", req)
+
+        const currentDate = moment().startOf('month').local()
+        if (!timeFormatted.isAfter(currentDate)) throw new ValidationError("Expiration must be in the future", req);
 
         const sanitizedCVC = validator.trim(cvc)
         if (!validator.isNumeric(sanitizedCVC) || !validator.isLength(sanitizedCVC, { min: 3, max: 4 })) {
