@@ -41,7 +41,7 @@ router.patch('/update-password', rateLimit(5, 10), requireAuth(isAdmin = false),
 router.get('/payment-info', rateLimit(5, 20), requireAuth(isAdmin = false), getPaymentInfo)
 
 // PUT: set payment info
-router.put('/payment-info', rateLimit(5, 10), requireAuth(isAdmin = false), setPaymentInfo)
+router.put('/payment-info', rateLimit(5, 15), requireAuth(isAdmin = false), setPaymentInfo)
 
 // PUT: set payment info
 router.post('/logout', rateLimit(5, 10), requireAuth(isAdmin = false), logoutAccount)
