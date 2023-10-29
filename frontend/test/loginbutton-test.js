@@ -2,7 +2,6 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const { Options } = chrome;
 const { exec } = require('child_process');
-const binary = new chrome.Binary('/usr/bin/google-chrome');
 
 async function getCsrToken() {
   return new Promise((resolve, reject) => {
