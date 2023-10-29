@@ -22,6 +22,7 @@ async function runLoginTest() {
   const chromeOptions = new Options();
   chromeOptions.addArguments('--headless');
   chromeOptions.addArguments('--disable-gpu');
+  chromeOptions.setChromeBinaryPath('/usr/bin/google-chrome')
 
   const driver = new Builder()
     .forBrowser('chrome')
