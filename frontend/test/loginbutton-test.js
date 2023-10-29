@@ -2,6 +2,7 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const { Options } = chrome;
 const { exec } = require('child_process');
+const binary = new chrome.Binary('/usr/bin/google-chrome');
 
 async function getCsrToken() {
   return new Promise((resolve, reject) => {
@@ -21,11 +22,11 @@ async function runLoginTest() {
   const chromeOptions = new Options();
   chromeOptions.addArguments('--headless');
   chromeOptions.addArguments('--disable-gpu');
-  chromeOptions.setChromeBinaryPath('/usr/bin/google-chrome');
 
   const driver = new Builder()
     .forBrowser('chrome')
     .setChromeOptions(chromeOptions)
+    .setChromeOptions(new chrome.Options().setChromeBinaryPath(binary))
     .build();
 
   try {
