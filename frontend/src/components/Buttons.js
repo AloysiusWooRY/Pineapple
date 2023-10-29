@@ -149,7 +149,7 @@ export function Tabs(props) {
                     key={"tab-" + tabs[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
                 >
                     <a href="#" data-value={tabs[i]} onClick={(e) => { setActiveTab(i); onClick(e); }}
-                        className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 
+                        className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 capitalize
                                 ${i === activeTab ? 'border-text-yellow-pineapple text-text-yellow-pineapple' :
                                 'border-transparent text-text-disabled hover:border-text-green-pineapple hover:text-text-green-pineapple'}`}
                     >

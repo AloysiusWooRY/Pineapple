@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
 import Comment from "../components/Comment";
-import { InputTextBox } from '../components/Inputs';
+import { InputTextBox, InputFile } from '../components/Inputs';
 import { ToggleButton, RoundedButton, StandardDropdown, RectangleButton } from '../components/Buttons';
 import { Divider, PostType } from '../components/Miscellaneous';
 
@@ -24,7 +24,6 @@ export default function Post() {
     const [organisationDescription, setOrganisationDescription] = useState('Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.');
     const [organisationCreateDate, setOrganisationCreateDate] = useState('July 22, 1999');
     const [organisationPosts, setOrganisationPosts] = useState(30);
-    const [organisationMembers, setOrganisationMembers] = useState(60);
 
     const [poster, setPoster] = useState('Wi Tu');
     const [postTime, setPostTime] = useState('6 days');
@@ -114,8 +113,18 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                             {postContent}
                         </div>
                         :
-                        <InputTextBox title="Editing Post" placeholder="Editing Post" height='96'
-                            value={postContent} width='full' onChange={(e) => setPostContent(e.target.value)} />
+                        <>
+                            <InputTextBox title="Editing Post" placeholder="Editing Post" height='96'
+                                value={postContent} width='full' onChange={(e) => setPostContent(e.target.value)} />
+                            <div className="flex flex-row items-center space-x-2 justify-between">
+                                <div className="grow">
+                                    <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }} />
+                                </div>
+                                <div className="pt-4">
+                                    <RectangleButton title="Remove Current Image" onClick={handleDelete} heroIcon={<TrashIcon />} colour="bg-button-red" />
+                                </div>
+                            </div>
+                        </>
                     }
 
                     <div className="py-2"></div>
@@ -147,7 +156,6 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                         organisationDescription={organisationDescription}
                         createDate={organisationCreateDate}
                         numberPosts={organisationPosts}
-                        numberMembers={organisationMembers}
                     />
                 </div>
             </div>
