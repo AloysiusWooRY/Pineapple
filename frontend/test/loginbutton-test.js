@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "../.env" });
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const { Options } = chrome;
@@ -5,7 +6,7 @@ const { exec } = require('child_process');
 
 async function getCsrToken() {
   return new Promise((resolve, reject) => {
-    exec('curl --location "http://localhost:4000/api/get-csrf-token" --header "Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGYwNGU3NzQ5YmI5YWVkMzBhNWZmMmQiLCJpYXQiOjE2OTg1NTU3MDgsImV4cCI6MTY5ODY0MjEwOH0.NqIxJRicf-ItEcBxxCCpe0SJkaYKKj8wpWK80j_x_uY"', (error, stdout, stderr) => {
+    exec('curl --location "https://mystifying-swirles.cloud/api/get-csrf-token" --header "Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGYwNGU3NzQ5YmI5YWVkMzBhNWZmMmQiLCJpYXQiOjE2OTg1NTU3MDgsImV4cCI6MTY5ODY0MjEwOH0.NqIxJRicf-ItEcBxxCCpe0SJkaYKKj8wpWK80j_x_uY"', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running curl: ${error}`);
         reject(error);
@@ -21,7 +22,6 @@ async function runLoginTest() {
   const chromeOptions = new Options();
   chromeOptions.addArguments('--headless');
   chromeOptions.addArguments('--disable-gpu');
-  chromeOptions.setChromeBinaryPath("/usr/bin/google-chrome");
 
   const driver = new Builder()
     .forBrowser('chrome')
@@ -30,8 +30,10 @@ async function runLoginTest() {
 
   try {
     const csrfToken = await getCsrToken();
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
 
-    driver.get('http://localhost:4000/login');
+    driver.get('https://mystifying-swirles.cloud/login');
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.xpath('//input[@placeholder="Enter Email Address"]'));
@@ -45,8 +47,8 @@ async function runLoginTest() {
       // Other headers, if needed
     });
 
-    await emailField.sendKeys(process.env.ADMIN_USER);
-    await passwordField.sendKeys(process.env.ADMIN_PASS);
+    await emailField.sendKeys(emailUser);
+    await passwordField.sendKeys(emailPass);
 
     // Include the CSRF token in the request headers
     await driver.executeScript(function (headers) {
