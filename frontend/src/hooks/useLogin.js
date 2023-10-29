@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useCsrfContext } from "./useCsrfContext";
 
+import { login as APILogin } from "../apis/exportedAPIs";
+
 export const useLogin = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
@@ -12,15 +14,7 @@ export const useLogin = () => {
     setIsLoading(true);
     setError(null);
 
-    const response = await fetch(`/api/account/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-csrf-token": csrfToken
-      },
-      body: JSON.stringify({ email, password }),
-
-    });
+    const response = await APILogin(csrfToken, email, password);
     const json = await response.json();
 
     if (!response.ok) {
