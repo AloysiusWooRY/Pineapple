@@ -1,5 +1,6 @@
 // React / Packages
 import React from "react";
+import { OrganisationType } from "./Miscellaneous";
 
 // Components
 // ~
@@ -11,7 +12,7 @@ import React from "react";
 // ~
 
 export default function CardHomeOrg(props) {
-    const { image, name, members, category } = props;
+    const { image, name, posts, category } = props;
 
     return (
         <a className="h-fit w-fit flex flex-col rounded outline-none gap-1 p-2 no-underline cursor-pointer hover:bg-background-minor">
@@ -23,13 +24,9 @@ export default function CardHomeOrg(props) {
                     </span>
                 </div>
                 <div className="flex pb-1 items-center text-xs text-text-secondary">
-                    {members} Members
+                    {posts} Posts
                 </div>
-                <div className="flex items-center text-xs gap-1 text-text-yellow-pineapple">
-                    <span className="rounded-full bg-background-minor px-2 py-[0.5px]">
-                        {category}
-                    </span>
-                </div>
+                <OrganisationType type={category}/>
             </div>
         </a>
     );

@@ -14,10 +14,11 @@ import { PaperAirplaneIcon, NoSymbolIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/org-banner.png";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useCsrfContext } from "../hooks/useCsrfContext";
+
 
 export default function NewOrganisation() {
-    const { user } = useAuthContext();
+    const { csrfToken } = useCsrfContext();
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -46,9 +47,7 @@ export default function NewOrganisation() {
 
             const response = await fetch(`/api/organisation/apply`, {
                 method: "POST",
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                },
+                headers: { 'x-csrf-token': csrfToken },
                 body: formData,
             });
             const json = await response.json();

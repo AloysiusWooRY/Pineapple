@@ -18,7 +18,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function NewPost() {
     const { user } = useAuthContext();
 
-    const [selectedElement, setSelectedElement] = useState('Discussion');
+    const [selectedElement, setSelectedElement] = useState('discussion');
 
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
@@ -33,7 +33,7 @@ export default function NewPost() {
             </section>
 
             <div className="flex flex-col p-4 gap-2">
-                <Tabs tabs={['Discussion', 'Event', 'Donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                <Tabs tabs={['discussion', 'event', 'donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                     onClick={(e) => setSelectedElement(e.target.getAttribute('data-value'))} />
 
                 <div className="-mt-2">

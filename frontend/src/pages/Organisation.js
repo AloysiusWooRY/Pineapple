@@ -21,14 +21,13 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function Organisation() {
     const { user } = useAuthContext();
 
-    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedCategory, setSelectedCategory] = useState('all');
 
     const [organisation, setOrganisation] = useState({
         name: 'Mental Health Hoax',
         description: 'Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.',
         createDate: 'July 22, 1999',
         posts: 30,
-        members: 60,
     });
 
     const [editOrganisationMode, setEditOrganisationMode] = useState(false);
@@ -47,7 +46,7 @@ export default function Organisation() {
             posts.push(
                 <DiscussionOverview
                     key={"post-" + i}
-                    title={"What if we could print a brain?"} discussionType={"Discussion"}
+                    title={"What if we could print a brain?"} discussionType={"discussion"}
                     votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
             );
         }
@@ -70,7 +69,7 @@ export default function Organisation() {
 
                     <div className="flex flex-row justify-between mt-2">
                         <div className="flex basis-4/5">
-                            <Tabs tabs={['All', 'Discussion', 'Event', 'Donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                            <Tabs tabs={['all', 'discussion', 'event', 'donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                                 onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
                         </div>
 
@@ -93,7 +92,6 @@ export default function Organisation() {
                     organisationDescription={organisation.description}
                     createDate={organisation.createDate}
                     numberPosts={organisation.posts}
-                    numberMembers={organisation.members}
                 />
             </div>
 

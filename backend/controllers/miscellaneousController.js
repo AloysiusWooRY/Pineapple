@@ -10,6 +10,7 @@ const ping = async (req, res) => {
 
 // Generate anti-CSRF token
 const generateCSRF = async (req, res) => {
+    console.log(req.session)
     const csrfToken = req.csrfToken()
     res.status(200).json({ csrfToken })
 }
