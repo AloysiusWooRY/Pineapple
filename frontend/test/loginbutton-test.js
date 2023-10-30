@@ -38,9 +38,10 @@ async function runLoginTest() {
     driver.get('https://mystifying-swirles.cloud/login');
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
-    const emailField = await driver.findElement(By.xpath('//InputField[@title="Email Address"]'));
-    const passwordField = await driver.findElement(By.xpath('//InputField[@title="Password"]'));
-    const loginButton = await driver.findElement(By.xpath('//RectangleButton[@title="Log In"]'));
+    const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
+    const passwordField = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
+    const loginButton = await driver.findElement(By.css('button:contains("Log In")'));
+
 
     // Include the CSRF token in the login request
     const csrfHeader = { 'X-CSRF-TOKEN': csrfToken };
@@ -51,6 +52,7 @@ async function runLoginTest() {
     console.log(emailUser)
     await emailField.sendKeys('pineapplehelpdesk@gmail.com');
     await passwordField.sendKeys('bmqeuxyprjqbsydd');
+    await loginButton.click();
 
     // Include the CSRF token in the request headers
     await driver.executeScript(function (headers) {
