@@ -41,7 +41,7 @@ export const POSTRequest = async ({ apiURL = '', csrfToken = null, requestBody =
     return response;
 }
 
-export const PATCHRequest = async (apiURL, csrfToken, requestBody = null, templatedObject = null) => {
+export const PATCHRequest = async ({ apiURL = '', csrfToken = null, requestBody = null, templatedObject = null } = {}) => {
     let response;
 
     if (templatedObject) {
@@ -62,7 +62,7 @@ export const PATCHRequest = async (apiURL, csrfToken, requestBody = null, templa
     return response;
 }
 
-export const PUTRequest = async (apiURL, csrfToken, requestBody = null, templatedObject = null) => {
+export const PUTRequest = async ({ apiURL = '', csrfToken = null, requestBody = null, templatedObject = null } = {}) => {
     let response;
 
     if (templatedObject) {
@@ -83,7 +83,7 @@ export const PUTRequest = async (apiURL, csrfToken, requestBody = null, template
     return response;
 }
 
-export const DELRequest = async (apiURL, csrfToken, requestBody = null, templatedObject = null) => {
+export const DELRequest = async ({ apiURL = '', csrfToken = null, requestBody = null, templatedObject = null } = {}) => {
     let response;
 
     if (templatedObject) {

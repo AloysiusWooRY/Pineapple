@@ -14,7 +14,7 @@ export const useLogin = () => {
     setIsLoading(true);
     setError(null);
 
-    const response = await accountLogin(csrfToken, email, password);
+    const response = await accountLogin({csrfToken, email: email, password: password});
     const json = await response.json();
 
     if (!response.ok) {

@@ -1,6 +1,6 @@
 import { POSTRequest, PATCHRequest, DELRequest } from "../skeletonAPIMethods";
 
-export const postAll = async (csrfToken, organisation, category, filter, sortByPinned) => {
+export const postAll = async ({ csrfToken = null, organisation = null, category = null, filter = null, sortByPinned = null }) => {
     return await POSTRequest({
         apiURL: '/api/post/all',
         csrfToken,
@@ -9,7 +9,7 @@ export const postAll = async (csrfToken, organisation, category, filter, sortByP
     });
 }
 
-export const postNew = async (csrfToken, title, description, organisation, event, event_location, event_capacity, event_time, donation, donation_goal, attachment) => {
+export const postNew = async ({ csrfToken = null, title = null, description = null, organisation = null, event = null, event_location = null, event_capacity = null, event_time = null, donation = null, donation_goal = null, attachment = null }) => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -30,7 +30,7 @@ export const postNew = async (csrfToken, title, description, organisation, event
     });
 }
 
-export const postIdPOST = async (csrfToken, id) => {
+export const postIdPOST = async ({csrfToken = null, id = null}) => {
     return await POSTRequest({
         apiURL: '/api/post/{id}',
         csrfToken,
@@ -39,7 +39,7 @@ export const postIdPOST = async (csrfToken, id) => {
     });
 }
 
-export const postIdPATCH = async (csrfToken, id, title, description, organisation, event, event_location, event_capacity, event_time, donation, donation_goal, attachment) => {
+export const postIdPATCH = async ({ csrfToken = null, id = null, title = null, description = null, organisation = null, event = null, event_location = null, event_capacity = null, event_time = null, donation = null, donation_goal = null, attachment = null }) => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -60,7 +60,7 @@ export const postIdPATCH = async (csrfToken, id, title, description, organisatio
     });
 }
 
-export const postIdDEL = async (csrfToken, id) => {
+export const postIdDEL = async ({ csrfToken = null, id = null }) => {
     return await DELRequest({
         apiURL: '/api/post/{id}',
         csrfToken,
@@ -69,7 +69,7 @@ export const postIdDEL = async (csrfToken, id) => {
     });
 }
 
-export const postIdImageDEL = async (csrfToken, id) => {
+export const postIdImageDEL = async ({ csrfToken = null, id = null }) => {
     return await DELRequest({
         apiURL: '/api/post/{id}/image',
         csrfToken,
@@ -78,7 +78,7 @@ export const postIdImageDEL = async (csrfToken, id) => {
     });
 }
 
-export const postIdLike = async (csrfToken, id) => {
+export const postIdLike = async ({ csrfToken = null, id = null }) => {
     return await POSTRequest({
         apiURL: '/api/post/{id}/like',
         csrfToken,
@@ -87,7 +87,7 @@ export const postIdLike = async (csrfToken, id) => {
     });
 }
 
-export const postIdDislike = async (csrfToken, id) => {
+export const postIdDislike = async ({ csrfToken = null, id = null }) => {
     return await POSTRequest({
         apiURL: '/api/post/{id}/dislike',
         csrfToken,

@@ -31,7 +31,7 @@ export default function Home() {
 
     useEffect(() => {
         async function fetchData() {
-            const fish = await organisationAll(csrfToken, 'health');
+            const fish = await organisationAll({csrfToken, category: 'health'});
             const fishtwo = await fish.json();
             console.log(fishtwo);
           }

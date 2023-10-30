@@ -46,9 +46,16 @@ export default function NewOrganisation() {
         try {
             setIsLoading(true);
 
-            const response = await organisationApply(csrfToken, organisationName, organisationDescription, 'health', bannerImage[0], posterImage[0]);
+            const response = await organisationApply({
+                csrfToken,
+                name: organisationName,
+                description: organisationDescription,
+                category: 'health',
+                banner: bannerImage[0],
+                poster: posterImage[0],
+            });
             const json = await response.json();
-            
+
             if (response.ok) {
                 toast.success("Success!", { id: toastId });
                 navigate("/organisation", { replace: true });
