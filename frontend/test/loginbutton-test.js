@@ -22,7 +22,9 @@ async function runLoginTest() {
   const chromeOptions = new Options();
   chromeOptions.addArguments('--headless');
   chromeOptions.addArguments('--disable-gpu');
+  chromeOptions.addArguments('--no-sandbox');
   chromeOptions.addArguments('--ignore-certificate-errors')
+  chromeOptions.setChromeBinaryPath('/usr/bin/google-chrome')
  
 
   const driver = new Builder()
@@ -40,7 +42,7 @@ async function runLoginTest() {
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
     const passwordField = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
-    const loginButton = await driver.findElement(By.css('button:contains("Log In")'));
+    const loginButton = await driver.finalElement(By.css('button[title="Log IN"]'));
 
 
     // Include the CSRF token in the login request
@@ -49,7 +51,7 @@ async function runLoginTest() {
       ...csrfHeader,
       // Other headers, if needed
     });
-    console.log(emailUser)
+    
     await emailField.sendKeys('pineapplehelpdesk@gmail.com');
     await passwordField.sendKeys('bmqeuxyprjqbsydd');
     await loginButton.click();
