@@ -24,12 +24,12 @@ async function runLoginTest() {
   chromeOptions.addArguments('--disable-gpu');
   chromeOptions.addArguments('--no-sandbox');
   chromeOptions.addArguments('--ignore-certificate-errors')
-  chromeOptions.setChromeBinaryPath('/usr/bin/google-chrome')
+  chromeOptions.setChromeBinaryPath('/usr/bin/google-chrome-stable')
  
 
   const driver = new Builder()
     .forBrowser('chrome')
-    .usingServer('http://localhost:4444/wd/hub')
+    .setChromeOptions(chromeOptions)
     .build();
 
   try {
