@@ -29,7 +29,6 @@ describe("Connection Test", () => {
       });
       expect(response.status).to.equal(200);
     } catch (error) {
-      // Handle any errors (e.g., network issues, request failure)
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
@@ -46,7 +45,6 @@ describe("Connection Test", () => {
       cookieString = response.headers.get("set-cookie");
       cookie = {...cookie, ...cookieFilter(cookieString)};
     } catch (error) {
-      // Handle any errors (e.g., network issues, request failure)
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
@@ -54,7 +52,6 @@ describe("Connection Test", () => {
 
 describe("Login Test, Successful login", () => {
   it("Exiting Credentials", async () => {
-    // Replace this URL with the URL you want to test
     const apiUrl = "http://localhost:4000/api/account/login";
     const email = process.env.ADMIN_USER;
     const password = process.env.ADMIN_PASS;
@@ -68,13 +65,10 @@ describe("Login Test, Successful login", () => {
         },
         body: JSON.stringify({ email, password }),
       });
-      // Add additional assertions for a successful login if needed
       cookieString = response.headers.get("set-cookie");
       cookie = {...cookie, ...cookieFilter(cookieString)};
-      // Assert that the response status code is 200 (OK) for a successful login
       expect(response.status).to.equal(200);
     } catch (error) {
-      // Handle any errors (e.g., network issues, request failure)
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
