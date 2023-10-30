@@ -1,5 +1,5 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -20,11 +20,23 @@ import Sample1 from "../assets/sample-nuts.jpg";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useCsrfContext } from "../hooks/useCsrfContext";
+import { organisationAll } from "../apis/exportedAPIs";
 
 export default function Home() {
     const { user } = useAuthContext();
+    const { csrfToken } = useCsrfContext();
 
     const [selectedCategory, setSelectedCategory] = useState('Related');
+
+    useEffect(() => {
+        async function fetchData() {
+            const fish = await organisationAll(csrfToken, 'health');
+            const fishtwo = await fish.json();
+            console.log(fishtwo);
+          }
+          fetchData();
+    }, [csrfToken]);
 
     return (
         <Layout>

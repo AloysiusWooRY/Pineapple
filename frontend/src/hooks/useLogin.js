@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useCsrfContext } from "./useCsrfContext";
 
-import { login as APILogin } from "../apis/exportedAPIs";
+import { accountLogin } from "../apis/exportedAPIs";
 
 export const useLogin = () => {
   const [error, setError] = useState(null);
@@ -14,7 +14,7 @@ export const useLogin = () => {
     setIsLoading(true);
     setError(null);
 
-    const response = await APILogin(csrfToken, email, password);
+    const response = await accountLogin(csrfToken, email, password);
     const json = await response.json();
 
     if (!response.ok) {

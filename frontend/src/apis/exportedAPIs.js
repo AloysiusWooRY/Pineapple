@@ -1,7 +1,8 @@
-import { forgotPassword, login, loginOTP, logout, paymentInfoGET, paymentInfoPUT, register, resetPassword, update, updatePassword, validateCode, verifyOTP } from "./Collections/accountAPIs";
+import { accountForgotPassword, accountLogin, accountLoginOTP, accountLogout, accountPaymentInfoPOST, accountPaymentInfoPUT, accountRegister, accountResetPassword, accountUpdate, accountUpdatePassword, accountValidateCode, accountVerifyOTP } from "./Collections/accountAPIs";
 // import { } from "./Collections/commentAPIs";
-import { all, apply, categories, organisationId } from "./Collections/organisationAPIs";
-import { } from "./Collections/postAPIs";
+import { organisationAll, organisationApply, organisationCategories, organisationId } from "./Collections/organisationAPIs";
+import { postAll, postIdDEL, postIdDislike, postIdImageDEL, postIdLike, postIdPATCH, postIdPOST, postNew } from "./Collections/postAPIs";
 
-export { forgotPassword, login, loginOTP, logout, paymentInfoGET, paymentInfoPUT, register, resetPassword, update, updatePassword, validateCode, verifyOTP };
-export { all, apply, categories, organisationId };
+export { accountForgotPassword, accountLogin, accountLoginOTP, accountLogout, accountPaymentInfoPOST, accountPaymentInfoPUT, accountRegister, accountResetPassword, accountUpdate, accountUpdatePassword, accountValidateCode, accountVerifyOTP };
+export { organisationAll, organisationApply, organisationCategories, organisationId };
+export { postAll, postIdDEL, postIdDislike, postIdImageDEL, postIdLike, postIdPATCH, postIdPOST, postNew };

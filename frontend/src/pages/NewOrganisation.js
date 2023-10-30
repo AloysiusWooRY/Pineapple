@@ -15,6 +15,7 @@ import BannerImage from "../assets/org-banner.png";
 
 // API
 import { useCsrfContext } from "../hooks/useCsrfContext";
+import { organisationApply } from "../apis/exportedAPIs";
 
 
 export default function NewOrganisation() {
@@ -45,13 +46,9 @@ export default function NewOrganisation() {
         try {
             setIsLoading(true);
 
-            const response = await fetch(`/api/organisation/apply`, {
-                method: "POST",
-                headers: { 'x-csrf-token': csrfToken },
-                body: formData,
-            });
+            const response = await organisationApply(csrfToken, organisationName, organisationDescription, 'health', bannerImage[0], posterImage[0]);
             const json = await response.json();
-
+            
             if (response.ok) {
                 toast.success("Success!", { id: toastId });
                 navigate("/organisation", { replace: true });
