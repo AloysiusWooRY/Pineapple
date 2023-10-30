@@ -24,7 +24,6 @@ async function runLoginTest() {
   chromeOptions.addArguments('--disable-gpu');
   chromeOptions.addArguments('--no-sandbox');
   chromeOptions.addArguments('--ignore-certificate-errors')
-  chromeOptions.setChromeBinaryPath('/usr/bin/google-chrome-stable')
  
 
   const driver = new Builder()
@@ -42,7 +41,7 @@ async function runLoginTest() {
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
     const passwordField = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
-    const loginButton = await driver.finalElement(By.css('button[title="Log IN"]'));
+    const loginButton = await driver.findElement(By.css('button[value="log-in"]'));
 
 
     // Include the CSRF token in the login request
@@ -70,7 +69,7 @@ async function runLoginTest() {
     }, headers);
 
     try {
-      await driver.wait(until.elementLocated(By.xpath('//input[@placeholder="Enter Recovery Code"]'), 10000));
+      await driver.wait(until.elementLocated(By.css('input[placeholder="Enter Recovery Code"]'), 10000));
       console.log('Login button successful.');
     } catch (error) {
       console.error('Login button failed.');
