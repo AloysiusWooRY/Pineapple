@@ -19,24 +19,19 @@ import CategoryDonationImage from "../assets/home-cat-donation.png";
 import Sample1 from "../assets/sample-nuts.jpg";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useCsrfContext } from "../hooks/useCsrfContext";
 import { organisationAll } from "../apis/exportedAPIs";
 
 export default function Home() {
-    const { user } = useAuthContext();
-    const { csrfToken } = useCsrfContext();
-
     const [selectedCategory, setSelectedCategory] = useState('Related');
 
     useEffect(() => {
         async function fetchData() {
-            const fish = await organisationAll({csrfToken, category: 'health'});
+            const fish = await organisationAll({category: 'health'});
             const fishtwo = await fish.json();
             console.log(fishtwo);
           }
           fetchData();
-    }, [csrfToken]);
+    }, []);
 
     return (
         <Layout>

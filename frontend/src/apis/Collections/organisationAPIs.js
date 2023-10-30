@@ -1,13 +1,15 @@
-import { POSTRequest } from "../skeletonAPIMethods";
+import { POSTRequest, getCSRF } from "../skeletonAPIMethods";
 
-export const organisationApply = async ({ csrfToken = null, name = null, description = null, category = null, banner = null, poster = null } = {}) => {
+export const organisationApply = async ({name = null, description = null, category = null, banner = null, poster = null } = {}) => {
+    const csrfToken = await getCSRF();
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
     formData.append("category", category);
     formData.append("banner", banner);
     formData.append("poster", poster);
-
+    
     return await POSTRequest({
         apiURL: '/api/organisation/apply',
         csrfToken,
@@ -16,7 +18,8 @@ export const organisationApply = async ({ csrfToken = null, name = null, descrip
     });
 }
 
-export const organisationAll = async ({ csrfToken = null, category = null } = {}) => {
+export const organisationAll = async ({category = null } = {}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/organisation/all',
         csrfToken,
@@ -25,7 +28,8 @@ export const organisationAll = async ({ csrfToken = null, category = null } = {}
     });
 }
 
-export const organisationCategories = async ({ csrfToken = null } = {}) => {
+export const organisationCategories = async () => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/organisation/categories',
         csrfToken,
@@ -33,7 +37,8 @@ export const organisationCategories = async ({ csrfToken = null } = {}) => {
         templatedObject: null,
     });
 }
-export const organisationId = async ({ csrfToken = null, id = null } = {}) => {
+export const organisationId = async ({id = null } = {}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/organisation/{id}',
         csrfToken,

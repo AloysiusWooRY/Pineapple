@@ -1,6 +1,7 @@
-import { POSTRequest, PATCHRequest, PUTRequest } from "../skeletonAPIMethods";
+import { POSTRequest, PATCHRequest, PUTRequest, getCSRF } from "../skeletonAPIMethods";
 
-export const accountLogin = async ({csrfToken = null, email = null, password = null}) => {
+export const accountLogin = async ({email = null, password = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/login',
         csrfToken,
@@ -9,7 +10,8 @@ export const accountLogin = async ({csrfToken = null, email = null, password = n
     });
 }
 
-export const accountLoginOTP = async ({csrfToken = null, token = null}) => {
+export const accountLoginOTP = async ({token = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/login-otp',
         csrfToken,
@@ -18,7 +20,8 @@ export const accountLoginOTP = async ({csrfToken = null, token = null}) => {
     });
 }
 
-export const accountRegister = async ({csrfToken = null, name = null, email = null, password = null, token = null}) => {
+export const accountRegister = async ({name = null, email = null, password = null, token = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/register',
         csrfToken,
@@ -27,7 +30,8 @@ export const accountRegister = async ({csrfToken = null, name = null, email = nu
     });
 }
 
-export const accountVerifyOTP = async ({csrfToken = null, token = null}) => {
+export const accountVerifyOTP = async ({token = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/verify-otp',
         csrfToken,
@@ -36,7 +40,8 @@ export const accountVerifyOTP = async ({csrfToken = null, token = null}) => {
     });
 }
 
-export const accountUpdate = async ({csrfToken = null, name = null, email = null}) => {
+export const accountUpdate = async ({name = null, email = null}) => {
+    const csrfToken = await getCSRF();
     return await PATCHRequest({
         apiURL: '/api/account/update',
         csrfToken,
@@ -45,7 +50,8 @@ export const accountUpdate = async ({csrfToken = null, name = null, email = null
     });
 }
 
-export const accountUpdatePassword = async ({csrfToken = null, password = null}) => {
+export const accountUpdatePassword = async ({password = null}) => {
+    const csrfToken = await getCSRF();
     return await PATCHRequest({
         apiURL: '/api/account/update-password',
         csrfToken,
@@ -54,7 +60,8 @@ export const accountUpdatePassword = async ({csrfToken = null, password = null})
     });
 }
 
-export const accountForgotPassword = async ({csrfToken = null, email = null}) => {
+export const accountForgotPassword = async ({email = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/forgot-password',
         csrfToken,
@@ -63,7 +70,8 @@ export const accountForgotPassword = async ({csrfToken = null, email = null}) =>
     });
 }
 
-export const accountValidateCode = async ({csrfToken = null, email = null, code = null}) => {
+export const accountValidateCode = async ({email = null, code = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/validate-code',
         csrfToken,
@@ -72,7 +80,8 @@ export const accountValidateCode = async ({csrfToken = null, email = null, code 
     });
 }
 
-export const accountResetPassword = async ({csrfToken = null, email = null, password = null, code = null}) => {
+export const accountResetPassword = async ({email = null, password = null, code = null}) => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/reset-password',
         csrfToken,
@@ -81,7 +90,8 @@ export const accountResetPassword = async ({csrfToken = null, email = null, pass
     });
 }
 
-export const accountPaymentInfoPOST = async ({csrfToken = null}) => {
+export const accountPaymentInfoPOST = async () => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/payment-info',
         csrfToken,
@@ -89,7 +99,8 @@ export const accountPaymentInfoPOST = async ({csrfToken = null}) => {
     });
 }
 
-export const accountPaymentInfoPUT = async ({csrfToken = null, cardNumber = null, expirationDate = null, cvc = null}) => {
+export const accountPaymentInfoPUT = async ({cardNumber = null, expirationDate = null, cvc = null}) => {
+    const csrfToken = await getCSRF();
     return await PUTRequest({
         apiURL: '/api/account/payment-info',
         csrfToken,
@@ -98,7 +109,8 @@ export const accountPaymentInfoPUT = async ({csrfToken = null, cardNumber = null
     });
 }
 
-export const accountLogout = async ({csrfToken = null}) => {
+export const accountLogout = async () => {
+    const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/logout',
         csrfToken,

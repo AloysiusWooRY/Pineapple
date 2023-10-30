@@ -1,3 +1,4 @@
+import cookie from 'react-cookies';
 // WIP NOT SAFE FOR WORK
 
 export const GETRequest = async ({ apiURL = '', csrfToken = null, templatedObject = null } = {}) => {
@@ -27,7 +28,10 @@ export const POSTRequest = async ({ apiURL = '', csrfToken = null, requestBody =
         apiURL = templateLiterally(apiURL, templatedObject);
     }
 
+    console.log("POSTRequest " + csrfToken)
+    
     const [preppedHeaders, preppedBody] = prepareRequest(csrfToken, requestBody);
+    console.log(preppedBody)
 
     // Only non-null bodies are added
     await fetch(apiURL, {
@@ -119,6 +123,9 @@ const templateLiterally = (template, idObject) => {
 const prepareRequest = (csrfToken, requestBody) => {
     let preppedHeaders, preppedBody;
 
+    console.log(csrfToken)
+    console.log(requestBody)
+
     // No body
     if (!requestBody) {
         preppedHeaders = { 'x-csrf-token': csrfToken };
@@ -141,4 +148,16 @@ const prepareRequest = (csrfToken, requestBody) => {
     }
 
     return [preppedHeaders, preppedBody];
+}
+
+export const getCSRF = async () => {
+    const csrf = cookie.load('csrf')
+    if (!csrf) {
+        await fetch('/api/get-csrf-token')
+        .catch(error => {
+            console.error('Failed to fetch CSRF token', error);
+        });
+        return cookie.load('csrf')
+    }
+    return csrf
 }

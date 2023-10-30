@@ -1,6 +1,7 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import cookie from 'react-cookies';
 
 // Components
 import Layout from "../layouts/Layout";
@@ -15,18 +16,29 @@ import BannerImage from "../assets/home-banner-org.png";
 import Sample1 from "../assets/sample-nuts.jpg";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
+import { organisationAll } from "../apis/exportedAPIs";
+
 
 export default function OrganisationHome() {
-    const { user } = useAuthContext();
     const navigate = useNavigate();
 
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [categories, setCategories] = useState(["all", "health", "education", "environment", "humanitarian"]);
 
+    const [allOrganistions, setAllOrganistions] = useState(null)
+
     const handleClick = (e) => {
         navigate("../organisation/new");
     }
+
+    useEffect(() => {
+        async function fetchData() {
+            const allOrgsJson = await organisationAll({category: 'health'});
+            const allOrganisations = await allOrgsJson.json()
+            setAllOrganistions(allOrganisations)
+        }
+        fetchData();
+    }, []);
 
     return (
         <Layout>
@@ -39,14 +51,11 @@ export default function OrganisationHome() {
                 <Divider padding={0} />
 
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="health" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="education" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="environment" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="humanitarian" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="health" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="education" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="environment" />
-                    <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="humanitarian" />
+                    {allOrganistions ? 
+                        (allOrganistions.organisations.map(item => (
+                            <CardHomeOrg image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
+                        ))) : <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="health" />
+                    }
                 </div>
             </section>
         </Layout >

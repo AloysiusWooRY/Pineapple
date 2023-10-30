@@ -14,12 +14,10 @@ import { PaperAirplaneIcon, NoSymbolIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/org-banner.png";
 
 // API
-import { useCsrfContext } from "../hooks/useCsrfContext";
 import { organisationApply } from "../apis/exportedAPIs";
 
 
 export default function NewOrganisation() {
-    const { csrfToken } = useCsrfContext();
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +45,6 @@ export default function NewOrganisation() {
             setIsLoading(true);
 
             const response = await organisationApply({
-                csrfToken,
                 name: organisationName,
                 description: organisationDescription,
                 category: 'health',
@@ -55,7 +52,7 @@ export default function NewOrganisation() {
                 poster: posterImage[0],
             });
             const json = await response.json();
-
+            
             if (response.ok) {
                 toast.success("Success!", { id: toastId });
                 navigate("/organisation", { replace: true });
