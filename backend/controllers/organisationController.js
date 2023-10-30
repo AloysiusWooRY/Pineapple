@@ -101,7 +101,7 @@ const getAllOrganisation = async (req, res) => {
 
         const organisations = await Organisation.find(query).select('name category posts imagePath.poster')
 
-        logger.http(`Organisations retrieved successfully, (Category: "${category})"`, { actor: "USER", req })
+        logger.http(`Organisations retrieved successfully, (Category: "${category ?? 'None'}")`, { actor: "USER", req })
         res.status(200).json({ organisations })
     } catch (err) {
         if (err.statusCode === 400)

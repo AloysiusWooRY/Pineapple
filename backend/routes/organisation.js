@@ -24,12 +24,12 @@ const uploadFields = upload.fields([
 router.post('/apply', requireAuth(isAdmin = false), uploadFields, fileUploadErrorHandler, applyOrganisation);
 
 // GET: Category
-router.get('/categories', rateLimit(10, 50), requireAuth(isAdmin = false), getAllCategories)
+router.post('/categories', rateLimit(10, 50), requireAuth(isAdmin = false), getAllCategories)
 
 // GET: Organisation by category
-router.get('/all', rateLimit(10, 50), requireAuth(isAdmin = false), getAllOrganisation)
+router.post('/all', rateLimit(10, 50), requireAuth(isAdmin = false), getAllOrganisation)
 
 // GET: Organisation by id
-router.get('/:id', rateLimit(10, 50), requireAuth(isAdmin = false), getOrganisationById)
+router.post('/:id', rateLimit(10, 50), requireAuth(isAdmin = false), getOrganisationById)
 
 module.exports = router

@@ -287,7 +287,7 @@ const editPost = async (req, res) => {
         await existingPost.save()
 
         logger.http(`Post successfully edited: ${existingPost._id}`, { actor: "USER", req })
-        res.status(200).json({ existingPost })
+        res.status(200).json({ post: existingPost })
     } catch (err) {
         if (req.info && req.info.attachment && fs.existsSync(`uploads/attachment/${req.info.attachment.filename}`))
             fs.unlinkSync(`uploads/attachment/${req.info.attachment.filename}`)
@@ -466,8 +466,6 @@ const dislikePost = async (req, res) => {
         }
     }
 }
-
-
 
 module.exports = {
     getAllPost,

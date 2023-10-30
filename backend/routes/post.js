@@ -18,13 +18,13 @@ const fileUploadErrorHandler = require('../middleware/fileUploadErrorHandler')
 const router = express.Router()
 
 // GET: Post by category and filter
-router.get('/all', rateLimit(10, 50), requireAuth(isAdmin = false), getAllPost)
+router.post('/all', rateLimit(10, 50), requireAuth(isAdmin = false), getAllPost)
 
 // POST: New Post
 router.post('/new', rateLimit(10, 50), requireAuth(isAdmin = false), upload.single("attachment"), fileUploadErrorHandler, createPost)
 
 // GET: Post by category and filter
-router.get('/:id', rateLimit(10, 50), requireAuth(isAdmin = false), getPostById)
+router.post('/:id', rateLimit(10, 50), requireAuth(isAdmin = false), getPostById)
 
 // PATCH: Post by category and filter
 router.patch('/:id', rateLimit(10, 50), requireAuth(isAdmin = false), upload.single("attachment"), fileUploadErrorHandler, editPost)
