@@ -19,10 +19,12 @@ const fileUploadErrorHandler = async (err, req, res, next) => {
             else
                 throw new Error(err.message)
         } catch (err) {
-            const { banner, poster, attachment } = req.info
-            if (attachment && fs.existsSync(`uploads/attachment/${attachment.filename}`)) fs.unlinkSync(`uploads/attachment/${attachment.filename}`)
-            if (banner && fs.existsSync(`uploads/banner/${banner.filename}`)) fs.unlinkSync(`uploads/banner/${banner.filename}`)
-            if (poster && fs.existsSync(`uploads/poster/${poster.filename}`)) fs.unlinkSync(`uploads/poster/${poster.filename}`)
+            if (req.info) {
+                const { banner, poster, attachment } = req.info
+                if (attachment && fs.existsSync(`uploads/attachment/${attachment.filename}`)) fs.unlinkSync(`uploads/attachment/${attachment.filename}`)
+                if (banner && fs.existsSync(`uploads/banner/${banner.filename}`)) fs.unlinkSync(`uploads/banner/${banner.filename}`)
+                if (poster && fs.existsSync(`uploads/poster/${poster.filename}`)) fs.unlinkSync(`uploads/poster/${poster.filename}`)
+            }
 
             if (err.statusCode === 400)
                 res.status(err.statusCode).json({ error: err.message })

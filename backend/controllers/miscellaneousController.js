@@ -17,7 +17,7 @@ const generateCSRF = async (req, res) => {
     res.cookie('csrf', csrfToken, {
         maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
     })
-    res.status(200).json(csrfToken)
+    res.status(200).json({ csrfToken })
 }
 
 // Email test

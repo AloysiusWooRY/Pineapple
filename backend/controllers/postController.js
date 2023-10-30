@@ -85,7 +85,7 @@ const createPost = async (req, res) => {
 
     const userId = req.account._id
     try {
-        const { title, description, time, organisation, attachment, event, donation } = req.info ?? req.body
+        const { title, description, organisation, attachment, event, donation } = req.info ?? req.body
 
         const newOrg = { owner: userId }
 
@@ -405,7 +405,7 @@ const likePost = async (req, res) => {
         existingPost.likes = sum
         await existingPost.save()
 
-        logger.http(`Post liked: ${_id}`, { actor: "USER", req })
+        logger.http(`Post liked: ${existingPost._id}`, { actor: "USER", req })
         res.status(200).json({ total: sum, value })
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
