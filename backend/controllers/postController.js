@@ -5,6 +5,8 @@ const moment = require('moment');
 
 const Organisation = require('../models/organisationModel')
 const Post = require('../models/postModel')
+const Comment = require('../models/commentModel')
+const Reply = require('../models/replyModel')
 const Like = require('../models/likeModel')
 const logger = require("../utils/logger")
 
@@ -160,6 +162,10 @@ const createPost = async (req, res) => {
         }
 
         const post = await Post.create(newOrg)
+        const totalPost = await Post.countDocuments({ organisation })
+
+        existingOrganisation.posts = totalPost
+        await existingOrganisation.save()
 
         logger.http(`Post successfully create: ${_id}`, { actor: "USER", req })
         res.status(200).json({ post })
@@ -351,7 +357,23 @@ const deletePost = async (req, res) => {
             !(new mongoose.Types.ObjectId(userId)).equals(owner)
         ) throw new ValidationError("Unauthorised to delete non-personal post", req)
 
+        const deletedComments = await Comment.find({ post: _id }).select('_id')
+        const commentIds = deletedComments.map(comment => comment._id)
+
+        const deletedReplies = await Reply.find({ comment: { $in: commentIds } }).select('_id')
+        const replyIds = deletedReplies.map(reply => reply._id)
+
         await Post.deleteOne({ _id })
+        await Comment.deleteMany({ post: _id })
+        await Reply.deleteMany({ comment: { $in: commentIds } })
+        await Like.deleteMany({ post: _id })
+        await Like.deleteMany({ comment: { $in: commentIds } })
+        await Like.deleteMany({ reply: { $in: replyIds } })
+
+        const totalPost = await Post.countDocuments({ organisation })
+        const existingOrganisation = await Organisation.findById(organisation)
+        existingOrganisation.posts = totalPost
+        await existingOrganisation.save()
 
         if (imagePath) fs.unlinkSync(`public/${imagePath}`)
 

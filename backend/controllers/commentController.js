@@ -107,9 +107,13 @@ const deleteComment = async (req, res) => {
             !(new mongoose.Types.ObjectId(userId)).equals(owner)
         ) throw new ValidationError("Unauthorised to delete non-personal comments", req)
 
+        const deletedReplies = await Reply.find({ comment: commentId }).select('_id')
+        const replyIds = deletedReplies.map(reply => reply._id)
+
         await Comment.deleteOne({ _id: commentId })
         await Reply.deleteMany({ comment: commentId })
         await Like.deleteMany({ comment: commentId })
+        await Like.deleteMany({ reply: { $in: replyIds } })
 
         logger.http(`Comment successfully deleted`, { actor: "USER", req })
         res.status(200).send()

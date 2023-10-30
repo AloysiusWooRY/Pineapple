@@ -43,11 +43,14 @@ const loginAccount = async (req, res) => {
         logger.http(`Login successful, token: ${token}`, { actor: "USER", req })
 
         req.session.isAuthenticated = true
-        const csrfToken = req.csrfToken();
+        const csrfToken = req.csrfToken()
         res.cookie('jwt', token, {
             httpOnly: true,
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
-        });
+        })
+        res.cookie('csrf', csrfToken, {
+            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+        })
         res.status(200).json({ _id, name, email, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
