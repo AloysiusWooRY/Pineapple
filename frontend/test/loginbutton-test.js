@@ -29,7 +29,7 @@ async function runLoginTest() {
 
   const driver = new Builder()
     .forBrowser('chrome')
-    .setChromeOptions(chromeOptions)
+    .usingServer('http://localhost:4444/wd/hub')
     .build();
 
   try {
