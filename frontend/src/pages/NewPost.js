@@ -22,8 +22,8 @@ export default function NewPost() {
 
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDateTime, setStartDateTime] = useState('');
+    const [endDateTime, setEndDateTime] = useState('');
     const [donation, setDonation] = useState('');
 
     return (
@@ -49,10 +49,10 @@ export default function NewPost() {
                 {selectedElement === 'event' &&
                     <div className="flex flex-row w-1/3 gap-2">
                         <div className="grow">
-                            <InputDate title="Event Start Date" width='full' value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                            <InputDate title="Event Start" width='full' value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} />
                         </div>
                         <div className="grow">
-                            <InputDate title="Event End Date" width='full' value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                            <InputDate title="Event End" width='full' value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} />
                         </div>
                     </div>}
 

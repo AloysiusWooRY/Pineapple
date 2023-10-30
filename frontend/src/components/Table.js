@@ -2,7 +2,7 @@
 import React from "react";
 
 // Components
-// ~
+import { textNerfer } from "./componentUtils";
 
 // Assets
 // ~
@@ -15,7 +15,7 @@ export default function Table(props) {
 
     return (
         <div>
-            <table id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="w-full h-fit text-left text-text-primary">
+            <table id={textNerfer(title)} className="w-full h-fit text-left text-text-primary">
                 <thead className="text-text-primary uppercase">
                     <tr>
                         {rows && Object.keys(rows[0]).map((key) => (
@@ -28,7 +28,7 @@ export default function Table(props) {
                 <tbody>
                     {rows && rows.map((row, i) => (
                         <tr
-                            id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') + "-" + i}
+                            id={textNerfer(title) + "-" + i}
                             data-index={i}
                             className={`bg-background-minor ${onClick ? "cursor-pointer" : ""}`}
                             onClick={onClick}>

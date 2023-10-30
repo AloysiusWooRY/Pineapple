@@ -27,11 +27,8 @@ export const POSTRequest = async ({ apiURL = '', csrfToken = null, requestBody =
     if (templatedObject) {
         apiURL = templateLiterally(apiURL, templatedObject);
     }
-
-    console.log("POSTRequest " + csrfToken)
     
     const [preppedHeaders, preppedBody] = prepareRequest(csrfToken, requestBody);
-    console.log(preppedBody)
 
     // Only non-null bodies are added
     await fetch(apiURL, {

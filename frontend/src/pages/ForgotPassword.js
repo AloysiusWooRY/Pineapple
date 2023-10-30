@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
 import { Divider } from "../components/Miscellaneous";
-import SteppedProgressBar from "../components/SteppedProgressBar";
+import {SteppedProgressBar} from "../components/CustomProgressBar";
 import CustomPasswordStrengthBar from "../components/CustomPasswordStrengthBar";
 
 // Assets

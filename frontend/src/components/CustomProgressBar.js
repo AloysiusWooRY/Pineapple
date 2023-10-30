@@ -4,7 +4,7 @@ import "react-step-progress-bar/styles.css";
 import { ProgressBar, Step } from "react-step-progress-bar";
 
 // Components
-// ~
+import { textNerfer } from "./componentUtils";
 
 // Assets
 // ~
@@ -12,17 +12,17 @@ import { ProgressBar, Step } from "react-step-progress-bar";
 // API
 // ~
 
-export default function SteppedProgressBar(props) {
+export function SteppedProgressBar(props) {
     const { title, steps, currentPhase, setCurrentPhase } = props;
 
     return (
         <div>
             <ProgressBar
-                id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                id={textNerfer(title)}
                 filledBackground="#fbbf24"
                 percent={Math.round((currentPhase - 1) / (steps - 1) * 100)}>
                 {Array.from({ length: steps }).map((_, i) => (
-                    <Step key={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') + "-" + i} transition="scale">
+                    <Step key={textNerfer(title) + "-" + i} transition="scale">
                         {({ accomplished }) => (
                             <div
                                 className={`indexedStep ${accomplished ? 'accomplished' : null}
@@ -39,3 +39,17 @@ export default function SteppedProgressBar(props) {
         </div>
     );
 };
+
+export function SmoothProgressBar(props) {
+    const { title, floorValue, ceilingValue } = props;
+
+    return (
+        <div>
+            <ProgressBar
+                id={textNerfer(title)}
+                filledBackground="#fbbf24"
+                percent={Math.round(floorValue / ceilingValue * 100)}>
+            </ProgressBar>
+        </div>
+    );
+}

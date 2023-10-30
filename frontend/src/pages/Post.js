@@ -3,19 +3,22 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Components
+import { FormatDateTime } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
 import Comment from "../components/Comment";
-import { InputTextBox, InputFile } from '../components/Inputs';
+import Popup from "../components/Popup";
+import { InputField, InputTextBox, InputDate, InputFile } from '../components/Inputs';
 import { ToggleButton, RoundedButton, StandardDropdown, RectangleButton } from '../components/Buttons';
 import { Divider, PostType } from '../components/Miscellaneous';
 
 // Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
-import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, CreditCardIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { SmoothProgressBar } from "../components/CustomProgressBar";
 
 export default function Post() {
     const { user } = useAuthContext();
@@ -25,6 +28,10 @@ export default function Post() {
     const [organisationCreateDate, setOrganisationCreateDate] = useState('July 22, 1999');
     const [organisationPosts, setOrganisationPosts] = useState(30);
 
+    const [postType, setPostType] = useState('donation');
+
+    const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:14:26.868Z');
+    const [eventEndDateTime, setEventEndDateTime] = useState('2023-10-28T08:15:00.000Z');
     const [poster, setPoster] = useState('Wi Tu');
     const [postTime, setPostTime] = useState('6 days');
     const [postTitle, setPostTitle] = useState('On the beach at night');
@@ -39,6 +46,12 @@ the Pleiades shall emerge, They are immortal, all those stars both silvery and g
 The great stars and the little ones shall shine out again, they endure, The vast immortal suns and the long-enduring pensive moons shall again shine.\n\n\
 Then dearest child mournest thou only for Jupiter? Considerest thou alone the burial of the stars?'
     );
+
+    const [donationCurrent, setDonationCurrent] = useState(34);
+    const [donationGoal, setDonationGoal] = useState(124);
+    const [displayDonationPopup, setDisplayDonationPopup] = useState(false);
+    const [donationAmount, setDonationAmount] = useState('');
+    const [CVC, setCVC] = useState('');
 
     const [editMode, setEditMode] = useState(false);
     const [comment, setComment] = useState('');
@@ -104,9 +117,52 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                         {postTitle}
                     </div>
 
-                    <PostType type="Donation" />
+                    <PostType type={postType} />
 
                     <div className="py-2"></div>
+
+                    {postType === 'event' ?
+                        <div className="flex flex-row space-x-2 self-start">
+                            {!editMode ?
+                                <>
+                                    <InputField title="Event Start" placeholder="Event Start" active={false}
+                                        value={FormatDateTime(eventStartDateTime)} width='full' />
+                                    <InputField title="Event End" placeholder="Event End" active={false}
+                                        value={FormatDateTime(eventEndDateTime)} width='full' />
+                                </>
+                                :
+                                <>
+                                    <InputDate title="Event Start" width='full' value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
+                                    <InputDate title="Event End" width='full' value={eventEndDateTime} onChange={(e) => setEventEndDateTime(e.target.value)} />
+                                </>
+                            }
+                        </div>
+                        :
+                        <></>
+                    }
+
+                    {postType === 'donation' ?
+                        <>
+                            <div className="text-text-primary text-xl">
+                                Donation Goal
+                            </div>
+                            <div className="flex flex-row items-center space-x-4 text-text-primary">
+                                <div className="flex flex-row items-center gap-x-4 w-1/2">
+                                    ${donationCurrent}
+                                    <div className="grow">
+                                        <SmoothProgressBar title='Donation' floorValue={donationCurrent} ceilingValue={donationGoal} />
+                                    </div>
+                                    ${donationGoal}
+                                </div>
+                                <RectangleButton title="Donate" onClick={() => setDisplayDonationPopup(!displayDonationPopup)}
+                                    heroIcon={<CreditCardIcon />} colour="bg-button-green" />
+                            </div>
+                        </>
+                        :
+                        <></>
+                    }
+
+                    <Divider padding={2} />
 
                     {!editMode ?
                         <div className="text-text-primary whitespace-pre">
@@ -159,6 +215,23 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     />
                 </div>
             </div>
+
+            <Popup title="Make Donation"
+                variableThatDeterminesIfPopupIsActive={displayDonationPopup}
+                setVariableThatDeterminesIfPopupIsActive={setDisplayDonationPopup}
+                onSubmit={undefined}
+            >
+                <InputField title="Card Number" type="text" width='full' active={false}
+                    value={'12781298367918236'} />
+
+                {/* todo expiry month and year */}
+
+                <InputField title="CVC" placeholder="Enter CVC" type="number" width='full' additionalProps={{ min: '1', max: '999', step: '1' }}
+                    value={CVC} onChange={(e) => setCVC(e.target.value)} />
+
+                <InputField title="Donation Amount" placeholder="Enter Donation Amount" type="number" width='full' additionalProps={{ min: '1', step: '0.01' }}
+                    value={donationAmount} onChange={(e) => setDonationAmount(e.target.value)} />
+            </Popup>
         </Layout>
     );
 }

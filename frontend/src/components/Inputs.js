@@ -2,6 +2,7 @@
 import React from "react";
 
 // Components
+import { textNerfer } from "./componentUtils";
 import { ToggleButton } from "./Buttons";
 
 // Assets
@@ -30,11 +31,11 @@ export function InputField(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
                 <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <input
-                id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                id={textNerfer(title)}
                 type={type}
                 placeholder={placeholder}
                 disabled={!active}
@@ -56,11 +57,11 @@ export function InputTextBox(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
                 <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <textarea
-                id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                id={textNerfer(title)}
                 placeholder={placeholder}
                 disabled={!active}
                 value={value}
@@ -81,11 +82,11 @@ export function InputFile(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
                 <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <input
-                id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                id={textNerfer(title)}
                 type='file'
                 accept={accept}
                 disabled={!active}
@@ -107,11 +108,11 @@ export function InputDate(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
                 <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <input
-                id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                id={textNerfer(title)}
                 type="datetime-local"
                 disabled={!active}
                 value={value}
@@ -137,7 +138,7 @@ export function SearchField(props) {
                     'rounded-sm bg-input-background-neutral text-text-primary'}`}
             >
                 <input
-                    id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                    id={textNerfer(title)}
                     type="search"
                     placeholder={title}
                     disabled={!active}

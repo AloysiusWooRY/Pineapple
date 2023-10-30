@@ -10,7 +10,7 @@ import { Tabs } from "../components/Buttons";
 import { Divider } from "../components/Miscellaneous";
 
 // Assets
-import { NewspaperIcon, SparklesIcon, ArrowUpIcon, GlobeAltIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
+import { SparklesIcon, ArrowUpIcon, GlobeAltIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/home-banner.png";
 import CategoryAllImage from "../assets/home-cat-all.png";
 import CategoryEventImage from "../assets/home-cat-event.png";
@@ -22,7 +22,7 @@ import Sample1 from "../assets/sample-nuts.jpg";
 import { organisationAll } from "../apis/exportedAPIs";
 
 export default function Home() {
-    const [selectedCategory, setSelectedCategory] = useState('Related');
+    const [selectedCategory, setSelectedCategory] = useState('new');
 
     useEffect(() => {
         async function fetchData() {
@@ -44,7 +44,7 @@ export default function Home() {
                     <CategoryButton image={CategoryDonationImage} title="DONATIONS" icon={CurrencyDollarIcon} />
                 </div>
 
-                <Tabs tabs={['Related', 'New', 'Top']} heroIconsArr={[<NewspaperIcon />, <SparklesIcon />, <ArrowUpIcon />]}
+                <Tabs tabs={['new', 'top']} heroIconsArr={[<SparklesIcon />, <ArrowUpIcon />]}
                     onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
 
                 <Divider padding={0} />

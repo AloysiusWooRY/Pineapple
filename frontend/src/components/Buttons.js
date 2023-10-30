@@ -2,15 +2,14 @@
 import React, { useState } from "react";
 
 // Components
-// ~
+import { textNerfer } from "./componentUtils";
 
 // Assets
-// ~
+import { QuestionMarkCircleIcon, PencilIcon, PaperAirplaneIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 
 // API
 // ~
 
-import { QuestionMarkCircleIcon, PencilIcon, PaperAirplaneIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 
 export function ToggleButton(props) {
     const { active, onClick } = props;
@@ -31,7 +30,7 @@ export function RectangleButton(props) {
     return (
         <div className="align-middle">
             <button type={!forForm ? "button" : "submit"} className={`flex w-full justify-center items-center text-text-primary px-4 py-2 rounded ${colour}`}
-                value={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                value={textNerfer(title)}
                 onClick={onClick}>
                 {heroIcon && React.cloneElement(heroIcon, { className: "h-4 w-4 mr-2" })}
                 {title}
@@ -46,7 +45,7 @@ export function RoundedButton(props) {
     return (
         <div>
             <button className={`w-full px-2 py-1 rounded-full ${colour} border border-transparent hover:border-divider-color font-bold`}
-                value={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                value={textNerfer(title)}
                 onClick={onClick}>
                 {title}
             </button>
@@ -63,7 +62,7 @@ export function StandardDropdown(props) {
         for (let i = 0; i < options.length; i++) {
             formattedOptions.push(
                 <option className="text-text-primary capitalize font-sans bg-input-background-neutral"
-                    key={options[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                    key={textNerfer(options[i])}
                     value={options[i]}
                 >{options[i]}</option>
             );
@@ -80,7 +79,7 @@ export function StandardDropdown(props) {
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
-                            <select id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                            <select id={textNerfer(title)}
                                 value={selected}
                                 onChange={onChange}
                                 className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
@@ -100,7 +99,7 @@ export function StandardDropdown(props) {
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
-                            <select id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                            <select id={textNerfer(title)}
                                 value={selected}
                                 onChange={onChange}
                                 className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
@@ -118,7 +117,7 @@ export function StandardDropdown(props) {
                 <div className={`flex flex-row items-center pb-${bottomPadding}`}>
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
-                            <select id={title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                            <select id={textNerfer(title)}
                                 value={selected}
                                 onChange={onChange}
                                 className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
@@ -146,7 +145,7 @@ export function Tabs(props) {
             formattedTabs.push(
                 <li
                     className="mr-2"
-                    key={"tab-" + tabs[i].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+                    key={"tab-" + textNerfer(tabs[i])}
                 >
                     <a href="#" data-value={tabs[i]} onClick={(e) => { setActiveTab(i); onClick(e); }}
                         className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 capitalize
