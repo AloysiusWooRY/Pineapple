@@ -3,7 +3,7 @@ const { expect } = chai;
 
 describe("Connection Test for smtp, gmail", () => {
     it("Successfully send Reset PW Email", async () => {
-    const email = "tosapap955@monutri.com"; // https://temp-mail.org/en/
+    const email = "vatilod807@hondabbs.com"; // https://temp-mail.org/en/
     const apiUrl = `http://localhost:4000/api/email?email=${encodeURIComponent(email)}`;
        try {
         const response = await fetch(apiUrl, {
