@@ -2,7 +2,8 @@ const express = require('express')
 const {
     ping,
     generateCSRF,
-    emailTest
+    emailTest,
+    test
 } = require('../controllers/miscellaneousController')
 const rateLimit = require('../utils/rateLimiter')
 
@@ -16,5 +17,9 @@ router.get('/get-csrf-token', rateLimit(5, 100), generateCSRF)
 
 // GET: Send email
 router.get('/email', rateLimit(5, 100), emailTest)
+
+// GET: Test
+router.get('/test', rateLimit(5, 100), test)
+
 
 module.exports = router
