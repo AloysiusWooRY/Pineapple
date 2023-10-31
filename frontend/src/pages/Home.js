@@ -1,5 +1,6 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import toast from 'react-hot-toast';
 
 // Components
@@ -89,9 +90,11 @@ export default function Home() {
 
                     {allPosts ?
                         (allPosts.posts.map((item) => (
-                            <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title}
-                                organisation={item.organisation.name}
-                                category={item.organisation.category} />
+                            <NavLink key={item._id} to={`/organisation/${item.organisation._id}/post/${item._id}`}>
+                                <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title}
+                                    organisation={item.organisation.name}
+                                    category={item.organisation.category} />
+                            </NavLink>
                         ))) : ""
                     }
                 </div>

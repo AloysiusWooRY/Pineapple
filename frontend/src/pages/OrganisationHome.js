@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -33,9 +34,15 @@ export default function OrganisationHome() {
 
     useEffect(() => {
         async function fetchData() {
-            const allOrgsJson = await organisationAll({ category: 'health' });
-            const allOrganisations = await allOrgsJson.json()
-            setAllOrganisations(allOrganisations)
+            const response = await organisationAll({ category: 'health' });
+            const jsonResponse = await response.json()
+
+            if (response.ok) {
+                console.log(jsonResponse);
+                setAllOrganisations(jsonResponse);
+            } else {
+                toast.error(response.error);
+            }
         }
         fetchData();
     }, []);

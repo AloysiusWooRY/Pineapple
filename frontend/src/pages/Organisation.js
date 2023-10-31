@@ -1,6 +1,7 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -47,6 +48,7 @@ export default function Organisation() {
 
     function OrganisationPosts() {
         let posts = [];
+        console.log(selectedOrganisation);
         (allPosts != null && !selectedOrganisation.default) ? (
             allPosts.posts.map(item => (
                 posts.push(
@@ -59,7 +61,7 @@ export default function Organisation() {
                         timeSincePost={item.updatedAt}
                         posterUsername={user.name} 
                         upvoted={null}
-                        imagePath={selectedOrganisation.imagePath.poster}
+                        imagePath={selectedOrganisation.organisation.imagePath.poster}
                     />
                 </NavLink>
                 )
@@ -83,11 +85,14 @@ export default function Organisation() {
 
     useEffect(() => {
         async function fetchData() {
-            const fetchedOrganisation = await organisationId({id})
-            const fetchedData = await fetchedOrganisation.json()
+            const response = await organisationId({id})
+            const jsonResponse = await response.json()
 
-            if (fetchedData.error != "Invalid id") {
-                setSelectedOrganisation(fetchedData.organisation)
+            if (response.ok) {
+                console.log(jsonResponse);
+                setSelectedOrganisation(jsonResponse);
+            } else {
+                toast.error(jsonResponse.error);
             }
         }
         fetchData()
@@ -95,14 +100,14 @@ export default function Organisation() {
 
     useEffect(() => {
         async function fetchData() {
-            const fetchedPosts = await postAll({
+            const response = await postAll({
                 organisation: id,
                 category: "",
                 filter: "",
                 sortByPinned: true,
             })
-            const fetchedData = await fetchedPosts.json()
-            setAllPosts(fetchedData)
+            const jsonResponse = await response.json()
+            setAllPosts(jsonResponse)
         }
         fetchData()
     }, []);

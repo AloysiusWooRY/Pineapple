@@ -15,7 +15,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import Logo from "../assets/logo-no-background.png";
 
 // API
-// ~
+import { accountRegister } from "../apis/exportedAPIs";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -62,25 +62,19 @@ export default function Login() {
         try {
             setIsLoading(true);
 
-            const response = await fetch(`/api/account/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name, email, password, recaptchaToken
-                }),
-            });
-            const json = await response.json();
+            const response = await accountRegister({name, email, password, token: recaptchaToken});
+            const jsonResponse = await response.json();
 
             if (response.ok) {
                 toast.success("Success!", { id: toastId });
                 navigate("..");
             } else {
-                const errorMsg = json.error;
+                const errorMsg = jsonResponse.error;
                 toast.error(errorMsg, { id: toastId });
-                if (json.error === "Missing fields") setError(errorMsg);
-                if (json.error === "Invalid email") setEmailErr(errorMsg);
-                if (json.error === "Email already exist") setEmailErr(errorMsg);
-                if (json.error === "Password not strong") setPasswordErr(errorMsg);
+                if (errorMsg === "Missing fields") setError(errorMsg);
+                if (errorMsg === "Invalid email") setEmailErr(errorMsg);
+                if (errorMsg === "Email already exist") setEmailErr(errorMsg);
+                if (errorMsg === "Password not strong") setPasswordErr(errorMsg);
             }
         } catch (error) {
             const errorMsg = ERR_GENERIC;
