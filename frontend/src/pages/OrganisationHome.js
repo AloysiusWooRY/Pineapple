@@ -1,7 +1,7 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import cookie from 'react-cookies';
+import { NavLink } from "react-router-dom";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -51,15 +51,14 @@ export default function OrganisationHome() {
                 <Divider padding={0} />
 
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
-                    {allOrganisations && (allOrganisations ?
+                    {allOrganisations ? 
                         (allOrganisations.organisations.map(item => (
-                            <div key={"key-organisation-" + item._id}>
-                                <CardHomeOrg image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
-                            </div>
-                        )))
-                        :
-                        <h1 className="grow text-text-primary py-4 text-6xl text-center">🍍No Organisations Here :(🍍</h1>
-                    )}
+                            <NavLink to={`/organisation/${item._id}`}>
+                                <CardHomeOrg key={item.id} image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
+                            </NavLink>
+                        ))) 
+                        : <h1 className="grow text-text-primary py-4 text-6xl text-center">🍍No Organisations Here :(🍍</h1>
+                    }
                 </div>
             </section>
         </Layout >

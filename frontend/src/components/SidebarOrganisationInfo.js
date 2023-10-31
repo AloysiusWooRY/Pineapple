@@ -13,11 +13,12 @@ import Sample2 from "../assets/sample-mental.png";
 // ~
 
 export default function SideBarOrganisationInfo(props) {
-    const { organisationName, organisationDescription, createDate, numberPosts } = props;
+    const { organisationName, organisationDescription, createDate, numberPosts, numberMembers, onCreateClicked, imagePath = null } = props;
 
     return (
-        <section id={"organisation-" + organisationName}  className="rounded-tr-lg rounded-br-lg h-fit w-96 bg-theme-primary">
-            <div className="flex h-44 bg-cover bg-center bg-no-repeat outline-none rounded-tr-lg organisation-image" style={{ backgroundImage: `url(${Sample2})` }}>
+        <section className="rounded-tr-lg rounded-br-lg h-fit w-96 bg-theme-primary">
+            {/* imagePath? imagePath: Sample2 */}
+            <div className="flex h-44 bg-cover bg-center bg-no-repeat outline-none rounded-tr-lg" style={{ backgroundImage: `url(${Sample2})` }}>
                 <div className="h-full w-full p-4 bg-gradient-to-t from-theme-primary flex items-end">
                     <h2 className="text-text-primary text-3xl font-semibold overflow-hidden organisation-name">{organisationName}</h2>
                 </div>
@@ -42,8 +43,8 @@ export default function SideBarOrganisationInfo(props) {
 
             <Divider padding={0} />
 
-            <div className="p-2">
-                <RoundedButton title="Create Post" />
+            <div className="px-2 py-2">
+                <RoundedButton title="Create Post" onClick={onCreateClicked} />
             </div>
         </section>
     );

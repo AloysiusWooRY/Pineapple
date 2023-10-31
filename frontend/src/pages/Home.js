@@ -14,11 +14,50 @@ import BannerImage from "../assets/home-banner.png";
 import Sample1 from "../assets/sample-nuts.jpg";
 
 // API
-// ~
+import { postAll } from "../apis/exportedAPIs";
 
 export default function Home() {
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedCategory, setSelectedCategory] = useState('new');
+
+    const [allPosts, setAllPosts] = useState(null);
+
+    const [categoryFilteredPosts, setCategoryFilteredPosts ] = useState(allPosts);
     const [sortBy, setSortBy] = useState('newest');
+
+    useEffect(() => {
+        async function fetchData() {
+            const fetchedData = await postAll({
+                organisation: '',
+                category: '',
+                filter: '',
+                sortByPinned: false,
+            });
+            const jsonResponse = await fetchedData.json();
+
+            console.log(jsonResponse);
+            setAllPosts(jsonResponse);
+          }
+          fetchData();
+    }, []);
+
+    function handleCategoryPosts() {
+        const filteredItems = allPosts.filter(item => {
+            if (selectedCategory === "donation") {
+              return item.organisation.donation;
+            } 
+            else if (selectedCategory === "event") {
+              return item.organisation.event;
+            } 
+            else if (selectedCategory === "discussion") {
+              return !item.organisation.donation && !item.organisation.event;
+            }
+            return true;
+        });
+
+        // setCategoryFilteredPosts(filteredItems);
+        console.log(filteredItems);
+    }
+    
 
     return (
         <Layout>
@@ -41,12 +80,13 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-2 max-lg:grid-cols-1 p-2">
-                    {
-                        [...Array(9)].map((_, index) => (
-                            <div key={"key-" + index}>
-                                <CardHome image={Sample1} title="Save deez nutz" organisation="Nut Allergy Foundation" category="Health" />
-                            </div>
-                        ))
+                
+                    {allPosts ? 
+                        (allPosts.posts.map((item) => (
+                            <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title} 
+                            organisation={item.organisation.name} 
+                            category={item.organisation.category} />
+                            ))) : ""
                     }
                 </div>
             </section>

@@ -1,6 +1,6 @@
 // React / Packages
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Components
 import { FormatDateTime } from "../components/componentUtils";
@@ -19,9 +19,12 @@ import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as Arr
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { SmoothProgressBar } from "../components/CustomProgressBar";
+import { postIdPOST, postIdDEL, postIdPATCH, postIdLike } from "../apis/exportedAPIs";
 
 export default function Post() {
     const { user } = useAuthContext();
+    const { id } = useParams();
 
     const [organisationName, setOrganisationName] = useState('Mental Health Hoax');
     const [organisationDescription, setOrganisationDescription] = useState('Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.');
@@ -49,6 +52,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
 
     const [donationCurrent, setDonationCurrent] = useState(34);
     const [donationGoal, setDonationGoal] = useState(124);
+
     const [displayDonationPopup, setDisplayDonationPopup] = useState(false);
     const [donationAmount, setDonationAmount] = useState('');
     const [CVC, setCVC] = useState('');
@@ -56,6 +60,36 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
 
     const [editMode, setEditMode] = useState(false);
     const [comment, setComment] = useState('');
+
+    // This is to load the post and organisation details for the selected post
+    useEffect(() => {
+        async function fetchData() {
+            const fetchedPost = await postIdPOST({id})
+            const fetchedData = await fetchedPost.json();
+    
+            if (fetchedData.error != "Invalid id") {
+                setPostContent(fetchedData.post.description);
+                setPostTitle(fetchedData.post.title);
+                setPoster(user.name);
+                setPostType(fetchedData.post.donation ? "donation": fetchedData.post.event ? "event": "discussion");
+                setPostTime(fetchedData.post.updatedAt);
+    
+                if (fetchedData.post.organisation.donation) {
+                    setDonationCurrent(fetchedData.post.organisation.donation.amoount);
+                    setDonationGoal(fetchedData.post.organisation.donation.goal);
+                }
+                if (fetchedData.post.organisation.event) {
+                    eventStartDateTime(fetchedData.post.createdAt);
+                }
+    
+                setOrganisationName(fetchedData.post.organisation.name);
+                setOrganisationDescription(fetchedData.post.organisation.description);
+                setOrganisationCreateDate(fetchedData.post.organisation.createdAt);
+                setOrganisationPosts(fetchedData.post.organisation.posts);
+            }
+        }
+        fetchData();
+    }, []);
 
     function PopulateComments() {
         let comments = [];

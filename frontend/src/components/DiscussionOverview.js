@@ -14,7 +14,7 @@ import Sample1 from "../assets/sample-nuts.jpg";
 // ~
 
 export default function DiscussionOverview(props) {
-    const { title, id, discussionType, votes, timeSincePost, posterUsername, upvoted = null } = props;
+    const { title, id, discussionType, votes, timeSincePost, posterUsername, upvoted = null, imagePath = null} = props;
 
     return (
         <a
@@ -39,7 +39,8 @@ export default function DiscussionOverview(props) {
                     </div>
                 </div>
             </div>
-            <img src={Sample1} className="w-64 basis-28 shrink-0 rounded object-cover object-center" />
+            {/* imagePath ? imagePath : Sample1 (Use this for src once the images are available) */}
+            <img src={Sample1} className="w-64 basis-28 shrink-0 rounded object-cover object-center" /> 
         </a>
     );
 };

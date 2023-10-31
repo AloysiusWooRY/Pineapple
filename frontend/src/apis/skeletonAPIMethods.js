@@ -120,9 +120,6 @@ const templateLiterally = (template, idObject) => {
 const prepareRequest = (csrfToken, requestBody) => {
     let preppedHeaders, preppedBody;
 
-    console.log(csrfToken)
-    console.log(requestBody)
-
     // No body
     if (!requestBody) {
         preppedHeaders = { 'x-csrf-token': csrfToken };

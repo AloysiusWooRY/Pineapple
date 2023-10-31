@@ -1,5 +1,6 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, NavLink } from "react-router-dom";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -17,18 +18,22 @@ import BannerImage from "../assets/home-banner-org.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { organisationId, postAll } from "../apis/exportedAPIs";
 
 export default function Organisation() {
-    const { user } = useAuthContext();
+    const { user } = useAuthContext()
+    const { id } = useParams()
 
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('newest');
+    const [allPosts, setAllPosts] = useState(null)
 
-    const [organisation, setOrganisation] = useState({
+    const [selectedOrganisation, setSelectedOrganisation] = useState({
         name: 'Mental Health Hoax',
         description: 'Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.',
         createDate: 'July 22, 1999',
         posts: 30,
+        default: true,
     });
 
     const [editOrganisationMode, setEditOrganisationMode] = useState(false);
@@ -42,25 +47,71 @@ export default function Organisation() {
 
     function OrganisationPosts() {
         let posts = [];
-
-        for (let i = 0; i < 10; i++) {
-            posts.push(
-                <div key={"key-post-" + i}>
+        (allPosts != null && !selectedOrganisation.default) ? (
+            allPosts.posts.map(item => (
+                posts.push(
+                <NavLink to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
                     <DiscussionOverview
-                        id={"post-" + i}
+                        key={"post-" + item._id}
+                        title={item.title} 
+                        discussionType={item.donation ? "donation": item.event ? "event": "discussion"}
+                        votes={item.likes} 
+                        timeSincePost={item.updatedAt}
+                        posterUsername={user.name} 
+                        upvoted={null}
+                        imagePath={selectedOrganisation.imagePath.poster}
+                    />
+                </NavLink>
+                )
+            ))
+        )
+        :
+        posts.push(
+            <div key={"key-post-" + id}>
+                <NavLink to={`/organisation/${selectedOrganisation._id}/post/123`}>
+                    <DiscussionOverview
+                        id={"post-" + id}
                         title={"What if we could print a brain?"} discussionType={"discussion"}
                         votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
-                </div>
-            );
-        }
+                </NavLink>
+            </div>
+        );
+        
 
         return posts;
     }
+
+    useEffect(() => {
+        async function fetchData() {
+            const fetchedOrganisation = await organisationId({id})
+            const fetchedData = await fetchedOrganisation.json()
+
+            if (fetchedData.error != "Invalid id") {
+                setSelectedOrganisation(fetchedData.organisation)
+            }
+        }
+        fetchData()
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            const fetchedPosts = await postAll({
+                organisation: id,
+                category: "",
+                filter: "",
+                sortByPinned: true,
+            })
+            const fetchedData = await fetchedPosts.json()
+            setAllPosts(fetchedData)
+        }
+        fetchData()
+    }, []);
 
     async function handleOrganisationEdit(e) {
         e.preventDefault();
 
         console.log("handle edit org!");
+        console.log(selectedOrganisation)
     }
 
     return (
@@ -86,16 +137,28 @@ export default function Organisation() {
                     </div>
 
                     <div className="flex flex-col py-2 gap-2">
-                        {<OrganisationPosts />}
+                       {<OrganisationPosts />}
                     </div>
                 </section>
 
-                <SideBarOrganisationInfo
-                    organisationName={organisation.name}
-                    organisationDescription={organisation.description}
-                    createDate={organisation.createDate}
-                    numberPosts={organisation.posts}
-                />
+                {selectedOrganisation ? 
+                    <NavLink to={`/organisation/${selectedOrganisation._id}/post/new`}>
+                        <SideBarOrganisationInfo
+                            organisationName={selectedOrganisation.name}
+                            organisationDescription={selectedOrganisation.description}
+                            createDate={selectedOrganisation.createdAt}
+                            numberPosts={selectedOrganisation.posts}
+                        />
+                    </NavLink> 
+                    : 
+                    <SideBarOrganisationInfo
+                        organisationName={selectedOrganisation.name}
+                        organisationDescription={selectedOrganisation.description}
+                        createDate={selectedOrganisation.createDate}
+                        numberPosts={selectedOrganisation.posts}
+                        onCreateClicked={handleOrganisationEdit}
+                    />
+                }
             </div>
 
             <Popup title="Edit Organisation"

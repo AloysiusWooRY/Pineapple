@@ -1,5 +1,5 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -15,12 +15,13 @@ import BannerImage from "../assets/post-banner.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { accountUpdate } from "../apis/exportedAPIs";
 
 export default function Profile() {
     const { user } = useAuthContext();
 
-    const [name, setName] = useState('Fish Ee');
-    const [email, setEmail] = useState('fish@gmail.com');
+    const [name, setName] = useState(user.name);
+    const [email, setEmail] = useState(user.email);
     const [paymentInfo, setPaymentInfo] = useState('1111 2222 3333 4444');
     const [expiryMonthYear, setExpiryMonthYear] = useState('');
 
@@ -49,6 +50,21 @@ export default function Profile() {
 
         console.log("handle password!");
     }
+
+    useEffect(() => {
+        async function fetchData() {
+            const patchProfile = await accountUpdate({
+                name: name,
+                email: email,
+            });
+            const fishtwo = await patchProfile.json();
+            setName(user.name)
+            setEmail(user.email)
+            console.log(fishtwo)
+          }
+
+          fetchData();
+    }, [name, email]);
 
     return (
         <Layout>
