@@ -8,7 +8,7 @@ const accountSchema = new Schema({
     isAdmin: { type: Boolean, required: true, default: false },
     hasTwoFA: { type: Boolean, required: true, default: false },
     twoFASecret: { type: String, required: true },
-    moderation: [{ type: Schema.Types.ObjectId, required: false, ref: Organisation }],
+    moderation: [{ type: Schema.Types.ObjectId, required: false, ref: 'Organisation' }],
     paymentInfo: { type: String, required: false }
 }, { timestamps: true, versionKey: false })
 
