@@ -373,10 +373,10 @@ const getPaymentInfo = async (req, res) => {
 // Set payment details
 const setPaymentInfo = async (req, res) => {
     const { _id } = req.account
-    const { cardNumber, expirationDate, cvc } = req.body
+    const { cardNumber, expirationDate } = req.body
 
     try {
-        if (!cardNumber || !expirationDate || !cvc) throw new MissingFieldError('Missing fields', req)
+        if (!cardNumber || !expirationDate) throw new MissingFieldError('Missing fields', req)
 
         const sanitizedCardNumber = validator.trim(cardNumber)
         if (!validator.isCreditCard(sanitizedCardNumber)) {
@@ -390,16 +390,10 @@ const setPaymentInfo = async (req, res) => {
         const currentDate = moment().startOf('month').local()
         if (!timeFormatted.isAfter(currentDate)) throw new ValidationError("Expiration must be in the future", req);
 
-        const sanitizedCVC = validator.trim(cvc)
-        if (!validator.isNumeric(sanitizedCVC) || !validator.isLength(sanitizedCVC, { min: 3, max: 4 })) {
-            throw new ValidationError('Invalid CVC number', req)
-        }
-
         const encryptedPaymentInfo = CryptoJS.AES.encrypt(
             JSON.stringify({
                 cardNumber: sanitizedCardNumber,
                 expirationDate: sanitizedExpirationDate,
-                cvc: sanitizedCVC
             }), process.env.ENCRYPTION_SECRET
         ).toString()
 
