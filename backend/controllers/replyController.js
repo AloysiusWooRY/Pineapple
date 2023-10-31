@@ -62,8 +62,8 @@ const deleteReply = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(replyId)) throw new ValidationError("Invalid id", req)
 
         const reply = await Reply.findById(replyId).populate({
-            path: 'post',
-            populate: { path: 'comment' }
+            path: 'comment',
+            populate: { path: 'post' }
         })
         if (!reply) throw new DataNotFoundError('No such reply', req)
 
