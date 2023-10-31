@@ -74,7 +74,7 @@ const getAllPost = async (req, res) => {
         logger.http(`Post retrieve successfully, (Category: ${category}, Filter: ${filter})`, { actor: "USER", req })
         res.status(200).json({ posts: postsWithLikes })
     } catch (err) {
-        if (err.statusCode === 400)
+        if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
         else {
             logger.error(err.message, { actor: "USER", req })
@@ -380,7 +380,7 @@ const deletePost = async (req, res) => {
             fs.rmSync(fileDir, { recursive: true })
         }
 
-        logger.http(`Post image successfully deleted: ${_id}`, { actor: "USER", req })
+        logger.http(`Post successfully deleted: ${_id}`, { actor: "USER", req })
         res.status(200).send()
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
