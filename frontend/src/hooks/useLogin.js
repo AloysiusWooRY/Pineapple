@@ -12,12 +12,12 @@ export const useLogin = () => {
     setIsLoading(true);
     setError(null);
 
-    const response = await accountLogin({email: email, password: password});
+    const response = await accountLogin({ email: email, password: password });
     const json = await response.json();
 
     if (!response.ok) {
-      setIsLoading(false)
-      setError(json.error)
+      setIsLoading(false);
+      setError(json.error);
     }
     if (response.ok) {
 
