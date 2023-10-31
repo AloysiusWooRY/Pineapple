@@ -7,7 +7,9 @@ const {
     deletePostImage,
     deletePost,
     likePost,
-    dislikePost
+    dislikePost,
+    pinPost,
+    unpinPost
 } = require('../controllers/postController')
 const rateLimit = require('../utils/rateLimiter')
 const requireAuth = require('../middleware/requireAuth')
@@ -40,5 +42,11 @@ router.post('/:id/like', rateLimit(10, 50), requireAuth(isAdmin = false), likePo
 
 // POST: Dislike Post
 router.post('/:id/dislike', rateLimit(10, 50), requireAuth(isAdmin = false), dislikePost)
+
+// POST: Dislike Post
+router.post('/:id/pin', rateLimit(), requireAuth(isAdmin = false), pinPost)
+
+// POST: Dislike Post
+router.post('/:id/unpin', rateLimit(), requireAuth(isAdmin = false), unpinPost)
 
 module.exports = router

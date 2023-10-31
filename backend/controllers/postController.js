@@ -489,6 +489,74 @@ const dislikePost = async (req, res) => {
     }
 }
 
+const pinPost = async (req, res) => {
+    const { _id: userId, isAdmin, moderation } = req.account
+    const { id: postId } = req.params
+
+    try {
+        if (!postId) throw new MissingFieldError("Missing id", req)
+        if (!mongoose.Types.ObjectId.isValid(postId)) throw new ValidationError("Invalid id", req)
+
+        const existingPost = await Post.findOne({ _id: postId })
+        if (!existingPost) throw new DataNotFoundError('No such post', req)
+
+        const { isPinned, organisation, owner } = existingPost
+
+        if (!isAdmin &&
+            (moderation && !moderation.includes(organisation))
+        ) throw new ValidationError("Insufficient access to pin post", req)
+
+        if (isPinned) throw new ValidationError("Post already pinned", req)
+
+        existingPost.isPinned = true
+        await existingPost.save()
+
+        logger.http(`Post pinned: ${existingPost._id}`, { actor: "USER", req })
+        res.status(200).send()
+    } catch (err) {
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
+const unpinPost = async (req, res) => {
+    const { _id: userId, isAdmin, moderation } = req.account
+    const { id: postId } = req.params
+
+    try {
+        if (!postId) throw new MissingFieldError("Missing id", req)
+        if (!mongoose.Types.ObjectId.isValid(postId)) throw new ValidationError("Invalid id", req)
+
+        const existingPost = await Post.findOne({ _id: postId })
+        if (!existingPost) throw new DataNotFoundError('No such post', req)
+
+        const { isPinned, organisation } = existingPost
+
+        if (!isAdmin &&
+            (moderation && !moderation.includes(organisation))
+        ) throw new ValidationError("Unauthorised to delete non-personal post", req)
+
+        if (!isPinned) throw new ValidationError("Post already unpinned", req)
+
+        existingPost.isPinned = false
+        await existingPost.save()
+
+        logger.http(`Post pinned: ${existingPost._id}`, { actor: "USER", req })
+        res.status(200).send()
+    } catch (err) {
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
 module.exports = {
     getAllPost,
     createPost,
@@ -497,5 +565,7 @@ module.exports = {
     deletePostImage,
     deletePost,
     likePost,
-    dislikePost
+    dislikePost,
+    pinPost,
+    unpinPost
 }
