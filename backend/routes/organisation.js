@@ -4,6 +4,7 @@ const { ValidationError } = require("../errors/customError")
 const {
     applyOrganisation,
     getAllOrganisation,
+    getAllOrganisationName,
     getAllCategories,
     getOrganisationById
 } = require('../controllers/organisationController')
@@ -20,16 +21,20 @@ const uploadFields = upload.fields([
     { name: 'poster', maxCount: 1 }
 ])
 
-// POST: new org application
+// POST: New org application
 router.post('/apply', requireAuth(isAdmin = false), uploadFields, fileUploadErrorHandler, applyOrganisation);
 
 // GET: Category
 router.post('/categories', rateLimit(10, 50), requireAuth(isAdmin = false), getAllCategories)
+
+// GET: Organisation name
+router.post('/all/name', rateLimit(10, 50), requireAuth(isAdmin = false), getAllOrganisationName)
 
 // GET: Organisation by category
 router.post('/all', rateLimit(10, 50), requireAuth(isAdmin = false), getAllOrganisation)
 
 // GET: Organisation by id
 router.post('/:id', rateLimit(10, 50), requireAuth(isAdmin = false), getOrganisationById)
+
 
 module.exports = router

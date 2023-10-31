@@ -113,6 +113,24 @@ const getAllOrganisation = async (req, res) => {
     }
 }
 
+const getAllOrganisationName = async (req, res) => {
+
+    try {
+        const organisations = await Organisation.find({}, { approved: true }).select('name')
+        const orgNames = organisations.map(org => [org._id, org.name])
+
+        logger.http(`Organisation name retrieved successfully`, { actor: "USER", req })
+        res.status(200).json({ organisations: orgNames })
+    } catch (err) {
+        if (err.statusCode === 400)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
 const getOrganisationById = async (req, res) => {
     let { id } = req.params
 
@@ -140,6 +158,7 @@ const getOrganisationById = async (req, res) => {
 module.exports = {
     applyOrganisation,
     getAllOrganisation,
+    getAllOrganisationName,
     getAllCategories,
     getOrganisationById
 }
