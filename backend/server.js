@@ -21,7 +21,7 @@ const adminRoutes = require('./routes/admin')
 
 const logger = require("./utils/logger")
 
-app.use(express.json())
+app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser());
 
 app.use(session({
