@@ -30,6 +30,7 @@ export function RectangleButton(props) {
     return (
         <div className="align-middle">
             <button type={!forForm ? "button" : "submit"} className={`flex w-full justify-center items-center text-text-primary px-4 py-2 rounded ${colour}`}
+                id={"button-" + textNerfer(title)}
                 value={textNerfer(title)}
                 onClick={onClick}>
                 {heroIcon && React.cloneElement(heroIcon, { className: "h-4 w-4 mr-2" })}
