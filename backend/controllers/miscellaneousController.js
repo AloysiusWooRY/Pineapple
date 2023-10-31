@@ -2,8 +2,9 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const logger = require("../utils/logger")
 const sendEmail = require('../utils/sendEmail')
-const validator = require('validator')
-const moment = require('moment');
+const path = require('path')
+const ClamScan = require('clamscan');
+// const clamscan = new ClamScan().init()
 
 const Account = require('../models/accountModel')
 
@@ -33,14 +34,28 @@ const emailTest = async (req, res) => {
 
 // Test
 const test = async (req, res) => {
-    const t = await Account.find().select('_id').lean()
-    const h = await Account.find().select('_id')
-    res.status(200).send([t, h])
+    res.status(200).send()
+}
+
+const clamTest = async (req, res) => {
+    const filePath = path.join(__dirname, '../uploads/1.png')
+    try {
+        // clamscan.scan(filePath, (err, file, isInfected) => {
+        //     if (err) console.log(err)
+        //     else console.log(`Infection: ${isInfected}`)
+        // })
+        res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        logger.error(err.message, { actor: "USER", req })
+        res.status(500).json({ error: "Something went wrong, try again later" })
+    }
 }
 
 module.exports = {
     ping,
     generateCSRF,
     emailTest,
-    test
+    test,
+    clamTest
 }

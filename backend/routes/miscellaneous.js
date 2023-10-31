@@ -3,7 +3,8 @@ const {
     ping,
     generateCSRF,
     emailTest,
-    test
+    test,
+    clamTest
 } = require('../controllers/miscellaneousController')
 const rateLimit = require('../utils/rateLimiter')
 
@@ -21,5 +22,7 @@ router.get('/email', rateLimit(5, 100), emailTest)
 // GET: Test
 router.get('/test', rateLimit(5, 100), test)
 
+// GET: Clam Test
+router.get('/clam-test', rateLimit(5, 100), clamTest)
 
 module.exports = router
