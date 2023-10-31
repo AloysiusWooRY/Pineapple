@@ -26,7 +26,7 @@ export default function AdminModeration() {
 
     const [viewingUserMode, setViewingUserMode] = useState(false);
     const [username, setUsername] = useState('John Xina');
-    const [userRole, setUserRole] = useState('Administrator');
+    const [userRole, setUserRole] = useState('administrator');
     const [userModerates, setUserModerates] = useState(['Org-1', 'Org-3']);
 
     function GenerateUsers() {
@@ -65,10 +65,10 @@ export default function AdminModeration() {
                 variableThatDeterminesIfPopupIsActive={viewingUserMode}
                 setVariableThatDeterminesIfPopupIsActive={setViewingUserMode}
             >
-                <StandardDropdown title="Role" titleLocation="top" options={['User', 'Moderator', 'Administrator']}
-                    selected={userRole} onChange={(e) => { setUserRole(e.target.value); }} />
+                <StandardDropdown title="Role" titleLocation="top" options={['user', 'moderator', 'administrator']}
+                    value={userRole} onChange={(e) => { setUserRole(e.target.value); }} />
 
-                {userRole === 'Moderator' &&
+                {userRole === 'moderator' &&
                     <div className="flex flex-col space-y-2 py-2">
                         <div className="flex flex-row space-x-2 justify-center items-center">
                             <span className="grow text-text-primary">Moderator Of</span>
@@ -84,8 +84,8 @@ export default function AdminModeration() {
                             <div className="flex flex-row space-x-2 justify-center items-center">
                                 <div className="grow">
                                     <StandardDropdown
-                                        title={'moderator ' + i}
-                                        selected={organisation}
+                                        title={'moderator-' + i}
+                                        value={organisation}
                                         titleLocation="none"
                                         bottomPadding={0}
                                         options={allOrganisations}

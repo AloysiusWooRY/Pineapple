@@ -2,6 +2,7 @@
 import React from "react";
 
 // Components
+import { textNerfer } from "./componentUtils";
 import { RectangleButton } from './Buttons';
 import { Divider } from './Miscellaneous';
 
@@ -20,7 +21,7 @@ export default function Popup(props) {
     return (
         <div
             className="fixed inset-0 bg-background-major bg-opacity-75 overflow-y-auto h-full w-full"
-            id={"popup-" + title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}
+            id={"popup-" + textNerfer(title)}
             style={{ display: variableThatDeterminesIfPopupIsActive ? "block" : "none" }}>
 
             <div className="flex flex-col items-center justify-center min-h-full"

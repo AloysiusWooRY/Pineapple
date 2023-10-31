@@ -2,6 +2,7 @@ const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
 const moment = require('moment')
+const logger = require("../utils/logger")
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -14,15 +15,14 @@ const storage = multer.diskStorage({
         const randomString = Math.random().toString(36).substring(2, 15); // Generate a random string
         const originalName = path.parse(file.originalname).name; // Get the original filename without extension
         const uniqueFilename = `${originalName}_${timestamp}_${randomString}${path.extname(file.originalname)}`;
+        const dateFilename = `${originalName}_${timestamp}${path.extname(file.originalname)}`;
 
         if (!req.info)
-            req.info = {
-                name: req.body.name,
-                description: req.body.description
-            };
+            req.info = { ...req.body };
 
         req.info[file.fieldname] = {
             filename: uniqueFilename,
+            dateFilename: dateFilename,
             originalFilename: file.originalname
         }
 
@@ -37,7 +37,7 @@ const fileFilter = async (req, file, cb) => {
     ) cb(null, true)
     else {
         req.errorCode = 'LIMIT_UNEXPECTED_FILE_TYPE'
-        cb(null, false)
+        cb(new Error()) //cb(null, false)
     }
 }
 
@@ -62,7 +62,11 @@ const checkUploadPath = (path, next) => {
 
 const upload = multer({
     storage,
-    fileFilter
+    fileFilter,
+    limits: {
+        fieldNameSize: 512,
+        fileSize: 8 * 1024 * 1024
+    }
 })
 
 module.exports = upload

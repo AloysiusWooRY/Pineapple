@@ -1,52 +1,98 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
 
 // Components
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
-import CategoryButton from "../components/CategoryButton";
 import CardHome from "../components/CardHome";
-import { Tabs } from "../components/Buttons";
+import { Tabs, StandardDropdown } from "../components/Buttons";
 import { Divider } from "../components/Miscellaneous";
 
 // Assets
-import { NewspaperIcon, SparklesIcon, ArrowUpIcon, GlobeAltIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
+import { NewspaperIcon, GlobeAltIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/home-banner.png";
-import CategoryAllImage from "../assets/home-cat-all.png";
-import CategoryEventImage from "../assets/home-cat-event.png";
-import CategoryDiscussionImage from "../assets/home-cat-discussion.png";
-import CategoryDonationImage from "../assets/home-cat-donation.png";
 import Sample1 from "../assets/sample-nuts.jpg";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
+import { postAll } from "../apis/exportedAPIs";
 
 export default function Home() {
-    const { user } = useAuthContext();
+    const [selectedCategory, setSelectedCategory] = useState('new');
 
-    const [selectedCategory, setSelectedCategory] = useState('Related');
+    const [allPosts, setAllPosts] = useState(null);
+
+    const [categoryFilteredPosts, setCategoryFilteredPosts] = useState(allPosts);
+    const [sortBy, setSortBy] = useState('newest');
+
+    useEffect(() => {
+        async function fetchData() {
+            const fetchedData = await postAll({
+                organisation: '',
+                category: '',
+                filter: '',
+                sortByPinned: false,
+            });
+
+            const jsonResponse = await fetchedData.json();
+            if (fetchedData.ok) {
+                console.log(jsonResponse);
+                setAllPosts(jsonResponse);
+            } else {
+                toast.error(jsonResponse.error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    function handleCategoryPosts() {
+        const filteredItems = allPosts.filter(item => {
+            if (selectedCategory === "donation") {
+                return item.organisation.donation;
+            }
+            else if (selectedCategory === "event") {
+                return item.organisation.event;
+            }
+            else if (selectedCategory === "discussion") {
+                return !item.organisation.donation && !item.organisation.event;
+            }
+            return true;
+        });
+
+        // setCategoryFilteredPosts(filteredItems);
+        console.log(filteredItems);
+    }
+
 
     return (
         <Layout>
             <section className="grid">
                 <Banner image={BannerImage} title="Home" />
-                <div className="grid grid-cols-4 h-32 my-2 gap-2">
-                    <CategoryButton image={CategoryAllImage} title="ALL" icon={GlobeAltIcon} />
-                    <CategoryButton image={CategoryEventImage} title="EVENTS" icon={CalendarDaysIcon} />
-                    <CategoryButton image={CategoryDiscussionImage} title="DISCUSSIONS" icon={ChatBubbleLeftRightIcon} />
-                    <CategoryButton image={CategoryDonationImage} title="DONATIONS" icon={CurrencyDollarIcon} />
+
+                <div className="flex flex-row justify-between mt-2">
+                    <div className="flex basis-4/5">
+                        <Tabs title="Post Types" tabs={['all', 'discussion', 'event', 'donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                            onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
+                    </div>
+
+                    <div className="basis-1/5">
+                        <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => setSortBy(e.target.value)} />
+                    </div>
                 </div>
 
-                <Tabs tabs={['Related', 'New', 'Top']} heroIconsArr={[<NewspaperIcon />, <SparklesIcon />, <ArrowUpIcon />]}
-                    onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
-
-                <Divider padding={0} />
+                <div className="-mt-2">
+                    <Divider padding={0} />
+                </div>
 
                 <div className="grid grid-cols-2 max-lg:grid-cols-1 p-2">
-                    {
-                        [...Array(9)].map((_, index) => (
-                            <CardHome key={index} image={Sample1} title="Save deez nutz" organisation="Nut Allergy Foundation" category="Health" />
-                        ))
+
+                    {allPosts ?
+                        (allPosts.posts.map((item) => (
+                            <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title}
+                                organisation={item.organisation.name}
+                                category={item.organisation.category} />
+                        ))) : ""
                     }
                 </div>
             </section>

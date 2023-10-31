@@ -6,6 +6,7 @@ const zxcvbn = require('zxcvbn')
 const validator = require('validator')
 const { authenticator } = require("otplib");
 const qrcode = require("qrcode");
+const moment = require('moment');
 
 const sendEmail = require('../utils/sendEmail')
 const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
@@ -96,12 +97,19 @@ const loginOTP = async (req, res) => {
 
         logger.http(`Login successful, token: ${newToken}`, { actor: "USER", req })
 
+        // Create session with cookies
         req.session.isAuthenticated = true
-        const csrfToken = req.csrfToken();
-        res.cookie('jwt', newToken, {
+
+        const csrfToken = req.csrfToken()
+        res.cookie('jwt', token, {
             httpOnly: true,
-            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000,
-        });
+            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+        })
+
+        res.cookie('csrf', csrfToken, {
+            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+        })
+
         res.status(200).json({ _id, name, email, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
@@ -130,23 +138,15 @@ const registerAccount = async (req, res) => {
 
         // Sanitize and validate credentials
         const sanitizedName = validator.escape(validator.trim(name))
-        if (!validator.isLength(sanitizedName, { min: 2, max: 50 })) {
-            throw new ValidationError('Name must be between 2 and 50 characters', req)
-        }
+        if (!validator.isLength(sanitizedName, { min: 2, max: 50 })) throw new ValidationError('Name must be between 2 and 50 characters', req)
 
         const sanitizedEmail = validator.normalizeEmail(validator.trim(email))
-        if (!validator.isLength(sanitizedEmail, { max: 100 })) {
-            throw new ValidationError('Email is too long (max 100 characters)', req)
-        }
-        if (!validator.isEmail(sanitizedEmail)) {
-            throw new ValidationError('Invalid email', req)
-        }
+        if (!validator.isLength(sanitizedEmail, { max: 100 })) throw new ValidationError('Email is too long (max 100 characters)', req)
+        if (!validator.isEmail(sanitizedEmail)) throw new ValidationError('Invalid email', req)
 
         // Check if the email already exists
         const exists = await Account.findOne({ email: sanitizedEmail })
-        if (exists) {
-            throw new ValidationError('Email already exists', req);
-        }
+        if (exists) throw new ValidationError('Email already exists', req)
 
         // Validate password complexity score
         if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
@@ -257,6 +257,7 @@ const updateAccount = async (req, res) => {
         account.email = sanitizedEmail;
         await account.save();
 
+        // Log event
         logger.http(`Update successful`, { actor: "USER", req })
         res.status(200).json({ name: sanitizedName, email: sanitizedEmail })
     } catch (err) {
@@ -291,8 +292,10 @@ const updatePassword = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
+        // Update the account password
         account.password = hash;
         await account.save();
+
 
         logger.http(`Update successful`, { actor: "USER", req })
         res.status(200).send();
@@ -314,7 +317,7 @@ const forgotPassword = async (req, res) => {
         // Validate fields
         if (!email) throw new MissingFieldError('Missing fields', req)
 
-        // Sanitize and validate email
+        // Sanitize and validate fields
         const sanitizedEmail = validator.normalizeEmail(validator.trim(email))
         if (!validator.isLength(sanitizedEmail, { max: 100 })) {
             throw new ValidationError('Email is too long (max 100 characters)', req)
@@ -324,30 +327,32 @@ const forgotPassword = async (req, res) => {
         }
 
         const account = await Account.findOne({ email: sanitizedEmail })
-        if (!account) throw new DataNotFoundError('No such account', req)
+        const accountId = account?._id
 
-        const resetCode = await ResetCode.findOne({ account: account._id })
+        const resetCode = await ResetCode.findOne({ email: sanitizedEmail })
         if (resetCode) throw new DuplicateRequestError('Reset code already sent, try again later', req)
 
         const randomCode = generateRandomCode()
 
         // Create reset code
         await ResetCode.create({
-            account: account._id,
-            email: account.email,
+            account: accountId,
+            email: sanitizedEmail,
             code: randomCode
         })
 
         // Prepare and send email
-        await sendEmail("PasswordReset", account.email, {
-            code: randomCode,
-            name: account.name
-        })
+        if (accountId) {
+            await sendEmail("PasswordReset", account.email, {
+                code: randomCode,
+                name: account.name
+            })
+        }
 
+        // Log event
         logger.http(`Reset code sent to ${email}`, { actor: "USER", req })
         res.status(200).send()
     } catch (err) {
-        console.log(err)
         if (err.statusCode === 400 || err.statusCode === 404 || err.statusCode === 409)
             res.status(err.statusCode).json({ error: err.message })
         else {
@@ -363,8 +368,9 @@ const validateCode = async (req, res) => {
     try {
         if (!email || !code) throw new MissingFieldError('Missing fields', req)
 
+        // Sanitize and validate fields
         const resetCode = await ResetCode.findOne({ email }).select('code attempts')
-        if (!resetCode) throw new DataNotFoundError('Invalid email', req)
+        if (!resetCode) throw new DataNotFoundError('Invalid code', req)
 
         resetCode.attempts = resetCode.attempts - 1
         if (resetCode.code !== code) {
@@ -376,7 +382,7 @@ const validateCode = async (req, res) => {
             throw new ValidationError(`Invalid code. ${resetCode.attempts} attempts remaining`, req)
         }
 
-
+        // Log event
         logger.http(`Successful code validation`, { actor: "USER", req })
         res.status(200).send()
     } catch (err) {
@@ -396,8 +402,9 @@ const resetPassword = async (req, res) => {
     try {
         if (!email || !password || !code) throw new MissingFieldError('Missing fields', req)
 
+        // Sanitize and validate fields
         const resetCode = await ResetCode.findOne({ email }).select('code attempts')
-        if (!resetCode) throw new DataNotFoundError('Invalid email', req)
+        if (!resetCode) throw new DataNotFoundError('Invalid code', req)
 
         resetCode.attempts = resetCode.attempts - 1
         if (resetCode.code !== code) {
@@ -488,10 +495,10 @@ const getPaymentInfo = async (req, res) => {
 // Set payment details
 const setPaymentInfo = async (req, res) => {
     const { _id } = req.account
-    const { cardNumber, expirationDate, cvc } = req.body
+    const { cardNumber, expirationDate } = req.body
 
     try {
-        if (!cardNumber || !expirationDate || !cvc) throw new MissingFieldError('Missing fields', req)
+        if (!cardNumber || !expirationDate) throw new MissingFieldError('Missing fields', req)
 
         const sanitizedCardNumber = validator.trim(cardNumber)
         if (!validator.isCreditCard(sanitizedCardNumber)) {
@@ -499,20 +506,16 @@ const setPaymentInfo = async (req, res) => {
         }
 
         const sanitizedExpirationDate = validator.trim(expirationDate)
-        if (!validator.isLength(sanitizedExpirationDate, { min: 5, max: 5 })) {
-            throw new ValidationError('Invalid expiration date', req)
-        }
+        const timeFormatted = moment(sanitizedExpirationDate, 'MM/YY', true)
+        if (!timeFormatted.isValid()) throw new ValidationError("Invalid time format", req)
 
-        const sanitizedCVC = validator.trim(cvc)
-        if (!validator.isNumeric(sanitizedCVC) && validator.isLength(sanitizedCVC, { min: 3, max: 4 })) {
-            throw new ValidationError('Invalid CVC number', req)
-        }
+        const currentDate = moment().startOf('month').local()
+        if (!timeFormatted.isAfter(currentDate)) throw new ValidationError("Expiration must be in the future", req);
 
         const encryptedPaymentInfo = CryptoJS.AES.encrypt(
             JSON.stringify({
                 cardNumber: sanitizedCardNumber,
                 expirationDate: sanitizedExpirationDate,
-                cvc: sanitizedCVC
             }), process.env.ENCRYPTION_SECRET
         ).toString()
 

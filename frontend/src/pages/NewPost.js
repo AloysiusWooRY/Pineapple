@@ -18,13 +18,14 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function NewPost() {
     const { user } = useAuthContext();
 
-    const [selectedElement, setSelectedElement] = useState('Discussion');
+    const [selectedElement, setSelectedElement] = useState('discussion');
 
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDateTime, setStartDateTime] = useState('');
+    const [endDateTime, setEndDateTime] = useState('');
     const [donation, setDonation] = useState('');
+    const [image, setImage] = useState([]);
 
     return (
         <Layout>
@@ -33,7 +34,7 @@ export default function NewPost() {
             </section>
 
             <div className="flex flex-col p-4 gap-2">
-                <Tabs tabs={['Discussion', 'Event', 'Donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                <Tabs title="Post Categories" tabs={['discussion', 'event', 'donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                     onClick={(e) => setSelectedElement(e.target.getAttribute('data-value'))} />
 
                 <div className="-mt-2">
@@ -47,20 +48,14 @@ export default function NewPost() {
                     value={message} onChange={(e) => setMessage(e.target.value)} />
 
                 {selectedElement === 'event' &&
-                    <div className="flex flex-row w-1/3 gap-2">
-                        <div className="grow">
-                            <InputDate title="Event Start Date" width='full' value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                        </div>
-                        <div className="grow">
-                            <InputDate title="Event End Date" width='full' value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                        </div>
-                    </div>}
+                    <InputDate title="Event Start" width='fit' value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} />
+                }
 
                 {selectedElement === 'donation' &&
                     <InputField title="Donation Goal ($)" placeholder="Enter Donation Goal" type="number" width='1/6' additionalProps={{ min: '1', step: '0.01' }}
                         value={donation} onChange={(e) => setDonation(e.target.value)} />}
 
-                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }} />
+                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setImage([...image, e.target.files[0]]) }} />
 
                 <div className="self-start">
                     <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />

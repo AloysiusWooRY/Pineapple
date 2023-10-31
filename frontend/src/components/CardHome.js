@@ -2,7 +2,7 @@
 import React from "react";
 
 // Components
-// ~
+import { textNerfer } from "./componentUtils";
 
 // Assets
 // ~
@@ -14,7 +14,9 @@ export default function CardHome(props) {
     const { image, title, organisation, category } = props;
 
     return (
-        <a className="w-full flex rounded outline-none gap-2 p-2 no-underline cursor-pointer hover:bg-background-minor">
+        <a
+            id={"card-home-" + textNerfer(title)}
+            className="w-full flex rounded outline-none gap-2 p-2 no-underline cursor-pointer hover:bg-background-minor">
             <img src={image} className="h-36 basis-28 shrink-0 rounded object-cover object-center" />
             <div className="w-[calc(100vh-8rem)] flex flex-col justify-center gap-1 flex-shrink">
                 <div className="w-full flex gap-1">

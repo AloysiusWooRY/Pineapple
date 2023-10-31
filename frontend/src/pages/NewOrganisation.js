@@ -14,10 +14,10 @@ import { PaperAirplaneIcon, NoSymbolIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/org-banner.png";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
+import { organisationApply } from "../apis/exportedAPIs";
+
 
 export default function NewOrganisation() {
-    const { user } = useAuthContext();
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -44,15 +44,15 @@ export default function NewOrganisation() {
         try {
             setIsLoading(true);
 
-            const response = await fetch(`/api/organisation/apply`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                },
-                body: formData,
+            const response = await organisationApply({
+                name: organisationName,
+                description: organisationDescription,
+                category: 'health',
+                banner: bannerImage[0],
+                poster: posterImage[0],
             });
             const json = await response.json();
-
+            
             if (response.ok) {
                 toast.success("Success!", { id: toastId });
                 navigate("/organisation", { replace: true });
@@ -93,7 +93,7 @@ export default function NewOrganisation() {
                 <div className="flex flex-row gap-2 items-center">
                     <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
                     <RectangleButton title="Cancel" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={handleCancel} />
-                    <label className="text-text-warn">
+                    <label id="error-new-organsation" className="text-text-warn">
                         {error ?? ''}
                     </label>
                 </div>

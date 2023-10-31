@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
 import { Divider } from "../components/Miscellaneous";
-import SteppedProgressBar from "../components/SteppedProgressBar";
+import {SteppedProgressBar} from "../components/CustomProgressBar";
 import CustomPasswordStrengthBar from "../components/CustomPasswordStrengthBar";
 
 // Assets
@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                         <form onSubmit={handleChangePassword}>
                             <InputField title="Password" placeholder="Enter Password" type="password"
                                 value={password} onChange={(e) => setPassword(e.target.value)} />
-                            <CustomPasswordStrengthBar password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
+                            <CustomPasswordStrengthBar title="Forgot Password Reset" password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
                             <InputField title="Confirm Password" placeholder="Confirm Password" type="password" width='full'
                                 value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />

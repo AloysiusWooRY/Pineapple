@@ -13,61 +13,61 @@ export default function IdleTimerComponent() {
 
     // Logout functions
     const handleLogout = () => {
-      logout();
+        logout();
     };
 
     // set states when user becomes idle
     const handleIdle = () => {
-      setShowModal(true); // Show modal only if not interacting with it
-      setRemainingTime(30); // Set 30 seconds as time remaining
+        setShowModal(true); // Show modal only if not interacting with it
+        setRemainingTime(30); // Set 30 seconds as time remaining
     };
 
     const handleStayLoggedIn = () => {
-      setShowModal(false);
+        setShowModal(false);
     };
 
     function millisToMinutesAndSeconds(millis) {
-      var minutes = Math.floor(millis / 60000);
-      var seconds = ((millis % 60000) / 1000).toFixed(0);
-      return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        var minutes = Math.floor(millis / 60000);
+        var seconds = ((millis % 60000) / 1000).toFixed(0);
+        return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
     // idleTime sets how long user idles before prompting that auto logout is imminent (time in minutes)
-    const { isIdle } = useIdle({ onIdle: handleIdle, idleTime: 60 }); 
+    const { isIdle } = useIdle({ onIdle: handleIdle, idleTime: 60 });
 
     useEffect(() => {
-      let interval;
+        let interval;
 
-      if (isIdle && showModal) {
-        interval = setInterval(() => {
-          setRemainingTime(
-            (prevRemainingTime) =>
-              prevRemainingTime > 0 ? prevRemainingTime - 1 : 0 //reduces the second by 1
-          );
-        }, 1000);
-      }
+        if (isIdle && showModal) {
+            interval = setInterval(() => {
+                setRemainingTime(
+                    (prevRemainingTime) =>
+                        prevRemainingTime > 0 ? prevRemainingTime - 1 : 0 //reduces the second by 1
+                );
+            }, 1000);
+        }
 
-      if (remainingTime === 0 && showModal) {
-        // alert("Time out!");
-        setShowModal(false);//close the modal
-        handleLogout()
-      }
+        if (remainingTime === 0 && showModal) {
+            // alert("Time out!");
+            setShowModal(false);//close the modal
+            handleLogout()
+        }
 
-      return () => {
-        clearInterval(interval);
-      };
+        return () => {
+            clearInterval(interval);
+        };
     }, [isIdle, remainingTime, showModal]);
 
     return (
-      <Popup
-        title="Are you still here?"
-        onSubmit={handleStayLoggedIn}
-        variableThatDeterminesIfPopupIsActive={showModal && isIdle}
-        setVariableThatDeterminesIfPopupIsActive={setShowModal}
-      >
-        <div className="text-text-primary text-m">
-        Time remaining: {millisToMinutesAndSeconds(remainingTime * 1000)}
-        </div>
-      </Popup>
+        <Popup
+            title="Are you still here?"
+            onSubmit={handleStayLoggedIn}
+            variableThatDeterminesIfPopupIsActive={showModal && isIdle}
+            setVariableThatDeterminesIfPopupIsActive={setShowModal}
+        >
+            <div className="text-text-primary text-m">
+                Time remaining: {millisToMinutesAndSeconds(remainingTime * 1000)}
+            </div>
+        </Popup>
     )
 }

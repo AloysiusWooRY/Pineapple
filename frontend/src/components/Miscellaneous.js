@@ -21,95 +21,107 @@ export function Divider(props) {
     );
 }
 
+export function OrganisationType(props) {
+    const { type } = props;
+
+    const org_map = {
+        'health': 'text-red-400',
+        'education': 'text-violet-400',
+        'environment': 'text-green-400',
+        'humanitarian': 'text-sky-400',
+    };
+
+    let type_to_lower = type.toLowerCase();
+    if (type_to_lower in org_map) {
+        return (
+            <div className={`flex items-center gap-1 text-xs ${org_map[type_to_lower]} capitalize org-${type_to_lower}`}>
+                <span className="rounded-full bg-background-minor px-2 py-[0.5px]">
+                    {type}
+                </span>
+            </div>
+        );
+    } else {
+        return (
+            <div className={`flex items-center gap-1 text-xs text-text-primary capitalize org-unknown`}>
+                <span className="rounded-full bg-background-minor px-2 py-[0.5px]">
+                    {type}
+                </span>
+            </div>
+        );
+    }
+}
+
 export function PostType(props) {
     const { type } = props;
 
-    switch (type.toLowerCase()) {
-        case 'discussion':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-post-discussion">
-                    Discussion
-                </div>
-            );
-        case 'event':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-post-event">
-                    Event
-                </div>
-            );
-        case 'donation':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-post-donation">
-                    Donation
-                </div>
-            );
-        default:
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-background-minor">
-                    {type}
-                </div>
-            );
+    const post_map = {
+        'discussion': 'bg-fuchsia-800',
+        'event': 'bg-amber-800',
+        'donation': 'bg-lime-800',
+    };
+
+    let type_to_lower = type.toLowerCase();
+    if (type_to_lower in post_map) {
+        return (
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${post_map[type_to_lower]} text-sm capitalize org-${type_to_lower}`}>
+                {type}
+            </div>
+        );
+    } else {
+        return (
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize org-unknown`}>
+                {type}
+            </div>
+        );
     }
 };
 
 export function UserType(props) {
     const { type } = props;
 
-    switch (type.toLowerCase()) {
-        case 'user':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-role-user">
-                    User
-                </div>
-            );
-        case 'administrator':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-role-administrator">
-                    Administrator
-                </div>
-            );
-        case 'moderator':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-role-moderator">
-                    Moderator
-                </div>
-            );
-        default:
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-background-minor">
-                    {type}
-                </div>
-            );
+    const user_map = {
+        'user': 'bg-[#252A34]',
+        'administrator': 'bg-[#FF2E63]',
+        'moderator': 'bg-[#176B87]',
+    };
+
+    let type_to_lower = type.toLowerCase();
+    if (type_to_lower in user_map) {
+        return (
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${user_map[type_to_lower]} text-sm capitalize org-${type_to_lower}`}>
+                {type}
+            </div>
+        );
+    } else {
+        return (
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize org-unknown`}>
+                {type}
+            </div>
+        );
     }
 };
 
 export function ApprovalType(props) {
     const { type } = props;
 
-    switch (type.toLowerCase()) {
-        case 'pending':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-button-blue">
-                    Pending
-                </div>
-            );
-        case 'approved':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-button-green">
-                    Approved
-                </div>
-            );
-        case 'rejected':
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-button-red">
-                    Rejected
-                </div>
-            );
-        default:
-            return (
-                <div className="w-fit h-fit px-2 py-0.5 rounded-full text-text-primary text-sm bg-background-minor">
-                    {type}
-                </div>
-            );
+    const approval_map = {
+        'pending': 'bg-cyan-600',
+        'approved': 'bg-green-700',
+        'rejected': 'bg-red-600',
+    };
+
+    let type_to_lower = type.toLowerCase();
+    if (type_to_lower in approval_map) {
+        return (
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${approval_map[type_to_lower]} text-sm capitalize org-${type_to_lower}`}>
+                {type}
+            </div>
+        );
+    } else {
+        return (
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize org-unknown`}>
+                {type}
+            </div>
+        );
     }
 };

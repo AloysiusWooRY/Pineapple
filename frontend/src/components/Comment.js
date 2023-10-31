@@ -32,7 +32,9 @@ export default function Comment(props) {
     }
 
     return (
-        <div className={isReply ? 'pl-8' : 'pl-0'} key={"comment-" + commentContent._id}>
+        <div
+            className={isReply ? 'pl-8' : 'pl-0'}
+            id={"comment-" + commentContent._id}>
             <div
                 className="flex flex-col gap-2 p-2 border-l-2 border-divider-color"
             >
@@ -49,7 +51,7 @@ export default function Comment(props) {
                 <p className="text-text-primary">
                     {commentContent.content}
                 </p>
-                {/* commentContent.userIsLiked is temp, figure how to get if liked*/}
+
                 <div className="flex mt-auto gap-2 text-text-primary items-center">
                     {commentContent.userIsLiked !== null ?
                         (commentContent.userIsLiked ? <ArrowUpCircleSolidIcon className="h-7" /> : <ArrowUpCircleOutlineIcon className="h-7" />)

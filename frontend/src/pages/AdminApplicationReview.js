@@ -20,7 +20,8 @@ import { useAuthContext } from "../hooks/useAuthContext";
 export default function AdminApplicationReview() {
     const { user } = useAuthContext();
 
-    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [sortBy, setSortBy] = useState('newest');
     const [searchField, setSearchField] = useState('');
 
     const [viewingApplicationMode, setViewingApplicationMode] = useState(false);
@@ -31,7 +32,6 @@ export default function AdminApplicationReview() {
         const tableData = [
             { date: '10-10-2023', organisationName: 'Organ Isation', approvalStatus: <ApprovalType type="pending" /> },
             { date: '12-10-2023', organisationName: 'WorseHelp', approvalStatus: <ApprovalType type="approved" /> },
-            { date: '14-10-2023', organisationName: 'Son of a Beach', approvalStatus: <ApprovalType type="rejected" /> }
         ];
 
         return tableData;
@@ -62,11 +62,11 @@ export default function AdminApplicationReview() {
                         <SearchField title="Search" bottomPadding={0} value={searchField} onChange={(e) => { setSearchField(e.target.value); }} />
                     </div>
                     <div className="w-1/5 my-2">
-                        <StandardDropdown title="Sort By" bottomPadding={0} options={['Newest', 'Status']} onChange={(e) => { console.log(e.target.value); }} />
+                        <StandardDropdown title="Sort By" bottomPadding={0} value={sortBy} options={['newest', 'status']} onChange={(e) => { setSortBy(e.target.value); }} />
                     </div>
                 </div>
 
-                <Tabs tabs={['All', 'Pending', 'Approved', 'Rejected']} heroIconsArr={[<NewspaperIcon />, <ClipboardIcon />, <CheckIcon />, <XMarkIcon />]}
+                <Tabs title="Application Status" tabs={['all', 'pending', 'approved']} heroIconsArr={[<NewspaperIcon />, <ClipboardIcon />, <CheckIcon />]}
                     onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
 
                 <Divider padding={0} />
@@ -88,11 +88,17 @@ export default function AdminApplicationReview() {
                 <div className="flex flex-col pb-2 space-y-2 items-start justify-between">
                     <div>
                         <span className="grow text-text-primary">Banner</span>
-                        <img src="https://wiki.teamfortress.com/w/images/2/2a/Main_Page_event_Scream_Fortress_2023.png" height="256"></img>
+                        <img
+                            id="image-banner"
+                            src="https://wiki.teamfortress.com/w/images/2/2a/Main_Page_event_Scream_Fortress_2023.png"
+                            height="256"></img>
                     </div>
                     <div>
                         <span className="grow text-text-primary">Poster</span>
-                        <img src="https://wiki.teamfortress.com/w/images/d/db/Buffed_blu_spy.jpg" height="256"></img>
+                        <img
+                            id="image-poster"
+                            src="https://wiki.teamfortress.com/w/images/d/db/Buffed_blu_spy.jpg"
+                            height="256"></img>
                     </div>
                 </div>
 

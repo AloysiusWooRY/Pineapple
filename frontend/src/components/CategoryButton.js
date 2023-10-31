@@ -10,6 +10,8 @@ import React from "react";
 // API
 // ~
 
+// THIS PAGE IS DEPRECATED
+
 export default function CategoryButton(props) {
     const { image, title, icon: IconComponent } = props;
 
