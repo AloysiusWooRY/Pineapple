@@ -19,7 +19,6 @@ import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as Arr
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { SmoothProgressBar } from "../components/CustomProgressBar";
 import { postIdPOST, postIdDEL, postIdPATCH, postIdLike } from "../apis/exportedAPIs";
 
 export default function Post() {

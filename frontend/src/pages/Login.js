@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
-import cookie from 'react-cookies';
 
 // Components
 import { InputField } from "../components/Inputs";

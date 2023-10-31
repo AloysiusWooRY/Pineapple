@@ -1,5 +1,6 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
 
 // Components
 import Layout from "../layouts/Layout";
@@ -21,7 +22,7 @@ export default function Home() {
 
     const [allPosts, setAllPosts] = useState(null);
 
-    const [categoryFilteredPosts, setCategoryFilteredPosts ] = useState(allPosts);
+    const [categoryFilteredPosts, setCategoryFilteredPosts] = useState(allPosts);
     const [sortBy, setSortBy] = useState('newest');
 
     useEffect(() => {
@@ -32,24 +33,29 @@ export default function Home() {
                 filter: '',
                 sortByPinned: false,
             });
-            const jsonResponse = await fetchedData.json();
 
-            console.log(jsonResponse);
-            setAllPosts(jsonResponse);
-          }
-          fetchData();
+            const jsonResponse = await fetchedData.json();
+            if (fetchedData.ok) {
+                console.log(jsonResponse);
+                setAllPosts(jsonResponse);
+            } else {
+                toast.error(jsonResponse.error);
+            }
+        }
+
+        fetchData();
     }, []);
 
     function handleCategoryPosts() {
         const filteredItems = allPosts.filter(item => {
             if (selectedCategory === "donation") {
-              return item.organisation.donation;
-            } 
+                return item.organisation.donation;
+            }
             else if (selectedCategory === "event") {
-              return item.organisation.event;
-            } 
+                return item.organisation.event;
+            }
             else if (selectedCategory === "discussion") {
-              return !item.organisation.donation && !item.organisation.event;
+                return !item.organisation.donation && !item.organisation.event;
             }
             return true;
         });
@@ -57,7 +63,7 @@ export default function Home() {
         // setCategoryFilteredPosts(filteredItems);
         console.log(filteredItems);
     }
-    
+
 
     return (
         <Layout>
@@ -80,13 +86,13 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-2 max-lg:grid-cols-1 p-2">
-                
-                    {allPosts ? 
+
+                    {allPosts ?
                         (allPosts.posts.map((item) => (
-                            <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title} 
-                            organisation={item.organisation.name} 
-                            category={item.organisation.category} />
-                            ))) : ""
+                            <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title}
+                                organisation={item.organisation.name}
+                                category={item.organisation.category} />
+                        ))) : ""
                     }
                 </div>
             </section>
