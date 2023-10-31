@@ -28,6 +28,16 @@ export const organisationAll = async ({category = null } = {}) => {
     });
 }
 
+export const organisationAllName = async () => {
+    const csrfToken = await getCSRF();
+    return await POSTRequest({
+        apiURL: '/api/organisation/all/name',
+        csrfToken,
+        requestBody: null,
+        templatedObject: null,
+    });
+}
+
 export const organisationCategories = async () => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
