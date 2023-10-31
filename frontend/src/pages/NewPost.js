@@ -23,7 +23,6 @@ export default function NewPost() {
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
     const [startDateTime, setStartDateTime] = useState('');
-    const [endDateTime, setEndDateTime] = useState('');
     const [donation, setDonation] = useState('');
     const [image, setImage] = useState([]);
 

@@ -1,6 +1,6 @@
 import { POSTRequest, PATCHRequest, PUTRequest, getCSRF } from "../skeletonAPIMethods";
 
-export const accountLogin = async ({email = null, password = null}) => {
+export const accountLogin = async ({email = null, password = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/login',
@@ -10,7 +10,7 @@ export const accountLogin = async ({email = null, password = null}) => {
     });
 }
 
-export const accountLoginOTP = async ({token = null}) => {
+export const accountLoginOTP = async ({token = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/login-otp',
@@ -20,7 +20,7 @@ export const accountLoginOTP = async ({token = null}) => {
     });
 }
 
-export const accountRegister = async ({name = null, email = null, password = null, token = null}) => {
+export const accountRegister = async ({name = null, email = null, password = null, token = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/register',
@@ -30,7 +30,7 @@ export const accountRegister = async ({name = null, email = null, password = nul
     });
 }
 
-export const accountVerifyOTP = async ({token = null}) => {
+export const accountVerifyOTP = async ({token = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/verify-otp',
@@ -40,7 +40,7 @@ export const accountVerifyOTP = async ({token = null}) => {
     });
 }
 
-export const accountUpdate = async ({name = null, email = null}) => {
+export const accountUpdate = async ({name = null, email = null} = {}) => {
     const csrfToken = await getCSRF();
     return await PATCHRequest({
         apiURL: '/api/account/update',
@@ -50,7 +50,7 @@ export const accountUpdate = async ({name = null, email = null}) => {
     });
 }
 
-export const accountUpdatePassword = async ({password = null}) => {
+export const accountUpdatePassword = async ({password = null} = {}) => {
     const csrfToken = await getCSRF();
     return await PATCHRequest({
         apiURL: '/api/account/update-password',
@@ -60,7 +60,7 @@ export const accountUpdatePassword = async ({password = null}) => {
     });
 }
 
-export const accountForgotPassword = async ({email = null}) => {
+export const accountForgotPassword = async ({email = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/forgot-password',
@@ -70,7 +70,7 @@ export const accountForgotPassword = async ({email = null}) => {
     });
 }
 
-export const accountValidateCode = async ({email = null, code = null}) => {
+export const accountValidateCode = async ({email = null, code = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/validate-code',
@@ -80,7 +80,7 @@ export const accountValidateCode = async ({email = null, code = null}) => {
     });
 }
 
-export const accountResetPassword = async ({email = null, password = null, code = null}) => {
+export const accountResetPassword = async ({email = null, password = null, code = null} = {}) => {
     const csrfToken = await getCSRF();
     return await POSTRequest({
         apiURL: '/api/account/reset-password',
@@ -95,11 +95,12 @@ export const accountPaymentInfoPOST = async () => {
     return await POSTRequest({
         apiURL: '/api/account/payment-info',
         csrfToken,
+        requestBody: null,
         templatedObject: null,
     });
 }
 
-export const accountPaymentInfoPUT = async ({cardNumber = null, expirationDate = null, cvc = null}) => {
+export const accountPaymentInfoPUT = async ({cardNumber = null, expirationDate = null, cvc = null} = {}) => {
     const csrfToken = await getCSRF();
     return await PUTRequest({
         apiURL: '/api/account/payment-info',
