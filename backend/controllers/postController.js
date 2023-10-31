@@ -46,11 +46,11 @@ const getAllPost = async (req, res) => {
 
         let query = {}
         if (organisation) {
-            const orgID = mongoose.Types.ObjectId(organisation)
+            const orgID = new mongoose.Types.ObjectId(organisation)
             const organisationObj = await Organisation.findOne({ _id: orgID, approved: true })
             if (!organisationObj) throw new DataNotFoundError('No such organisation', req)
 
-            query["organisation"] = mongoose.Types.ObjectId(orgID)
+            query["organisation"] = new mongoose.Types.ObjectId(orgID)
         }
         if (category === 'event' || category === 'donation') {
             query[category] = { $exists: true }
@@ -104,7 +104,7 @@ const createPost = async (req, res) => {
 
         if (!organisation) throw new MissingFieldError("Missing organisation", req)
         if (!mongoose.Types.ObjectId.isValid(organisation)) throw new ValidationError('Invalid organisation id', req)
-        const existingOrganisation = await Organisation.findById(organisation)
+        const existingOrganisation = await Organisation.findById(organisation, { approved: true })
         if (!existingOrganisation) throw new DataNotFoundError(`No such organisation`, req)
         newOrg["organisation"] = organisation
 
