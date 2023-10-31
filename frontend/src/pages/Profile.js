@@ -1,7 +1,5 @@
 // React / Packages
 import React, { useState } from "react";
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 
 // Components
 import Layout from "../layouts/Layout";
@@ -30,6 +28,7 @@ export default function Profile() {
     const [newPassword, setNewPassword] = useState('');
     const [passwordScore, setPasswordScore] = useState(0);
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [changePasswordError, setChangePasswordError] = useState(null);
 
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [isPaymentActive, setIsPaymentActive] = useState(false);
@@ -87,10 +86,10 @@ export default function Profile() {
                             return newIsPaymentActive;
                         });
                     }} />
-                <InputField title="Payment Info" placeholder="Enter Credit Card Information" type="tel" width="1/3"
+                <InputField title="Credit Card Number" placeholder="Enter Credit Card Number" type="tel" width="1/3"
                     active={isPaymentActive} value={paymentInfo} onChange={(e) => setPaymentInfo(e.target.value)} />
 
-                <InputMonthYear title="Expiry" width="1/3" setFormattedValue={setExpiryMonthYear} active={isPaymentActive}/>
+                <InputMonthYear title="Expiry" width="1/3" setFormattedValue={setExpiryMonthYear} active={isPaymentActive} />
             </div>
 
             <Popup title="Change Password"
@@ -104,10 +103,14 @@ export default function Profile() {
                 <InputField title="New Password" placeholder="Enter New Password" type="password" width='full'
                     value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
 
-                <CustomPasswordStrengthBar title="Update Password" password={newPassword} passwordScore={passwordScore} setPasswordScore={setPasswordScore}/>
+                <CustomPasswordStrengthBar title="Update Password" password={newPassword} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
                 <InputField title="Confirm New Password" placeholder="Confirm New Password" type="password" width='full'
                     value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
+
+                <label id="error-change-password" className="text-text-warn">
+                    {changePasswordError ?? ''}
+                </label>
             </Popup>
         </Layout>
     );

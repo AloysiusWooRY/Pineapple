@@ -88,11 +88,17 @@ export default function AdminApplicationReview() {
                 <div className="flex flex-col pb-2 space-y-2 items-start justify-between">
                     <div>
                         <span className="grow text-text-primary">Banner</span>
-                        <img src="https://wiki.teamfortress.com/w/images/2/2a/Main_Page_event_Scream_Fortress_2023.png" height="256"></img>
+                        <img
+                            id="image-banner"
+                            src="https://wiki.teamfortress.com/w/images/2/2a/Main_Page_event_Scream_Fortress_2023.png"
+                            height="256"></img>
                     </div>
                     <div>
                         <span className="grow text-text-primary">Poster</span>
-                        <img src="https://wiki.teamfortress.com/w/images/d/db/Buffed_blu_spy.jpg" height="256"></img>
+                        <img
+                            id="image-poster"
+                            src="https://wiki.teamfortress.com/w/images/d/db/Buffed_blu_spy.jpg"
+                            height="256"></img>
                     </div>
                 </div>
 

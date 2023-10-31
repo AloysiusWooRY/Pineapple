@@ -11,6 +11,7 @@ import Popup from "../components/Popup";
 import { InputField, InputTextBox, InputDate, InputFile } from '../components/Inputs';
 import { ToggleButton, RoundedButton, StandardDropdown, RectangleButton } from '../components/Buttons';
 import { Divider, PostType } from '../components/Miscellaneous';
+import { SmoothProgressBar } from "../components/CustomProgressBar";
 
 // Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
@@ -18,7 +19,6 @@ import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as Arr
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { SmoothProgressBar } from "../components/CustomProgressBar";
 
 export default function Post() {
     const { user } = useAuthContext();
@@ -28,11 +28,10 @@ export default function Post() {
     const [organisationCreateDate, setOrganisationCreateDate] = useState('July 22, 1999');
     const [organisationPosts, setOrganisationPosts] = useState(30);
 
-    const [postType, setPostType] = useState('donation');
+    const [postType, setPostType] = useState('event');
     const [sortBy, setSortBy] = useState('newest');
 
-    const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:14:26.868Z');
-    const [eventEndDateTime, setEventEndDateTime] = useState('2023-10-28T08:15:00.000Z');
+    const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:15:00.000Z');
     const [poster, setPoster] = useState('Wi Tu');
     const [postTime, setPostTime] = useState('6 days');
     const [postTitle, setPostTitle] = useState('On the beach at night');
@@ -53,6 +52,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
     const [displayDonationPopup, setDisplayDonationPopup] = useState(false);
     const [donationAmount, setDonationAmount] = useState('');
     const [CVC, setCVC] = useState('');
+    const [donationError, setDonationError] = useState(null);
 
     const [editMode, setEditMode] = useState(false);
     const [comment, setComment] = useState('');
@@ -128,21 +128,16 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     <div className="py-2"></div>
 
                     {postType === 'event' ?
-                        <div className="flex flex-row space-x-2 self-start">
+                        <>
                             {!editMode ?
-                                <>
-                                    <InputField title="Event Start" placeholder="Event Start" active={false}
-                                        value={FormatDateTime(eventStartDateTime)} width='full' />
-                                    <InputField title="Event End" placeholder="Event End" active={false}
-                                        value={FormatDateTime(eventEndDateTime)} width='full' />
-                                </>
+                                <InputField title="Event Start" placeholder="Event Start" active={false}
+                                    value={FormatDateTime(eventStartDateTime)} width='fit' />
                                 :
-                                <>
-                                    <InputDate title="Event Start" width='full' value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
-                                    <InputDate title="Event End" width='full' value={eventEndDateTime} onChange={(e) => setEventEndDateTime(e.target.value)} />
-                                </>
+                                <InputDate title="Event Start" width='fit' value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
                             }
-                        </div>
+
+                            <Divider padding={2} />
+                        </>
                         :
                         <></>
                     }
@@ -165,12 +160,12 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                                         heroIcon={<CreditCardIcon />} colour="bg-button-green" />
                                 </div>
                             </div>
+
+                            <Divider padding={2} />
                         </>
                         :
                         <></>
                     }
-
-                    <Divider padding={2} />
 
                     {!editMode ?
                         <div className="text-text-primary whitespace-pre-wrap">
@@ -214,14 +209,14 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     </div>
                 </div>
 
-                
-                    <SideBarOrganisationInfo
-                        organisationName={organisationName}
-                        organisationDescription={organisationDescription}
-                        createDate={organisationCreateDate}
-                        numberPosts={organisationPosts}
-                    />
-                
+
+                <SideBarOrganisationInfo
+                    organisationName={organisationName}
+                    organisationDescription={organisationDescription}
+                    createDate={organisationCreateDate}
+                    numberPosts={organisationPosts}
+                />
+
             </div>
 
             <Popup title="Make Donation"
@@ -240,6 +235,10 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
 
                 <InputField title="Donation Amount ($)" placeholder="Enter Donation Amount" type="number" width='full' additionalProps={{ min: '1', step: '0.01' }}
                     value={donationAmount} onChange={(e) => setDonationAmount(e.target.value)} />
+
+                <label id="error-post-donate" className="text-text-warn">
+                    {donationError ?? ''}
+                </label>
             </Popup>
         </Layout>
     );

@@ -33,8 +33,8 @@ export function InputField(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
-                <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
+                <label htmlFor={"input-" + textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label id={"error-input-" + textNerfer(title)} className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <input
                 id={"input-" + textNerfer(title)}
@@ -59,8 +59,8 @@ export function InputTextBox(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
-                <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
+                <label htmlFor={"input-" + textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label id={"error-input-" + textNerfer(title)} className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <textarea
                 id={"input-" + textNerfer(title)}
@@ -84,8 +84,8 @@ export function InputFile(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
-                <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
+                <label htmlFor={"input-" + textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label id={"error-input-" + textNerfer(title)} className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <input
                 id={"input-" + textNerfer(title)}
@@ -110,8 +110,8 @@ export function InputDate(props) {
     return (
         <div className={`flex flex-col pb-${bottomPadding}`}>
             <div className="flex flex-wrap">
-                <label htmlFor={textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
-                <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
+                <label htmlFor={"input-" + textNerfer(title)} className="shrink-0 text-text-primary pb-2">{title}</label>
+                <label id={"error-input-" + textNerfer(title)} className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
             </div>
             <input
                 id={"input-" + textNerfer(title)}
@@ -185,10 +185,10 @@ export function InputMonthYear(props) {
             <div className={`flex flex-col w-1/2`}>
                 <div className="flex flex-wrap py-2">
                     <label htmlFor={"input-" + textNerfer(title) + "-year"} className="shrink-0 text-text-primary">{title + " Year"}</label>
-                    <label className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
+                    <label id={"error-input-" + textNerfer(title)} className="text-text-warn ml-auto">{errorMsg ?? ''}</label>
                 </div>
                 <input
-                    id={textNerfer(title)}
+                    id={"input-" + textNerfer(title) + "-year"}
                     type="number"
                     placeholder="YY"
                     min="23"

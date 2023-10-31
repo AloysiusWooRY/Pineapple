@@ -104,7 +104,7 @@ export default function Login() {
             className="flex items-center justify-between min-h-screen bg-background-minor"
         >
             <section className="flex flex-col items-center justify-center w-full p-5">
-                    <img src={Logo} alt="logo" className="h-44" />
+                <img src={Logo} alt="logo" className="h-44" />
                 <form
                     className="flex flex-col w-2/3 max-w-md p-10 mx-auto mt-5 text-text-primary"
                     onSubmit={handleFormSubmit}
@@ -124,7 +124,9 @@ export default function Login() {
                     <InputField title="Confirm Password" errorMsg={confirmPasswordErr} placeholder="Confirm Password" type="password" width='full' additionalProps={{ required: 'required' }}
                         value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                    <div className="flex justify-center pt-2 pb-4">
+                    <div
+                        id="captcha-register"
+                        className="flex justify-center pt-2 pb-4">
                         <ReCAPTCHA
                             sitekey="6LeQDqooAAAAAHzIRnk97IoeBTb_JBFtY07NtW9b"
                             onChange={(token) => setRecaptchaToken(token)}
@@ -132,7 +134,7 @@ export default function Login() {
                     </div>
 
                     <div className="flex flex-row flex-wrap justify-between">
-                        <label className="self-center text-text-warn text-right">
+                        <label id="error-register" className="self-center text-text-warn text-right">
                             {error ?? ''}
                         </label>
                         <div>

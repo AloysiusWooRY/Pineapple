@@ -25,6 +25,7 @@ export default function NewPost() {
     const [startDateTime, setStartDateTime] = useState('');
     const [endDateTime, setEndDateTime] = useState('');
     const [donation, setDonation] = useState('');
+    const [image, setImage] = useState([]);
 
     return (
         <Layout>
@@ -47,20 +48,14 @@ export default function NewPost() {
                     value={message} onChange={(e) => setMessage(e.target.value)} />
 
                 {selectedElement === 'event' &&
-                    <div className="flex flex-row w-1/3 gap-2">
-                        <div className="grow">
-                            <InputDate title="Event Start" width='full' value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} />
-                        </div>
-                        <div className="grow">
-                            <InputDate title="Event End" width='full' value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} />
-                        </div>
-                    </div>}
+                    <InputDate title="Event Start" width='fit' value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} />
+                }
 
                 {selectedElement === 'donation' &&
                     <InputField title="Donation Goal ($)" placeholder="Enter Donation Goal" type="number" width='1/6' additionalProps={{ min: '1', step: '0.01' }}
                         value={donation} onChange={(e) => setDonation(e.target.value)} />}
 
-                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }} />
+                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setImage([...image, e.target.files[0]]) }} />
 
                 <div className="self-start">
                     <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />

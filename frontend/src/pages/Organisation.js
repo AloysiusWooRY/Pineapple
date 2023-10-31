@@ -114,7 +114,7 @@ export default function Organisation() {
                 <InputFile title="Upload Poster" width='full' accept=".png,.jpeg,.jpg"
                     onChange={(e) => setEditOrganisation({ ...editOrganisation, posterImage: e.target.files[0] })} />
 
-                <label className="text-text-warn">
+                <label id="error-edit-organisation" className="text-text-warn">
                     {editOrganisation.error ?? ''}
                 </label>
             </Popup>
