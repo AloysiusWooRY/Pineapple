@@ -375,8 +375,10 @@ const deletePost = async (req, res) => {
         existingOrganisation.posts = totalPost
         await existingOrganisation.save()
 
-        const fileDir = `public/${imagePath.split("/").slice(0, 5).join("/")}`
-        fs.rmSync(fileDir, { recursive: true })
+        if (imagePath) {
+            const fileDir = `public/${imagePath.split("/").slice(0, 5).join("/")}`
+            fs.rmSync(fileDir, { recursive: true })
+        }
 
         logger.http(`Post image successfully deleted: ${_id}`, { actor: "USER", req })
         res.status(200).send()
