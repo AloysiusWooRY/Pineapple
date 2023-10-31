@@ -60,7 +60,7 @@ const getAllPost = async (req, res) => {
         if (sortByPinned) sort["isPinned"] = -1
         if (filter === "top") sort["likes"] = -1
 
-        const posts = await Post.find(query).sort(sort)
+        const posts = await Post.find(query).sort(sort).populate("organisation", "-requestedBy")
 
         const postIds = posts.map(post => post._id)
         const userLiked = await Like.find({ post: { $in: postIds }, account: userId }).select("post value")
@@ -490,7 +490,7 @@ const dislikePost = async (req, res) => {
 }
 
 const pinPost = async (req, res) => {
-    const { _id: userId, isAdmin, moderation } = req.account
+    const { isAdmin, moderation } = req.account
     const { id: postId } = req.params
 
     try {
@@ -524,7 +524,7 @@ const pinPost = async (req, res) => {
 }
 
 const unpinPost = async (req, res) => {
-    const { _id: userId, isAdmin, moderation } = req.account
+    const { isAdmin, moderation } = req.account
     const { id: postId } = req.params
 
     try {
