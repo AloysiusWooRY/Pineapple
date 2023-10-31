@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                         <form onSubmit={handleChangePassword}>
                             <InputField title="Password" placeholder="Enter Password" type="password"
                                 value={password} onChange={(e) => setPassword(e.target.value)} />
-                            <CustomPasswordStrengthBar password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
+                            <CustomPasswordStrengthBar title="Forgot Password Reset" password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
                             <InputField title="Confirm Password" placeholder="Confirm Password" type="password" width='full'
                                 value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />

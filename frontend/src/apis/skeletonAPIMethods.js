@@ -27,7 +27,7 @@ export const POSTRequest = async ({ apiURL = '', csrfToken = null, requestBody =
     if (templatedObject) {
         apiURL = templateLiterally(apiURL, templatedObject);
     }
-    
+
     const [preppedHeaders, preppedBody] = prepareRequest(csrfToken, requestBody);
 
     // Only non-null bodies are added
@@ -95,7 +95,7 @@ export const DELRequest = async ({ apiURL = '', csrfToken = null, requestBody = 
 
     // Only non-null bodies are added
     await fetch(apiURL, {
-        method: "DEL",
+        method: "DELETE",
         headers: preppedHeaders,
         ...(requestBody ? ({ body: preppedBody }) : {}),
     })
@@ -151,9 +151,9 @@ export const getCSRF = async () => {
     const csrf = cookie.load('csrf')
     if (!csrf) {
         await fetch('/api/get-csrf-token')
-        .catch(error => {
-            console.error('Failed to fetch CSRF token', error);
-        });
+            .catch(error => {
+                console.error('Failed to fetch CSRF token', error);
+            });
         return cookie.load('csrf')
     }
     return csrf

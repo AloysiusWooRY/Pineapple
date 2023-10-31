@@ -29,6 +29,7 @@ export default function Post() {
     const [organisationPosts, setOrganisationPosts] = useState(30);
 
     const [postType, setPostType] = useState('donation');
+    const [sortBy, setSortBy] = useState('newest');
 
     const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:14:26.868Z');
     const [eventEndDateTime, setEventEndDateTime] = useState('2023-10-28T08:15:00.000Z');
@@ -62,26 +63,31 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
         for (let i = 0; i < 10; i++) {
             if (i % 2 === 0) {
                 comments.push(
-                    <Comment isReply={false} commentContent={{
-                        '_id': i,
-                        'owner': { 'name': 'Ho Li' },
-                        'createdAt': '01-01-1970',
-                        'content': 'Get em\', boys!',
-                        'likeValue': i * 2,
-                        'userIsLiked': true,
-                    }} />
+                    <div key={"key-comment-" + i}>
+                        <Comment isReply={false} commentContent={{
+                            '_id': i,
+                            'owner': { 'name': 'Ho Li' },
+                            'createdAt': '01-01-1970',
+                            'content': 'Get em\', boys!',
+                            'likeValue': i * 2,
+                            'userIsLiked': true,
+                        }} />
+                    </div>
+
                 );
             }
             else {
                 comments.push(
-                    <Comment isReply={true} commentContent={{
-                        '_id': i,
-                        'owner': { 'name': 'Bang Ding' },
-                        'createdAt': '01-01-1980',
-                        'content': 'Seeing Triple?',
-                        'likeValue': i * 2,
-                        'userIsLiked': false,
-                    }} />
+                    <div key={"key-comment-" + i}>
+                        <Comment isReply={true} commentContent={{
+                            '_id': i,
+                            'owner': { 'name': 'Bang Ding' },
+                            'createdAt': '01-01-1980',
+                            'content': 'Seeing Triple?',
+                            'likeValue': i * 2,
+                            'userIsLiked': false,
+                        }} />
+                    </div>
                 );
             }
         }
@@ -147,15 +153,17 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                                 Donation Goal
                             </div>
                             <div className="flex flex-row items-center space-x-4 text-text-primary">
-                                <div className="flex flex-row items-center gap-x-4 w-1/2">
+                                <div className="flex flex-row items-center gap-x-4 grow">
                                     ${donationCurrent}
                                     <div className="grow">
                                         <SmoothProgressBar title='Donation' floorValue={donationCurrent} ceilingValue={donationGoal} />
                                     </div>
                                     ${donationGoal}
                                 </div>
-                                <RectangleButton title="Donate" onClick={() => setDisplayDonationPopup(!displayDonationPopup)}
-                                    heroIcon={<CreditCardIcon />} colour="bg-button-green" />
+                                <div className="grow-0">
+                                    <RectangleButton title="Donate" onClick={() => setDisplayDonationPopup(!displayDonationPopup)}
+                                        heroIcon={<CreditCardIcon />} colour="bg-button-green" />
+                                </div>
                             </div>
                         </>
                         :
@@ -165,7 +173,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     <Divider padding={2} />
 
                     {!editMode ?
-                        <div className="text-text-primary whitespace-pre">
+                        <div className="text-text-primary whitespace-pre-wrap">
                             {postContent}
                         </div>
                         :
@@ -198,7 +206,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     <Divider padding={2} />
 
                     <div className="w-1/5">
-                        <StandardDropdown title="Sort By" options={['Newest', 'Top']} onChange={(e) => { console.log(e.target.value); }} />
+                        <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => setSortBy(e.target.value)} />
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -206,14 +214,14 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     </div>
                 </div>
 
-                <div className="flex-none">
+                
                     <SideBarOrganisationInfo
                         organisationName={organisationName}
                         organisationDescription={organisationDescription}
                         createDate={organisationCreateDate}
                         numberPosts={organisationPosts}
                     />
-                </div>
+                
             </div>
 
             <Popup title="Make Donation"
@@ -224,12 +232,13 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                 <InputField title="Card Number" type="text" width='full' active={false}
                     value={'12781298367918236'} />
 
-                {/* todo expiry month and year */}
+                <InputField title="Card Expiry" type="text" width='full' active={false}
+                    value={'12/24'} />
 
                 <InputField title="CVC" placeholder="Enter CVC" type="number" width='full' additionalProps={{ min: '1', max: '999', step: '1' }}
                     value={CVC} onChange={(e) => setCVC(e.target.value)} />
 
-                <InputField title="Donation Amount" placeholder="Enter Donation Amount" type="number" width='full' additionalProps={{ min: '1', step: '0.01' }}
+                <InputField title="Donation Amount ($)" placeholder="Enter Donation Amount" type="number" width='full' additionalProps={{ min: '1', step: '0.01' }}
                     value={donationAmount} onChange={(e) => setDonationAmount(e.target.value)} />
             </Popup>
         </Layout>

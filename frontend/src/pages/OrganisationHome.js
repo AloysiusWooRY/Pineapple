@@ -25,7 +25,7 @@ export default function OrganisationHome() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [categories, setCategories] = useState(["all", "health", "education", "environment", "humanitarian"]);
 
-    const [allOrganistions, setAllOrganistions] = useState(null)
+    const [allOrganisations, setAllOrganisations] = useState(null);
 
     const handleClick = (e) => {
         navigate("../organisation/new");
@@ -33,9 +33,9 @@ export default function OrganisationHome() {
 
     useEffect(() => {
         async function fetchData() {
-            const allOrgsJson = await organisationAll({category: 'health'});
+            const allOrgsJson = await organisationAll({ category: 'health' });
             const allOrganisations = await allOrgsJson.json()
-            setAllOrganistions(allOrganisations)
+            setAllOrganisations(allOrganisations)
         }
         fetchData();
     }, []);
@@ -45,17 +45,21 @@ export default function OrganisationHome() {
             <section className="grid">
                 <Banner image={BannerImage} title="Organisations" button={{ icon: <PlusCircleIcon />, text: "Apply for New Organisation", onClick: handleClick }} />
 
-                <Tabs tabs={categories} heroIconsArr={[<NewspaperIcon />, <HeartIcon />, <BookOpenIcon />, <GlobeAsiaAustraliaIcon />, <HandRaisedIcon />]}
+                <Tabs title="Organisation Categories" tabs={categories} heroIconsArr={[<NewspaperIcon />, <HeartIcon />, <BookOpenIcon />, <GlobeAsiaAustraliaIcon />, <HandRaisedIcon />]}
                     onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
 
                 <Divider padding={0} />
 
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
-                    {allOrganistions ? 
-                        (allOrganistions.organisations.map(item => (
-                            <CardHomeOrg image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
-                        ))) : <CardHomeOrg image={Sample1} name="Nut Allergy Foundation" posts="69" category="health" />
-                    }
+                    {allOrganisations && (allOrganisations ?
+                        (allOrganisations.organisations.map(item => (
+                            <div key={"key-organisation-" + item._id}>
+                                <CardHomeOrg image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
+                            </div>
+                        )))
+                        :
+                        <h1 className="grow text-text-primary py-4 text-6xl text-center">🍍No Organisations Here :(🍍</h1>
+                    )}
                 </div>
             </section>
         </Layout >

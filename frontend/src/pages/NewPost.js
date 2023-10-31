@@ -33,7 +33,7 @@ export default function NewPost() {
             </section>
 
             <div className="flex flex-col p-4 gap-2">
-                <Tabs tabs={['discussion', 'event', 'donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                <Tabs title="Post Categories" tabs={['discussion', 'event', 'donation']} heroIconsArr={[<ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                     onClick={(e) => setSelectedElement(e.target.getAttribute('data-value'))} />
 
                 <div className="-mt-2">

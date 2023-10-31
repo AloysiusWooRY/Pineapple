@@ -22,6 +22,7 @@ export default function Organisation() {
     const { user } = useAuthContext();
 
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [sortBy, setSortBy] = useState('newest');
 
     const [organisation, setOrganisation] = useState({
         name: 'Mental Health Hoax',
@@ -44,10 +45,12 @@ export default function Organisation() {
 
         for (let i = 0; i < 10; i++) {
             posts.push(
-                <DiscussionOverview
-                    key={"post-" + i}
-                    title={"What if we could print a brain?"} discussionType={"discussion"}
-                    votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
+                <div key={"key-post-" + i}>
+                    <DiscussionOverview
+                        id={"post-" + i}
+                        title={"What if we could print a brain?"} discussionType={"discussion"}
+                        votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
+                </div>
             );
         }
 
@@ -69,12 +72,12 @@ export default function Organisation() {
 
                     <div className="flex flex-row justify-between mt-2">
                         <div className="flex basis-4/5">
-                            <Tabs tabs={['all', 'discussion', 'event', 'donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
+                            <Tabs title="Post Types" tabs={['all', 'discussion', 'event', 'donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
                                 onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
                         </div>
 
                         <div className="basis-1/5">
-                            <StandardDropdown title="Sort By" options={['Newest', 'Top']} onChange={(e) => { console.log(e.target.value); }} />
+                            <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => setSortBy(e.target.value)} />
                         </div>
                     </div>
 

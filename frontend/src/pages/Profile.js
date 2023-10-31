@@ -1,11 +1,13 @@
 // React / Packages
 import React, { useState } from "react";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 // Components
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import Popup from '../components/Popup';
-import { InputField, InputHeader } from '../components/Inputs';
+import { InputField, InputHeader, InputMonthYear } from '../components/Inputs';
 import { RectangleButton } from '../components/Buttons';
 import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
 
@@ -22,6 +24,7 @@ export default function Profile() {
     const [name, setName] = useState('Fish Ee');
     const [email, setEmail] = useState('fish@gmail.com');
     const [paymentInfo, setPaymentInfo] = useState('1111 2222 3333 4444');
+    const [expiryMonthYear, setExpiryMonthYear] = useState('');
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -38,6 +41,8 @@ export default function Profile() {
 
     async function handleEditPayment() {
         console.log("handle pay!");
+
+        console.log(expiryMonthYear);
     }
 
     async function handlePasswordChange(e) {
@@ -82,8 +87,10 @@ export default function Profile() {
                             return newIsPaymentActive;
                         });
                     }} />
-                <InputField title="Payment Info" placeholder="Enter Credit Card Information" type="tel" width="2/3"
+                <InputField title="Payment Info" placeholder="Enter Credit Card Information" type="tel" width="1/3"
                     active={isPaymentActive} value={paymentInfo} onChange={(e) => setPaymentInfo(e.target.value)} />
+
+                <InputMonthYear title="Expiry" width="1/3" setFormattedValue={setExpiryMonthYear} active={isPaymentActive}/>
             </div>
 
             <Popup title="Change Password"
@@ -97,7 +104,7 @@ export default function Profile() {
                 <InputField title="New Password" placeholder="Enter New Password" type="password" width='full'
                     value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
 
-                <CustomPasswordStrengthBar password={newPassword} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
+                <CustomPasswordStrengthBar title="Update Password" password={newPassword} passwordScore={passwordScore} setPasswordScore={setPasswordScore}/>
 
                 <InputField title="Confirm New Password" placeholder="Confirm New Password" type="password" width='full'
                     value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />

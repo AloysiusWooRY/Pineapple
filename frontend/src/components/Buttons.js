@@ -12,15 +12,18 @@ import { QuestionMarkCircleIcon, PencilIcon, PaperAirplaneIcon, ChevronDownIcon 
 
 
 export function ToggleButton(props) {
-    const { active, onClick } = props;
+    const { title, active, onClick } = props;
 
     return (
-        <div>
-            <button type="button" className={`flex w-fit items-center text-text-primary px-4 py-2 rounded ${!active ? 'bg-button-neutral' : 'bg-button-green'}`}
+        <>
+            <button
+                type="button"
+                id={"toggle-button-" + textNerfer(title)}
+                className={`flex w-fit items-center text-text-primary px-4 py-2 rounded ${!active ? 'bg-button-neutral' : 'bg-button-green'}`}
                 onClick={onClick}>
                 {!active ? <><PencilIcon className="h-4 w-4 mr-2" />Edit</> : <><PaperAirplaneIcon className="h-4 w-4 mr-2" />Submit</>}
             </button>
-        </div>
+        </>
     );
 };
 
@@ -28,15 +31,17 @@ export function RectangleButton(props) {
     const { title, forForm = null, heroIcon = <QuestionMarkCircleIcon />, colour = 'bg-button-neutral', onClick = null } = props;
 
     return (
-        <div className="align-middle">
-            <button type={!forForm ? "button" : "submit"} className={`flex w-full justify-center items-center text-text-primary px-4 py-2 rounded ${colour}`}
+        <>
+            <button
+                type={!forForm ? "button" : "submit"}
                 id={"button-" + textNerfer(title)}
+                className={`flex w-full justify-center items-center text-text-primary px-4 py-2 rounded ${colour}`}
                 value={textNerfer(title)}
                 onClick={onClick}>
                 {heroIcon && React.cloneElement(heroIcon, { className: "h-4 w-4 mr-2" })}
                 {title}
             </button>
-        </div>
+        </>
     );
 };
 
@@ -44,26 +49,32 @@ export function RoundedButton(props) {
     const { title, colour = 'bg-button-white', onClick } = props;
 
     return (
-        <div>
-            <button className={`w-full px-2 py-1 rounded-full ${colour} border border-transparent hover:border-divider-color font-bold`}
+        <>
+            <button
+                type="button"
+                id={"button-" + textNerfer(title)}
+                className={`w-full px-2 py-1 rounded-full ${colour} border border-transparent hover:border-divider-color font-bold`}
                 value={textNerfer(title)}
                 onClick={onClick}>
                 {title}
             </button>
-        </div>
+        </>
     );
 }
 
 export function StandardDropdown(props) {
-    const { title, titleLocation = 'side', width = 'full', bottomPadding = 4, options = ['Uninitialised!'], selected, onChange } = props;
+    const { title, titleLocation = 'side', width = 'full', bottomPadding = 4, options = ['Uninitialised!'], value, onChange } = props;
 
     function IterateOptions() {
         let formattedOptions = [];
+        const nerfedTitle = textNerfer(title);
 
         for (let i = 0; i < options.length; i++) {
             formattedOptions.push(
-                <option className="text-text-primary capitalize font-sans bg-input-background-neutral"
-                    key={textNerfer(options[i])}
+                <option
+                    className="text-text-primary capitalize font-sans bg-input-background-neutral"
+                    id={"dropdown-" + nerfedTitle + "-option-" + textNerfer(options[i])}
+                    key={"key-dropdown-" + nerfedTitle + "-option-" + textNerfer(options[i])}
                     value={options[i]}
                 >{options[i]}</option>
             );
@@ -80,8 +91,9 @@ export function StandardDropdown(props) {
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
-                            <select id={textNerfer(title)}
-                                value={selected}
+                            <select
+                                id={"dropdown-" + textNerfer(title)}
+                                value={value}
                                 onChange={onChange}
                                 className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
@@ -100,8 +112,9 @@ export function StandardDropdown(props) {
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
-                            <select id={textNerfer(title)}
-                                value={selected}
+                            <select
+                                id={textNerfer(title)}
+                                value={value}
                                 onChange={onChange}
                                 className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
@@ -118,8 +131,9 @@ export function StandardDropdown(props) {
                 <div className={`flex flex-row items-center pb-${bottomPadding}`}>
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
-                            <select id={textNerfer(title)}
-                                value={selected}
+                            <select
+                                id={textNerfer(title)}
+                                value={value}
                                 onChange={onChange}
                                 className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
@@ -135,18 +149,20 @@ export function StandardDropdown(props) {
 };
 
 export function Tabs(props) {
-    const { tabs = ['Uninitialised!'], heroIconsArr = [<QuestionMarkCircleIcon />], onClick } = props;
+    const { title, tabs = ['Uninitialised!'], heroIconsArr = [<QuestionMarkCircleIcon />], onClick } = props;
 
     const [activeTab, setActiveTab] = useState(0);
 
     function IterateTabs() {
         let formattedTabs = [];
+        const nerfedTitle = textNerfer(title);
 
         for (let i = 0; i < tabs.length; i++) {
             formattedTabs.push(
                 <li
                     className="mr-2"
-                    key={"tab-" + textNerfer(tabs[i])}
+                    id={"tab-" + nerfedTitle + "-option-" + textNerfer(tabs[i])}
+                    key={"key-tab-" + nerfedTitle + "-option-" + textNerfer(tabs[i])}
                 >
                     <a href="#" data-value={tabs[i]} onClick={(e) => { setActiveTab(i); onClick(e); }}
                         className={`inline-flex items-center justify-center py-2 px-4 group gap-2 text-lg border-b-2 capitalize
@@ -163,7 +179,9 @@ export function Tabs(props) {
     }
 
     return (
-        <ul className="flex flex-wrap text-center">
+        <ul 
+        className="flex flex-wrap text-center"
+        id={"tab-" + textNerfer(title)}>
             <IterateTabs />
         </ul>
     );

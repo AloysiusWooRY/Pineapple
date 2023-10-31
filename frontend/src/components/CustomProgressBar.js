@@ -18,11 +18,11 @@ export function SteppedProgressBar(props) {
     return (
         <div>
             <ProgressBar
-                id={textNerfer(title)}
+                id={"progress-bar-stepped-" + textNerfer(title)}
                 filledBackground="#fbbf24"
                 percent={Math.round((currentPhase - 1) / (steps - 1) * 100)}>
                 {Array.from({ length: steps }).map((_, i) => (
-                    <Step key={textNerfer(title) + "-" + i} transition="scale">
+                    <Step key={"key-" + textNerfer(title) + "-" + i} transition="scale">
                         {({ accomplished }) => (
                             <div
                                 className={`indexedStep ${accomplished ? 'accomplished' : null}
@@ -46,7 +46,7 @@ export function SmoothProgressBar(props) {
     return (
         <div>
             <ProgressBar
-                id={textNerfer(title)}
+                id={"progress-bar-" + textNerfer(title)}
                 filledBackground="#fbbf24"
                 percent={Math.round(floorValue / ceilingValue * 100)}>
             </ProgressBar>

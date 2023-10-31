@@ -3,6 +3,7 @@ import React from "react";
 
 // Components
 import { PostType } from './Miscellaneous';
+import { textNerfer } from "./componentUtils";
 
 // Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
@@ -13,10 +14,12 @@ import Sample1 from "../assets/sample-nuts.jpg";
 // ~
 
 export default function DiscussionOverview(props) {
-    const { title, discussionType, votes, timeSincePost, posterUsername, upvoted = null } = props;
+    const { title, id, discussionType, votes, timeSincePost, posterUsername, upvoted = null } = props;
 
     return (
-        <a className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor">
+        <a
+            className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor"
+            id={id}>
             <div className="w-full flex flex-col justify-start gap-1 flex-shrink">
                 <span className="w-full text-text-primary text-2xl overflow-hidden text-ellipsis whitespace-nowrap">
                     {title}

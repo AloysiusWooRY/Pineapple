@@ -101,7 +101,7 @@ export default function Login() {
     return (
         <div
             id="login"
-            className="flex items-center justify-between min-h-screen bg-background-major"
+            className="flex items-center justify-between min-h-screen bg-background-minor"
         >
             <section className="flex flex-col items-center justify-center w-full p-5">
                     <img src={Logo} alt="logo" className="h-44" />
@@ -119,7 +119,7 @@ export default function Login() {
 
                     <InputField title="Password" errorMsg={passwordErr} placeholder="Enter Password" type="password" additionalProps={{ required: 'required' }}
                         value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <CustomPasswordStrengthBar password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
+                    <CustomPasswordStrengthBar title="Register Create Password" password={password} passwordScore={passwordScore} setPasswordScore={setPasswordScore} />
 
                     <InputField title="Confirm Password" errorMsg={confirmPasswordErr} placeholder="Confirm Password" type="password" width='full' additionalProps={{ required: 'required' }}
                         value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />

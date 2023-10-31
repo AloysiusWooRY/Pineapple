@@ -13,28 +13,28 @@ import Sample2 from "../assets/sample-mental.png";
 // ~
 
 export default function SideBarOrganisationInfo(props) {
-    const { organisationName, organisationDescription, createDate, numberPosts, numberMembers } = props;
+    const { organisationName, organisationDescription, createDate, numberPosts } = props;
 
     return (
-        <section className="rounded-tr-lg rounded-br-lg h-fit w-96 bg-theme-primary">
-            <div className="flex h-44 bg-cover bg-center bg-no-repeat outline-none rounded-tr-lg" style={{ backgroundImage: `url(${Sample2})` }}>
+        <section id={"organisation-" + organisationName}  className="rounded-tr-lg rounded-br-lg h-fit w-96 bg-theme-primary">
+            <div className="flex h-44 bg-cover bg-center bg-no-repeat outline-none rounded-tr-lg organisation-image" style={{ backgroundImage: `url(${Sample2})` }}>
                 <div className="h-full w-full p-4 bg-gradient-to-t from-theme-primary flex items-end">
-                    <h2 className="text-text-primary text-3xl font-semibold overflow-hidden">{organisationName}</h2>
+                    <h2 className="text-text-primary text-3xl font-semibold overflow-hidden organisation-name">{organisationName}</h2>
                 </div>
             </div>
-            <div className="flex flex-col text-text-primary text-sm gap-4 p-4">
+            <div className="flex flex-col text-text-primary text-sm gap-4 p-4 organisation-description">
                 {organisationDescription}
 
                 <div className="flex items-center gap-1">
                     <CakeIcon className="h-4" />
                     <div className="flex flex-row text-sm gap-1">
-                        <p className="text-text-secondary">Created:</p> {createDate}
+                        <p className="text-text-secondary organisation-create-date">Created:</p> {createDate}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1">
                     <MegaphoneIcon className="h-4" />
-                    <div className="flex flex-row text-sm gap-1">
+                    <div className="flex flex-row text-sm gap-1 organisation-post-count">
                         {numberPosts} <p className="text-text-secondary">Posts</p>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ export default function SideBarOrganisationInfo(props) {
 
             <Divider padding={0} />
 
-            <div className="px-2 py-2">
+            <div className="p-2">
                 <RoundedButton title="Create Post" />
             </div>
         </section>

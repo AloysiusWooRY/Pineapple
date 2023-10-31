@@ -50,18 +50,6 @@ export default function Login() {
         navigate('../register');
     }
 
-    const getCSRF = () => {
-        const csrf = cookie.load('csrf')
-        if (!csrf) {
-            fetch('/api/get-csrf-token')
-            .catch(error => {
-                console.error('Failed to fetch CSRF token', error);
-            });
-            return cookie.load('csrf')
-        }
-        return csrf
-    }
-
     return (
         <div
             id="login"

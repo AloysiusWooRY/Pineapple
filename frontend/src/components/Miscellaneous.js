@@ -34,7 +34,7 @@ export function OrganisationType(props) {
     let type_to_lower = type.toLowerCase();
     if (type_to_lower in org_map) {
         return (
-            <div className={`flex items-center gap-1 text-xs ${org_map[type_to_lower]} capitalize`}>
+            <div className={`flex items-center gap-1 text-xs ${org_map[type_to_lower]} capitalize org-${type_to_lower}`}>
                 <span className="rounded-full bg-background-minor px-2 py-[0.5px]">
                     {type}
                 </span>
@@ -42,7 +42,7 @@ export function OrganisationType(props) {
         );
     } else {
         return (
-            <div className={`flex items-center gap-1 text-xs text-text-primary capitalize`}>
+            <div className={`flex items-center gap-1 text-xs text-text-primary capitalize org-unknown`}>
                 <span className="rounded-full bg-background-minor px-2 py-[0.5px]">
                     {type}
                 </span>
@@ -63,13 +63,13 @@ export function PostType(props) {
     let type_to_lower = type.toLowerCase();
     if (type_to_lower in post_map) {
         return (
-            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${post_map[type_to_lower]} text-sm capitalize`}>
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${post_map[type_to_lower]} text-sm capitalize org-${type_to_lower}`}>
                 {type}
             </div>
         );
     } else {
         return (
-            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize`}>
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize org-unknown`}>
                 {type}
             </div>
         );
@@ -88,13 +88,13 @@ export function UserType(props) {
     let type_to_lower = type.toLowerCase();
     if (type_to_lower in user_map) {
         return (
-            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${user_map[type_to_lower]} text-sm capitalize`}>
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${user_map[type_to_lower]} text-sm capitalize org-${type_to_lower}`}>
                 {type}
             </div>
         );
     } else {
         return (
-            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize`}>
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize org-unknown`}>
                 {type}
             </div>
         );
@@ -113,13 +113,13 @@ export function ApprovalType(props) {
     let type_to_lower = type.toLowerCase();
     if (type_to_lower in approval_map) {
         return (
-            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${approval_map[type_to_lower]} text-sm capitalize`}>
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary ${approval_map[type_to_lower]} text-sm capitalize org-${type_to_lower}`}>
                 {type}
             </div>
         );
     } else {
         return (
-            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize`}>
+            <div className={`w-fit h-fit px-2 py-0.5 rounded-full text-text-primary bg-background-minor capitalize org-unknown`}>
                 {type}
             </div>
         );
