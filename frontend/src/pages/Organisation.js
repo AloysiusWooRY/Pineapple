@@ -44,7 +44,7 @@ export default function Organisation() {
 
     // Loads the organisation by id
     useEffect(() => {
-        async function fetchData() {
+        async function getAllOrganisations() {
             const response = await organisationId({id});
 
             if (response.ok) {
@@ -53,18 +53,18 @@ export default function Organisation() {
                 setSelectedOrganisation(json.organisation);
             }
         }
-        fetchData()
+        getAllOrganisations()
     }, []);
 
     // Loads all posts
     useEffect(() => {
-        async function fetchData() {
+        async function getAllPosts() {
             const response = await postAll({
                 organisation: id,
                 category: "",
                 filter: "",
                 sortByPinned: true,
-            })
+            });
             const json = await response.json();
 
             if (response.ok) {
@@ -74,7 +74,7 @@ export default function Organisation() {
                 toast.error(json.error);
             }
         }
-        fetchData();
+        getAllPosts();
     }, []);
 
     function OrganisationPosts() {
@@ -87,31 +87,22 @@ export default function Organisation() {
                 posts.push(
                 <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
                     <DiscussionOverview
-                        key={"post-" + item._id}
-                        title={item.title} 
-                        discussionType={item.donation ? "donation": item.event ? "event": "discussion"}
-                        votes={item.likes} 
-                        timeSincePost={(Math.floor((currentDate - (new Date(item.updatedAt))) / (1000 * 60 * 60 * 24)))}
-                        posterUsername={item.owner.name} 
-                        upvoted={null}
-                        imagePath={selectedOrganisation.imagePath.poster}
+                        post ={{
+                            title: item.title,
+                            discussionType: item.donation ? "donation": item.event ? "event": "discussion",
+                            votes: item.likes,
+                            timeSincePost: Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) < 24 ? Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) + " hours" : Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60 / 24)) + " days",
+                            username: item.owner.name,
+                            upvoted: null,
+                            imagePath: selectedOrganisation.imagePath.poster,
+                        }}
                     />
                 </NavLink>
                 )
             ))
         )
         :
-        posts.push(
-            <div key={"key-post-" + id}>
-                <NavLink key={"nav-link-" + id} to={`/organisation/123/post/123`}>
-                    <DiscussionOverview
-                        id={"post-" + id}
-                        title={"What if we could print a brain?"} discussionType={"discussion"}
-                        votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
-                </NavLink>
-            </div>
-        );
-        
+        <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No posts Here🍍</h1>
 
         return posts;
     }
@@ -190,13 +181,7 @@ export default function Organisation() {
                         />
                     </NavLink> 
                     : 
-                    <SideBarOrganisationInfo
-                        organisationName="Mental Health Hoax"
-                        organisationDescription="Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy."
-                        createDate="July 22, 1999"
-                        numberPosts="30"
-                        onCreateClicked={handleOrganisationEdit}
-                    />
+                    ""
                 }
             </div>
 
