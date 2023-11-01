@@ -4,7 +4,7 @@ import { useParams, NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Components
-import { FormatDateTime } from "../components/componentUtils";
+import { FormatDateTime, timeAgo } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from "../components/SidebarOrganisationInfo";
 import DiscussionOverview from "../components/DiscussionOverview";
@@ -80,32 +80,26 @@ export default function Organisation() {
 
     function OrganisationPosts() {
         let posts = [];
-        const currentDate = new Date();
-
-        (categoryFilteredPosts != null && selectedOrganisation != null) ? (
-
-            categoryFilteredPosts.map(item => (
-                posts.push(
-                    <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
-                        <DiscussionOverview
-                            key={"post-" + item._id}
-                            title={item.title}
-                            discussionType={item.donation ? "donation" : item.event ? "event" : "discussion"}
-                            votes={item.likes}
-                            timeSincePost={(Math.floor((currentDate - (new Date(item.updatedAt))) / (1000 * 60 * 60 * 24)))}
-                            posterUsername={item.owner.name}
-                            upvoted={null}
-                            imagePath={selectedOrganisation.imagePath.poster}
-                        />
-                    </NavLink>
-                )
-            ))
-        )
+        categoryFilteredPosts.length > 0 ? (categoryFilteredPosts.map(item => (
+            posts.push(
+                <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
+                    <DiscussionOverview
+                        key={"post-" + item._id}
+                        title={item.title}
+                        discussionType={item.donation ? "donation" : item.event ? "event" : "discussion"}
+                        votes={item.likes}
+                        timeSincePost={timeAgo(item.createdAt)}
+                        posterUsername={item.owner.name}
+                        upvoted={null}
+                        imagePath={selectedOrganisation.imagePath.poster}
+                    />
+                </NavLink>
+            )
+        )))
             :
             posts.push(
                 <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Posts Here🍍</h1>
             );
-
 
         return posts;
     }
@@ -170,7 +164,7 @@ export default function Organisation() {
                     </div>
 
                     <div className="flex flex-col py-2 gap-2">
-                        {categoryFilteredPosts && <OrganisationPosts />}
+                        {selectedOrganisation && categoryFilteredPosts && <OrganisationPosts />}
                     </div>
                 </section>
 

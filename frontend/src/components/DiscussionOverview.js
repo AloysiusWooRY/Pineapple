@@ -35,7 +35,7 @@ export default function DiscussionOverview(props) {
                         : <ArrowDownCircleOutlineIcon className="h-7" />}
                     •
                     <div className="flex text-sm text-text-secondary">
-                        Posted by {posterUsername}, {timeSincePost} ago
+                        Posted by {posterUsername} • {timeSincePost} ago
                     </div>
                 </div>
             </div>

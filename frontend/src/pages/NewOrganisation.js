@@ -28,8 +28,8 @@ export default function NewOrganisation() {
     const [organisationName, setOrganisationName] = useState('');
     const [organisationDescription, setOrganisationDescription] = useState('');
     const [organisationCategory, setOrganisationCategory] = useState('all');
-    const [bannerImage, setBannerImage] = useState([]);
-    const [posterImage, setPosterImage] = useState([]);
+    const [bannerImage, setBannerImage] = useState(null);
+    const [posterImage, setPosterImage] = useState(null);
 
     useEffect(() => {
         async function fetchAllCategories() {
