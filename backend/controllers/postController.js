@@ -165,6 +165,8 @@ const createPost = async (req, res) => {
             const attachmentPath = `${orgPath}/post/${_id}/${attachment.dateFilename}`
             newOrg["imagePath"] = attachmentPath
 
+            if (!fs.existsSync(`uploads/attachment/${attachment.filename}`)) throw new ValidationError("Invalid file", req)
+
             // Create new path for image to be stored in
             if (!fs.existsSync(orgPath)) {
                 logger.info(`Created organisation folder: ${organisation}`, { actor: "SERVER" });
@@ -182,7 +184,7 @@ const createPost = async (req, res) => {
         logger.http(`Post successfully create: ${_id}`, { actor: "USER", req })
         res.status(200).json({ post })
     } catch (err) {
-        if (req.info && req.info.attachment) fs.unlinkSync(`uploads/attachment/${req.info.attachment.filename}`)
+        if (req.info && req.info.attachment && fs.existsSync(`uploads/attachment/${req.info.attachment.filename}`)) fs.unlinkSync(`uploads/attachment/${req.info.attachment.filename}`)
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
         else {
@@ -193,20 +195,27 @@ const createPost = async (req, res) => {
 }
 
 const getPostById = async (req, res) => {
-    let { id } = req.params
+    const { id } = req.params
+    const { _id: userId } = req.account
     try {
         if (!id) throw new MissingFieldError("Missing id", req)
         if (!mongoose.Types.ObjectId.isValid(id)) throw new ValidationError("Invalid id", req)
 
         const post = await Post.findOne({ _id: id })
-            .select("-donation.donors -event.members")
+            .select("-donation.donors")
             .populate("owner", "_id name")
             .populate("organisation", "-requestedBy")
 
         if (!post) throw new DataNotFoundError('No such post', req)
 
+        const userObjId = new mongoose.Types.ObjectId(userId)
+        const filteredPost = post.toObject()
+        if (filteredPost.event && Array.isArray(filteredPost.event.members)) {
+            filteredPost.event.members = filteredPost.event.members.filter(memberId => memberId.equals(userObjId))
+        }
+
         logger.http(`Post retrieved successfully, (ID: ${id})`, { actor: "USER", req })
-        res.status(200).json({ post })
+        res.status(200).json({ filteredPost })
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -287,6 +296,8 @@ const editPost = async (req, res) => {
         }
 
         if (attachment) {
+            if (!fs.existsSync(`uploads/attachment/${attachment.filename}`)) throw new ValidationError("Invalid file", req)
+
             const { _id, organisation, imagePath } = existingPost
             if (imagePath) fs.unlinkSync(`public/${imagePath}`)
 
@@ -572,6 +583,76 @@ const unpinPost = async (req, res) => {
     }
 }
 
+const joinEvent = async (req, res) => {
+    const { id: postId } = req.params
+    const { _id: userId } = req.account
+    try {
+        if (!postId) throw new MissingFieldError("Missing id", req)
+        if (!mongoose.Types.ObjectId.isValid(postId)) throw new ValidationError("Invalid id", req)
+
+        const existingPost = await Post.findOne({ _id: postId })
+        if (!existingPost) throw new DataNotFoundError('No such post', req)
+        if (!existingPost.event) throw new ValidationError("Post have no active events", req)
+
+        const { event } = existingPost
+        const userObjId = new mongoose.Types.ObjectId(userId)
+
+        if (event.membersCount === event.capacity) throw new ValidationError("Event has already reached its capacity", req)
+        if (event.members && event.members.includes(userObjId)) throw new ValidationError("You have already joined the event", req)
+
+        if (existingPost.event.members) existingPost.event.members.push(userObjId)
+        else existingPost.event.members = [userObjId]
+
+        existingPost.event.membersCount += 1
+
+        await existingPost.save()
+
+        logger.http(`Event joined successful`, { actor: "USER", req })
+        res.status(200).json({ total: existingPost.event.membersCount })
+    } catch (err) {
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
+const leaveEvent = async (req, res) => {
+    const { id: postId } = req.params
+    const { _id: userId } = req.account
+    try {
+        if (!postId) throw new MissingFieldError("Missing id", req)
+        if (!mongoose.Types.ObjectId.isValid(postId)) throw new ValidationError("Invalid id", req)
+
+        const existingPost = await Post.findOne({ _id: postId })
+        if (!existingPost) throw new DataNotFoundError('No such post', req)
+        if (!existingPost.event) throw new ValidationError("Post have no active events", req)
+
+        const { event } = existingPost
+        const userObjId = new mongoose.Types.ObjectId(userId)
+
+        if (!event.members || !event.members.includes(userObjId)) throw new ValidationError("You need to join to leave", req)
+
+        existingPost.event.members = existingPost.event.members.filter(memberId => !memberId.equals(userObjId))
+
+        existingPost.event.membersCount -= 1
+
+        await existingPost.save()
+
+        logger.http(`Event joined successful`, { actor: "USER", req })
+        res.status(200).json({ total: existingPost.event.membersCount })
+    } catch (err) {
+        if (err.statusCode === 400 || err.statusCode === 404)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
 module.exports = {
     getAllPost,
     createPost,
@@ -582,5 +663,7 @@ module.exports = {
     likePost,
     dislikePost,
     pinPost,
-    unpinPost
+    unpinPost,
+    joinEvent,
+    leaveEvent
 }

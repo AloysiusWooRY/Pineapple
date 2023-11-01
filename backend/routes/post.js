@@ -9,7 +9,9 @@ const {
     likePost,
     dislikePost,
     pinPost,
-    unpinPost
+    unpinPost,
+    joinEvent,
+    leaveEvent
 } = require('../controllers/postController')
 const rateLimit = require('../utils/rateLimiter')
 const requireAuth = require('../middleware/requireAuth')
@@ -48,5 +50,11 @@ router.post('/:id/pin', rateLimit(), requireAuth(isAdmin = false), pinPost)
 
 // POST: Dislike Post
 router.post('/:id/unpin', rateLimit(), requireAuth(isAdmin = false), unpinPost)
+
+// POST: Join event
+router.post('/:id/join', rateLimit(), requireAuth(isAdmin = false), joinEvent)
+
+// POST: Leave event
+router.post('/:id/leave', rateLimit(), requireAuth(isAdmin = false), leaveEvent)
 
 module.exports = router
