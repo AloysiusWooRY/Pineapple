@@ -4,7 +4,6 @@ import { useParams, NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Components
-import { FormatDateTime } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from "../components/SidebarOrganisationInfo";
 import DiscussionOverview from "../components/DiscussionOverview";
@@ -82,8 +81,7 @@ export default function Organisation() {
         let posts = [];
         const currentDate = new Date();
 
-        (categoryFilteredPosts != null && selectedOrganisation != null) ? (
-
+        categoryFilteredPosts.length > 0 ?
             categoryFilteredPosts.map(item => (
                 posts.push(
                     <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
@@ -91,9 +89,9 @@ export default function Organisation() {
                             post={{
                                 id: item._id,
                                 title: item.title,
-                                discussionType: item.donation ? "donation": item.event ? "event": "discussion",
+                                discussionType: item.donation ? "donation" : item.event ? "event" : "discussion",
                                 votes: item.likes,
-                                timeSincePost: Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) < 24 ? Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) + " hours" : Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60 / 24)) + " days",
+                                createdAt: item.createdAt,
                                 username: item.owner.name,
                                 upvoted: null,
                                 imagePath: selectedOrganisation.imagePath.poster,
@@ -102,12 +100,10 @@ export default function Organisation() {
                     </NavLink>
                 )
             ))
-        )
             :
             posts.push(
                 <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Posts Here🍍</h1>
             );
-
 
         return posts;
     }
@@ -172,7 +168,7 @@ export default function Organisation() {
                     </div>
 
                     <div className="flex flex-col py-2 gap-2">
-                        {categoryFilteredPosts && <OrganisationPosts />}
+                        {selectedOrganisation && categoryFilteredPosts && <OrganisationPosts />}
                     </div>
                 </section>
 
@@ -181,7 +177,7 @@ export default function Organisation() {
                         <SideBarOrganisationInfo
                             organisationName={selectedOrganisation.name}
                             organisationDescription={selectedOrganisation.description}
-                            createDate={FormatDateTime(selectedOrganisation.createdAt)}
+                            createDate={selectedOrganisation.createdAt}
                             numberPosts={selectedOrganisation.posts}
                         />
                     </NavLink>

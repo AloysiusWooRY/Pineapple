@@ -2,6 +2,7 @@
 import React from "react";
 
 // Components
+import { FormatDateTime } from "./componentUtils";
 import { RoundedButton } from './Buttons';
 import { Divider } from './Miscellaneous';
 
@@ -29,7 +30,7 @@ export default function SideBarOrganisationInfo(props) {
                 <div className="flex items-center gap-1">
                     <CakeIcon className="h-4" />
                     <div className="flex flex-row text-sm gap-1">
-                        <p className="text-text-secondary organisation-create-date">Created:</p> {createDate}
+                        <p className="text-text-secondary organisation-create-date">Created:</p> {FormatDateTime(createDate)}
                     </div>
                 </div>
 

@@ -3,7 +3,7 @@ import React from "react";
 
 // Components
 import { PostType } from './Miscellaneous';
-import { textNerfer } from "./componentUtils";
+import { timeAgo } from "./componentUtils";
 
 // Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
@@ -35,7 +35,7 @@ export default function DiscussionOverview(props) {
                         : <ArrowDownCircleOutlineIcon className="h-7" />}
                     •
                     <div className="flex text-sm text-text-secondary">
-                        Posted by {post.username}, {post.timeSincePost} ago
+                        Posted by {post.username} • {timeAgo(post.createdAt)} ago
                     </div>
                 </div>
             </div>
