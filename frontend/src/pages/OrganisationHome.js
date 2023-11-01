@@ -23,23 +23,37 @@ import { organisationAll } from "../apis/exportedAPIs";
 export default function OrganisationHome() {
     const navigate = useNavigate();
 
-    const [selectedCategory, setSelectedCategory] = useState('all');
     const [categories, setCategories] = useState(["all", "health", "education", "environment", "humanitarian"]);
 
     const [allOrganisations, setAllOrganisations] = useState(null);
+    const [categoryFilteredOrganisations , setCategoryFilteredOrganisations] = useState(null);
 
     const handleClick = (e) => {
         navigate("../organisation/new");
     }
 
+    function handleCategoryOrganisations(e) {
+        const category = e.target.getAttribute('data-value');
+
+        const filteredItems = allOrganisations.filter(item => {
+            if (category === "all") {
+                return true;
+            } else {
+                return item.category === category;
+            }   
+        });
+
+        setCategoryFilteredOrganisations(filteredItems);
+    }
+
     useEffect(() => {
         async function fetchData() {
-            const response = await organisationAll({ category: 'health' });
-            const jsonResponse = await response.json()
+            const response = await organisationAll({ category: '' });
+            const jsonResponse = await response.json();
 
             if (response.ok) {
-                console.log(jsonResponse);
-                setAllOrganisations(jsonResponse);
+                setAllOrganisations(jsonResponse.organisations);
+                setCategoryFilteredOrganisations(jsonResponse.organisations);
             } else {
                 toast.error(response.error);
             }
@@ -53,14 +67,14 @@ export default function OrganisationHome() {
                 <Banner image={BannerImage} title="Organisations" button={{ icon: <PlusCircleIcon />, text: "Apply for New Organisation", onClick: handleClick }} />
 
                 <Tabs title="Organisation Categories" tabs={categories} heroIconsArr={[<NewspaperIcon />, <HeartIcon />, <BookOpenIcon />, <GlobeAsiaAustraliaIcon />, <HandRaisedIcon />]}
-                    onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
+                    onClick={(e) => handleCategoryOrganisations(e) } />
 
                 <Divider padding={0} />
 
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
-                    {allOrganisations ? 
-                        (allOrganisations.organisations.map(item => (
-                            <NavLink to={`/organisation/${item._id}`}>
+                    {categoryFilteredOrganisations ? 
+                        (categoryFilteredOrganisations.map(item => (
+                            <NavLink key={"nav-link" + item._id} to={`/organisation/${item._id}`}>
                                 <CardHomeOrg key={item.id} image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
                             </NavLink>
                         ))) 
