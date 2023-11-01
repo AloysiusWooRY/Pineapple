@@ -13,7 +13,7 @@ const fileLogFormat = printf(({ level, message, timestamp, actor, req }) => {
         message: message,
     } : {
         timestamp: formattedTimestamp,
-        actor: "SERVER",
+        actor: "USER",
         account: req.account?._id ?? null,
         ip: req.headers?.["x-real-ip"] || req.ip || null,
         session: req.sessionID ?? null,
