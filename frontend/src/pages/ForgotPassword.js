@@ -1,20 +1,21 @@
 // React / Packages
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 // Components
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
 import { Divider } from "../components/Miscellaneous";
-import {SteppedProgressBar} from "../components/CustomProgressBar";
+import { SteppedProgressBar } from "../components/CustomProgressBar";
 import CustomPasswordStrengthBar from "../components/CustomPasswordStrengthBar";
 
 // Assets
-import { PaperAirplaneIcon, ArrowLeftOnRectangleIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, ArrowLeftOnRectangleIcon, ArrowPathIcon, ForwardIcon, BackwardIcon } from "@heroicons/react/24/solid";
 import Logo from "../assets/logo-no-background.png";
 
 // API
-// ~
+import { accountForgotPassword, accountValidateCode, accountResetPassword } from "../apis/exportedAPIs";
 
 export default function ForgotPassword() {
     const navigate = useNavigate();
@@ -27,29 +28,46 @@ export default function ForgotPassword() {
     const [confirmPassword, setConfirmPassword] = useState('');
 
 
-    const handleRecoveryRequest = async () => {
-        console.log("stage 1 launched!");
+    const handleRecoveryRequest = async (e) => {
+        e.preventDefault();
 
-        setStage(2);
+        const response = await accountForgotPassword({ email: email });
+
+        const json = await response.json();
+        if (response.ok) {
+            setStage(2);
+        } else {
+            toast.error(json.error);
+        }
     };
 
     const handleRecoveryCheck = async (e) => {
         e.preventDefault();
 
-        console.log("stage 2 launched!");
+        const response = await accountValidateCode({ email: email, code: recoveryCode });
 
-        setStage(3);
+        const json = await response.json();
+        if (response.ok) {
+            setStage(3);
+        } else {
+            toast.error(json.error);
+            return;
+        }
     };
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
+        console.log(recoveryCode);
+        const response = await accountResetPassword({ email: email, password: password, code: recoveryCode });
 
-        console.log("stage 3 launched!");
+        const json = await response.json();
+        if (response.ok) {
+            navigate('../setup-authenticator-qr', { state: { referrer: 'forgot', qrImageBase64: json.qrImage } });
+        } else {
+            toast.error(json.error);
+            return;
+        }
     };
-
-    const handleReturnToLogin = () => {
-        navigate('../login');
-    }
 
     return (
         <div
@@ -76,6 +94,10 @@ export default function ForgotPassword() {
                                 value={email} onChange={(e) => setEmail(e.target.value)} />
 
                             <RectangleButton title="Send Recovery Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
+
+                            <div className="py-2"></div>
+
+                            <RectangleButton title="I Already Have a Code" onClick={() => setStage(2)} heroIcon={<ForwardIcon />} colour="bg-button-blue" />
                         </form>
                     </>}
 
@@ -89,6 +111,10 @@ export default function ForgotPassword() {
                                 value={recoveryCode} onChange={(e) => setRecoveryCode(e.target.value)} />
 
                             <RectangleButton title="Submit Recovery Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
+
+                            <div className="py-2"></div>
+
+                            <RectangleButton title="I Don't Have a Code" onClick={() => setStage(1)} heroIcon={<BackwardIcon />} colour="bg-button-blue" />
                         </form>
                     </>}
 
@@ -113,7 +139,7 @@ export default function ForgotPassword() {
 
                     <p className="pb-2">Suddenly remember your password?</p>
 
-                    <RectangleButton title="Back to Login" onClick={handleReturnToLogin} heroIcon={<ArrowLeftOnRectangleIcon />} colour="bg-button-blue" />
+                    <RectangleButton title="Back to Login" onClick={() => navigate('../login')} heroIcon={<ArrowLeftOnRectangleIcon />} colour="bg-button-blue" />
                 </div>
             </section>
         </div>
