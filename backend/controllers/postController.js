@@ -60,7 +60,10 @@ const getAllPost = async (req, res) => {
         if (sortByPinned) sort["isPinned"] = -1
         if (filter === "top") sort["likes"] = -1
 
-        const posts = await Post.find(query).sort(sort).populate("organisation", "-requestedBy")
+        const posts = await Post.find(query)
+            .sort(sort)
+            .populate("organisation", "-requestedBy")
+            .populate("owner", "name")
 
         const postIds = posts.map(post => post._id)
         const userLiked = await Like.find({ post: { $in: postIds }, account: userId }).select("post value")
