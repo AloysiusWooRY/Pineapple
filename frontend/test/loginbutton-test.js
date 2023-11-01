@@ -33,8 +33,8 @@ async function runLoginTest() {
 
   try {
     const csrfToken = await getCsrToken();
-    const emailUser = 'pineapplehelpdesk@gmail.com';
-    const emailPass = 'bmqeuxyprjqbsydd';
+    const emailUser = 'testUser@gmail.com';
+    const emailPass = 'Ge2023!!!';
 
     driver.get('https://mystifying-swirles.cloud/login');
 
@@ -51,25 +51,25 @@ async function runLoginTest() {
       // Other headers, if needed
     });
     
-    await emailField.sendKeys('pineapplehelpdesk@gmail.com');
-    await passwordField.sendKeys('bmqeuxyprjqbsydd');
+    await emailField.sendKeys('testUser@gmail.com');
+    await passwordField.sendKeys('Ge2023!!!');
     await loginButton.click();
-
     // Include the CSRF token in the request headers
     await driver.executeScript(function (headers) {
       fetch('/login', {
         method: 'POST', 
         headers: headers,  // Include the CSRF token in the headers
         body: JSON.stringify({
-          email: 'pineapplehelpdesk@gmail.com',
-          password: 'bmqeuxyprjqbsydd',
+          email: 'testUser@gmail.com',
+          password: 'Ge2023!!!',
           // Include other login data as needed
         }),
       });
     }, headers);
-
+    
     try {
-      await driver.wait(until.elementLocated(By.css('input[placeholder="Enter Recovery Code"]'), 10000));
+      console.log('test')
+      await driver.wait(until.elementLocated(By.css('input[placeholder="Enter Recovery Code"]'), 100));
       console.log('Login button successful.');
     } catch (error) {
       console.error('Login button failed.');
