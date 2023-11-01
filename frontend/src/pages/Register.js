@@ -17,7 +17,7 @@ import Logo from "../assets/logo-no-background.png";
 // API
 import { accountRegister } from "../apis/exportedAPIs";
 
-export default function Login() {
+export default function Register() {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
@@ -44,44 +44,38 @@ export default function Login() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         clearAllErrorMsg();
-        const toastId = toast.loading('Loading...');
 
         if (!validator.isEmail(email)) {
-            toast.error(ERR_EMAIL_INVALID, { id: toastId });
+            toast.error(ERR_EMAIL_INVALID);
             return setEmailErr(ERR_EMAIL_INVALID);
         }
         if (passwordScore < 2) {
-            toast.error(ERR_PASSWORD_WEAK, { id: toastId });
+            toast.error(ERR_PASSWORD_WEAK);
             return setPasswordErr(ERR_PASSWORD_WEAK);
         }
         if (confirmPassword !== password) {
-            toast.error(ERR_PASSWORD_MISMATCH, { id: toastId });
+            toast.error(ERR_PASSWORD_MISMATCH);
             return setConfirmPasswordErr(ERR_PASSWORD_MISMATCH);
         }
 
         try {
-            setIsLoading(true);
-
-            const response = await accountRegister({name, email, password, token: recaptchaToken});
-            const jsonResponse = await response.json();
+            const response = await accountRegister({ name: name, email: email, password: password, token: 'backdoor' });
+            const json = await response.json();
 
             if (response.ok) {
-                toast.success("Success!", { id: toastId });
-                navigate("..");
+                navigate('../setup-authenticator-qr', { state: { referrer: 'register', qrImageBase64: json.qrImage } });
             } else {
-                const errorMsg = jsonResponse.error;
-                toast.error(errorMsg, { id: toastId });
-                if (errorMsg === "Missing fields") setError(errorMsg);
-                if (errorMsg === "Invalid email") setEmailErr(errorMsg);
-                if (errorMsg === "Email already exist") setEmailErr(errorMsg);
-                if (errorMsg === "Password not strong") setPasswordErr(errorMsg);
+                const errorMsg = json.error;
+                toast.error(errorMsg);
+                if (json.error === "Missing fields") setError(errorMsg);
+                if (json.error === "Invalid email") setEmailErr(errorMsg);
+                if (json.error === "Email already exist") setEmailErr(errorMsg);
+                if (json.error === "Password not strong") setPasswordErr(errorMsg);
             }
         } catch (error) {
             const errorMsg = ERR_GENERIC;
-            toast.error(errorMsg, { id: toastId });
+            toast.error(errorMsg);
             setError(errorMsg);
-        } finally {
-            setIsLoading(false);
         }
     };
 

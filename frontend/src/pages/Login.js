@@ -14,40 +14,54 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import Logo from "../assets/logo-no-background.png";
 
 // API
-import { useLogin } from "../hooks/useLogin";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { accountLogin, accountLoginOTP } from "../apis/exportedAPIs";
 
 export default function Login() {
-    const [stage, setStage] = useState(1);
+    const navigate = useNavigate();
+    const { dispatch } = useAuthContext();
 
+    const [stage, setStage] = useState(1);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [authenticatorCode, setAuthenticatorCode] = useState('');
 
-    const { login, error, isLoading } = useLogin();
-    const navigate = useNavigate();
-
     const handleStageOne = async (e) => {
         e.preventDefault();
 
-        await login(email, password);
+        const response = await accountLogin({ email: email, password: password });
+
+        const json = await response.json();
+        if (!response.ok) {
+            toast.error(json.error);
+            return;
+        }
+
+        if (json.message === "2FA not setup") {
+            navigate('../setup-authenticator-qr', { state: { referrer: 'login', qrImageBase64: json.qrImage } });
+        } else {
+            setStage(2);
+        }
     };
-    // 'error' is a useState, so it's not guaranteed that it is updated by the time handleStageOne is complete.
-    useEffect(() => {
-        if (error) toast.error(error);
-    }, [error]);
 
     const handleStageTwo = async (e) => {
         e.preventDefault();
 
-    };
+        const response = await accountLoginOTP({ token: authenticatorCode });
 
-    const handleRecoverPass = () => {
-        navigate('../forgot-password');
-    };
+        const json = await response.json();
+        if (response.ok) {
+            // Save the user to local storage
+            localStorage.setItem("user", JSON.stringify(json));
 
-    const handleRegister = () => {
-        navigate('../register');
-    }
+            // Update the auth context
+            dispatch({ type: "LOGIN", payload: json });
+
+            toast.success(`Welcome back, ${json.name}!`, { duration: 6000 });
+        } else {
+            toast.error(json.error);
+        }
+    };
 
     return (
         <div
@@ -74,11 +88,11 @@ export default function Login() {
 
                         <Divider />
 
-                        <RectangleButton title="Forgot Password" onClick={handleRecoverPass} heroIcon={<QuestionMarkCircleIcon />} colour="bg-button-red" />
+                        <RectangleButton title="Forgot Password" onClick={() => navigate('../forgot-password')} heroIcon={<QuestionMarkCircleIcon />} colour="bg-button-red" />
 
                         <div className="py-2"></div>
 
-                        <RectangleButton title="Register" onClick={handleRegister} heroIcon={<PencilIcon />} colour="bg-button-blue" />
+                        <RectangleButton title="Register" onClick={() => navigate('../register')} heroIcon={<PencilIcon />} colour="bg-button-blue" />
                     </form>
                 </section>
             </>}
@@ -97,7 +111,7 @@ export default function Login() {
 
                         <Divider padding={4} />
 
-                        <InputField title="Recovery Code" placeholder="Enter Recovery Code" type="text" additionalProps={{ pattern: '[0-9]{6}', required: 'required' }}
+                        <InputField title="Authenticator Code" placeholder="Enter Authenticator Code" type="text" additionalProps={{ pattern: '[0-9]{6}', required: 'required' }}
                             value={authenticatorCode} onChange={(e) => setAuthenticatorCode(e.target.value)} />
 
                         <RectangleButton title="Submit Authenticator Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />

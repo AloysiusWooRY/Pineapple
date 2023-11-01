@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const zxcvbn = require('zxcvbn')
 const validator = require('validator')
+const { authenticator } = require("otplib");
+const qrcode = require("qrcode");
 const moment = require('moment');
 
 const sendEmail = require('../utils/sendEmail')
@@ -36,19 +38,72 @@ const loginAccount = async (req, res) => {
         const match = await bcrypt.compare(password, account.password)
         if (!match) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
-        const { _id, name, isAdmin, moderation } = account
+        const { _id, hasTwoFA } = account
+
+        if (hasTwoFA) {
+            // Create JWT token
+            const jwt_token = jwt.sign({ _id }, process.env.JWT_LOGIN_SECRET, { expiresIn: process.env.JWT_LOGIN_EXPIRE * 60 * 60 })
+
+            logger.http(`Login credentials successfully verified`, { actor: "USER", req })
+
+            res.cookie('jwt_login', jwt_token, {
+                httpOnly: true,
+                maxAge: process.env.JWT_LOGIN_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+            })
+            res.status(200).json({ message: "Verified" })
+        } else {
+            // Generate secret
+            const secret = authenticator.generateSecret()
+            const encryptedSecret = CryptoJS.AES.encrypt(secret, process.env.ENCRYPTION_SECRET).toString()
+
+            account.twoFASecret = encryptedSecret
+            account.save()
+
+            // Generate QR from secret
+            const keyuri = authenticator.keyuri(email, "pineapple", secret)
+            const qrImage = await qrcode.toDataURL(keyuri)
+
+            // Create JWT token
+            const jwt_token = jwt.sign({ _id }, process.env.JWT_SETUP_SECRET, { expiresIn: process.env.JWT_SETUP_EXPIRE * 60 * 60 })
+
+            logger.http(`Login credentials successfully verified but 2FA not setup`, { actor: "USER", req })
+
+            res.cookie('jwt_setup', jwt_token, {
+                httpOnly: true,
+                maxAge: process.env.JWT_SETUP_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+            })
+            res.status(200).json({ message: "2FA not setup", qrImage })
+        }
+
+    } catch (err) {
+        if (err.statusCode === 400)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
+// Login OTP
+const loginOTP = async (req, res) => {
+    const { _id, name, email, twoFASecret, moderation, isAdmin } = req.account
+    const { token } = req.body
+    try {
+        if (!token) throw new MissingFieldError('Missing field', req)
+        const decryptedTwoFASecret = CryptoJS.AES.decrypt(twoFASecret, process.env.ENCRYPTION_SECRET).toString(CryptoJS.enc.Utf8)
+        if (!authenticator.check(token, decryptedTwoFASecret)) throw new ValidationError("Invalid token", req)
 
         // Create JWT token
-        const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
+        const newToken = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
 
-        // Log event
-        logger.http(`Login successful, token: ${token}`, { actor: "USER", req })
+        logger.http(`Login successful, token: ${newToken}`, { actor: "USER", req })
 
         // Create session with cookies
         req.session.isAuthenticated = true
 
         const csrfToken = req.csrfToken()
-        res.cookie('jwt', token, {
+        res.cookie('jwt', newToken, {
             httpOnly: true,
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         })
@@ -57,7 +112,7 @@ const loginAccount = async (req, res) => {
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         })
 
-        res.status(200).json({ _id, name, sanitiseEmail, isAdmin, moderation, csrfToken })
+        res.status(200).json({ _id, name, email, isAdmin, moderation, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
             res.status(err.statusCode).json({ error: err.message })
@@ -102,18 +157,62 @@ const registerAccount = async (req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
 
+        // Generate secret
+        const secret = authenticator.generateSecret()
+        const encryptedSecret = CryptoJS.AES.encrypt(secret, process.env.ENCRYPTION_SECRET).toString()
+
         // Create account
-        await Account.create({
+        const account = await Account.create({
             name: sanitizedName,
             email: sanitizedEmail,
             password: hash,
+            twoFASecret: encryptedSecret
         })
 
-        // Log event
-        logger.http(`Registration successful`, { actor: "USER", req })
-        res.status(200).json({ name: sanitizedName, email: sanitizedEmail })
+        // Generate QR from secret
+        const keyuri = authenticator.keyuri(account.email, "pineapple", secret)
+        const qrImage = await qrcode.toDataURL(keyuri)
+
+        // Create JWT token
+        const jwt_token = jwt.sign({ _id: account._id }, process.env.JWT_SETUP_SECRET, { expiresIn: process.env.JWT_SETUP_EXPIRE * 60 * 60 })
+
+        logger.http(`Registration credentials successful`, { actor: "USER", req })
+
+        res.cookie('jwt_setup', jwt_token, {
+            httpOnly: true,
+            maxAge: process.env.JWT_SETUP_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+        })
+        res.status(200).json({ qrImage })
     } catch (err) {
         if (err.statusCode === 400)
+            res.status(err.statusCode).json({ error: err.message })
+        else {
+            logger.error(err.message, { actor: "USER", req })
+            res.status(500).json({ error: "Something went wrong, try again later" })
+        }
+    }
+}
+
+// Verify 2FA setup
+const verify2FA = async (req, res) => {
+    const { _id, hasTwoFA, twoFASecret } = req.account
+    const { token } = req.body
+    try {
+        if (!token) throw new MissingFieldError('Missing field', req)
+
+        if (hasTwoFA) {
+            throw new ValidationError("2FA already verified and enabled", req)
+        }
+
+        const decryptedTwoFASecret = CryptoJS.AES.decrypt(twoFASecret, process.env.ENCRYPTION_SECRET).toString(CryptoJS.enc.Utf8)
+        if (!authenticator.check(token, decryptedTwoFASecret)) throw new ValidationError("Invalid token", req)
+        const account = await Account.findOneAndUpdate({ _id }, { hasTwoFA: true })
+        if (!account) throw new DataNotFoundError('Account not found', req)
+
+        logger.http(`2FA successfully enabled`, { actor: "USER", req })
+        return res.status(200).json({ message: "2FA has been verified and enabled." });
+    } catch (err) {
+        if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
         else {
             logger.error(err.message, { actor: "USER", req })
@@ -328,13 +427,31 @@ const resetPassword = async (req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
 
-        account.password = hash;
-        await account.save();
+        // Generate secret
+        const secret = authenticator.generateSecret()
+        const encryptedSecret = CryptoJS.AES.encrypt(secret, process.env.ENCRYPTION_SECRET).toString()
+
+        account.password = hash
+        account.twoFASecret = encryptedSecret
+        account.hasTwoFA = false
+        await account.save()
 
         await ResetCode.deleteOne({ _id: resetCode._id })
 
+        // Generate QR from secret
+        const keyuri = authenticator.keyuri(account.email, "pineapple", secret)
+        const qrImage = await qrcode.toDataURL(keyuri)
+
+        // Create JWT token
+        const jwt_token = jwt.sign({ _id: account._id }, process.env.JWT_SETUP_SECRET, { expiresIn: process.env.JWT_SETUP_EXPIRE * 60 * 60 })
+
+        res.cookie('jwt_setup', jwt_token, {
+            httpOnly: true,
+            maxAge: process.env.JWT_SETUP_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+        })
+
         logger.http(`Reset successful`, { actor: "USER", req })
-        res.status(200).json({})
+        res.status(200).json({ qrImage })
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -443,6 +560,7 @@ const generateRandomCode = () => {
 
 module.exports = {
     loginAccount,
+    loginOTP,
     registerAccount,
     updateAccount,
     updatePassword,
@@ -451,5 +569,6 @@ module.exports = {
     resetPassword,
     getPaymentInfo,
     setPaymentInfo,
-    logoutAccount
+    logoutAccount,
+    verify2FA
 }

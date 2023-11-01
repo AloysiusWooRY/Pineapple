@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 // Pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import SetupAuthenticatorQR from "./pages/SetupAuthenticatorQR";
 import Profile from './pages/Profile';
 import Home from './pages/Home';
 import OrganisationHome from './pages/OrganisationHome';
@@ -52,6 +53,10 @@ function App() {
               <Route
                 path="/forgot-password"
                 element={!user ? <ForgotPassword /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/setup-authenticator-qr"
+                element={!user ? <SetupAuthenticatorQR /> : <Navigate to="/" />}
               />
               <Route
                 path="/profile"
