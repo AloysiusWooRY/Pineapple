@@ -19,11 +19,9 @@ import Sample1 from "../assets/sample-nuts.jpg";
 import { postAll } from "../apis/exportedAPIs";
 
 export default function Home() {
-    const [selectedCategory, setSelectedCategory] = useState('new');
-
     const [allPosts, setAllPosts] = useState(null);
+    const [categoryFilteredPosts, setCategoryFilteredPosts] = useState(null);
 
-    const [categoryFilteredPosts, setCategoryFilteredPosts] = useState(allPosts);
     const [sortBy, setSortBy] = useState('newest');
 
     useEffect(() => {
@@ -37,8 +35,8 @@ export default function Home() {
 
             const jsonResponse = await fetchedData.json();
             if (fetchedData.ok) {
-                console.log(jsonResponse);
-                setAllPosts(jsonResponse);
+                setAllPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setCategoryFilteredPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
             } else {
                 toast.error(jsonResponse.error);
             }
@@ -47,24 +45,35 @@ export default function Home() {
         fetchData();
     }, []);
 
-    function handleCategoryPosts() {
+    function handleCategoryPosts(e) {
+        const category = e.target.getAttribute('data-value');
         const filteredItems = allPosts.filter(item => {
-            if (selectedCategory === "donation") {
-                return item.organisation.donation;
+            if (category === "donation") {
+                return item.donation;
             }
-            else if (selectedCategory === "event") {
-                return item.organisation.event;
+            else if (category === "event") {
+                return item.event;
             }
-            else if (selectedCategory === "discussion") {
-                return !item.organisation.donation && !item.organisation.event;
+            else if (category === "discussion") {
+                return !item.donation && !item.event;
             }
             return true;
         });
 
-        // setCategoryFilteredPosts(filteredItems);
-        console.log(filteredItems);
+        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
     }
 
+    function handleSortPosts(e) {
+        const sortByValue = e.target.value;
+        setSortBy(sortByValue);
+
+        if (sortByValue === "newest") {
+            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+        }
+        else if(sortByValue === "top") {
+            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => b.likes - a.likes));
+        }
+    }
 
     return (
         <Layout>
@@ -74,11 +83,11 @@ export default function Home() {
                 <div className="flex flex-row justify-between mt-2">
                     <div className="flex basis-4/5">
                         <Tabs title="Post Types" tabs={['all', 'discussion', 'event', 'donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
-                            onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
+                            onClick={(e) => handleCategoryPosts(e)} />
                     </div>
 
                     <div className="basis-1/5">
-                        <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => setSortBy(e.target.value)} />
+                        <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => handleSortPosts(e)} />
                     </div>
                 </div>
 
@@ -87,9 +96,8 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-2 max-lg:grid-cols-1 p-2">
-
-                    {allPosts ?
-                        (allPosts.posts.map((item) => (
+                    {categoryFilteredPosts ?
+                        (categoryFilteredPosts.map((item) => (
                             <NavLink key={item._id} to={`/organisation/${item.organisation._id}/post/${item._id}`}>
                                 <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title}
                                     organisation={item.organisation.name}
