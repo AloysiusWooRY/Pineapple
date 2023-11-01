@@ -38,7 +38,7 @@ export default function Login() {
         }
 
         if (json.message === "2FA not setup") {
-            navigate('../setup-authenticator-qr', { state: { referrer: 'register', qrImageBase64: json.qrImage } });
+            navigate('../setup-authenticator-qr', { state: { referrer: 'login', qrImageBase64: json.qrImage } });
         } else {
             setStage(2);
         }

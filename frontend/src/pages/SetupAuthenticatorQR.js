@@ -40,6 +40,7 @@ export default function SetupAuthenticatorQR() {
         const json = await response.json();
         if (!response.ok) {
             toast.error(json.error);
+            if (json.error === "2FA already verified and enabled") navigate("/");
             return;
         }
 
@@ -51,6 +52,8 @@ export default function SetupAuthenticatorQR() {
 
                 // Update the auth context
                 dispatch({ type: "LOGIN", payload: json });
+
+                toast.success(`Welcome back, ${json.name}!`, { duration: 6000 });
             } else {
                 toast.error(json.error);
             }

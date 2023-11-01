@@ -201,8 +201,7 @@ const verify2FA = async (req, res) => {
         if (!token) throw new MissingFieldError('Missing field', req)
 
         if (hasTwoFA) {
-            logger.http(`2FA already verified and enabled`, { actor: "USER", req })
-            return res.status(204).json({ message: "2FA already verified and enabled" })
+            throw new ValidationError("2FA already verified and enabled", req)
         }
 
         const decryptedTwoFASecret = CryptoJS.AES.decrypt(twoFASecret, process.env.ENCRYPTION_SECRET).toString(CryptoJS.enc.Utf8)
