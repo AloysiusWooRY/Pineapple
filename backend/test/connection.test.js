@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: "./.envtest" });
 const chai = require("chai");
 const { expect } = chai;
 let csrfToken = null;

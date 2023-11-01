@@ -28,14 +28,14 @@ export function ToggleButton(props) {
 };
 
 export function RectangleButton(props) {
-    const { title, forForm = null, heroIcon = <QuestionMarkCircleIcon />, colour = 'bg-button-neutral', onClick = null } = props;
+    const { title, forForm = null, heroIcon = <QuestionMarkCircleIcon />, colour = 'bg-button-neutral', width='full', onClick = null } = props;
 
     return (
         <>
             <button
                 type={!forForm ? "button" : "submit"}
                 id={"button-" + textNerfer(title)}
-                className={`flex w-full justify-center items-center text-text-primary px-4 py-2 rounded ${colour}`}
+                className={`flex w-${width} justify-center items-center text-text-primary px-4 py-2 rounded ${colour}`}
                 value={textNerfer(title)}
                 onClick={onClick}>
                 {heroIcon && React.cloneElement(heroIcon, { className: "h-4 w-4 mr-2" })}
@@ -86,7 +86,7 @@ export function StandardDropdown(props) {
     switch (titleLocation) {
         case 'side':
             return (
-                <div className={`flex flex-row items-center pb-${bottomPadding}`}>
+                <div className={`flex flex-row items-center pb-${bottomPadding} w-${width}`}>
                     <span className="min-w-fit grow-0 px-2 text-text-primary">{title}</span>
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
@@ -95,7 +95,7 @@ export function StandardDropdown(props) {
                                 id={"dropdown-" + textNerfer(title)}
                                 value={value}
                                 onChange={onChange}
-                                className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
+                                className={`p-2 w-full capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
                             </select>
                         </div>
@@ -107,7 +107,7 @@ export function StandardDropdown(props) {
             );
         case 'top':
             return (
-                <div className={`flex flex-col pb-${bottomPadding}`}>
+                <div className={`flex flex-col pb-${bottomPadding} w-${width}`}>
                     <span className="min-w-fit grow-0 py-2 text-text-primary">{title}</span>
 
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
@@ -116,7 +116,7 @@ export function StandardDropdown(props) {
                                 id={textNerfer(title)}
                                 value={value}
                                 onChange={onChange}
-                                className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
+                                className={`p-2 w-full capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
                             </select>
                         </div>
@@ -128,14 +128,14 @@ export function StandardDropdown(props) {
             );
         default:
             return (
-                <div className={`flex flex-row items-center pb-${bottomPadding}`}>
+                <div className={`flex flex-row items-center pb-${bottomPadding} w-${width}`}>
                     <div className="flex flex-row grow bg-input-background-neutral rounded-sm">
                         <div className="grow rounded-sm text-text-primary">
                             <select
                                 id={textNerfer(title)}
                                 value={value}
                                 onChange={onChange}
-                                className={`p-2 w-${width} capitalize bg-transparent appearance-none`}>
+                                className={`p-2 w-full capitalize bg-transparent appearance-none`}>
                                 {<IterateOptions />}
                             </select>
                         </div>

@@ -16,6 +16,7 @@ import BannerImage from "../assets/banner-admin-moderation.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { adminAccountAll } from "../apis/Collections/adminAPIs";
 
 export default function AdminModeration() {
     const { user } = useAuthContext();
@@ -43,6 +44,10 @@ export default function AdminModeration() {
         setUsername(e);
 
         setViewingUserMode(true);
+    }
+
+    async function fetchData() {
+        
     }
 
     return (

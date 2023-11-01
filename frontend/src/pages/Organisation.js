@@ -35,83 +35,75 @@ export default function Organisation() {
 
     const [editOrganisationMode, setEditOrganisationMode] = useState(false);
     const [editOrganisation, setEditOrganisation] = useState({
-        name: 'Mental Health Hoax',
-        description: 'Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.',
-        bannerImage: [],
-        posterImage: [],
+        name: '',
+        description: '',
+        bannerImage: null,
+        posterImage: null,
         error: null,
     });
 
     // Loads the organisation by id
     useEffect(() => {
-        async function fetchData() {
-            const response = await organisationId({id});
+        async function fetchOrganisation() {
+            const response = await organisationId({ id });
 
             if (response.ok) {
-                const jsonResponse = await response.json();
-                console.log(jsonResponse);
-                setSelectedOrganisation(jsonResponse.organisation);
+                const json = await response.json();
+                console.log(json);
+                setSelectedOrganisation(json.organisation);
             }
         }
-        fetchData()
+        fetchOrganisation();
     }, []);
 
     // Loads all posts
     useEffect(() => {
-        async function fetchData() {
+        async function fetchPosts() {
             const response = await postAll({
                 organisation: id,
                 category: "",
                 filter: "",
                 sortByPinned: true,
-            })
-            const jsonResponse = await response.json();
+            });
+            const json = await response.json();
 
             if (response.ok) {
-                setAllPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-                setCategoryFilteredPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setAllPosts(json.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+                setCategoryFilteredPosts(json.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
             } else {
-                toast.error(jsonResponse.error);
+                toast.error(json.error);
             }
         }
-        fetchData();
+        fetchPosts();
     }, []);
 
     function OrganisationPosts() {
         let posts = [];
         const currentDate = new Date();
 
-        (categoryFilteredPosts != null && selectedOrganisation != null) ? (
-            
+        categoryFilteredPosts.length > 0 ?
             categoryFilteredPosts.map(item => (
                 posts.push(
-                <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
-                    <DiscussionOverview
-                        key={"post-" + item._id}
-                        title={item.title} 
-                        discussionType={item.donation ? "donation": item.event ? "event": "discussion"}
-                        votes={item.likes} 
-                        timeSincePost={(Math.floor((currentDate - (new Date(item.updatedAt))) / (1000 * 60 * 60 * 24)))}
-                        posterUsername={item.owner.name} 
-                        upvoted={null}
-                        imagePath={selectedOrganisation.imagePath.poster}
-                    />
-                </NavLink>
+                    <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
+                        <DiscussionOverview
+                            post={{
+                                id: item._id,
+                                title: item.title,
+                                discussionType: item.donation ? "donation" : item.event ? "event" : "discussion",
+                                votes: item.likes,
+                                createdAt: item.createdAt,
+                                username: item.owner.name,
+                                upvoted: null,
+                                imagePath: selectedOrganisation.imagePath.poster,
+                            }}
+                        />
+                    </NavLink>
                 )
             ))
-        )
-        :
-        posts.push(
-            <div key={"key-post-" + id}>
-                <NavLink key={"nav-link-" + id} to={`/organisation/123/post/123`}>
-                    <DiscussionOverview
-                        id={"post-" + id}
-                        title={"What if we could print a brain?"} discussionType={"discussion"}
-                        votes={69} timeSincePost={"4 days"} posterUsername={"Ho Lee"} upvoted={null} />
-                </NavLink>
-            </div>
-        );
-        
+            :
+            posts.push(
+                <h1 className="text-text-primary py-4 text-3xl text-center">🍍No Organisations Here🍍</h1>
+            );
 
         return posts;
     }
@@ -131,7 +123,7 @@ export default function Organisation() {
             return true;
         });
 
-        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
+        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
     }
 
     function handleSortPosts(e) {
@@ -139,9 +131,9 @@ export default function Organisation() {
         setSortBy(sortByValue);
 
         if (sortByValue === "newest") {
-            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
         }
-        else if(sortByValue === "top") {
+        else if (sortByValue === "top") {
             setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => b.likes - a.likes));
         }
     }
@@ -157,7 +149,7 @@ export default function Organisation() {
         <Layout>
             <div className="flex flex-row gap-2">
                 <section className="h-96 flex-grow">
-                    <Banner image={BannerImage} title={selectedOrganisation ? selectedOrganisation.name : "Mental Health Hoax"} />
+                    {selectedOrganisation && <Banner image={BannerImage} title={selectedOrganisation.name} />}
                     {/* button={{ icon: <PencilIcon />, text: "Edit", onClick: () => setEditOrganisationMode(!editOrganisationMode) }} */}
 
                     <div className="flex flex-row justify-between mt-2">
@@ -176,27 +168,19 @@ export default function Organisation() {
                     </div>
 
                     <div className="flex flex-col py-2 gap-2">
-                       {<OrganisationPosts />}
+                        {selectedOrganisation && categoryFilteredPosts && <OrganisationPosts />}
                     </div>
                 </section>
 
-                {selectedOrganisation != null ? 
+                {selectedOrganisation &&
                     <NavLink to={`/organisation/${selectedOrganisation._id}/post/new`}>
                         <SideBarOrganisationInfo
                             organisationName={selectedOrganisation.name}
                             organisationDescription={selectedOrganisation.description}
-                            createDate={new Date(selectedOrganisation.createdAt).toLocaleDateString()}
+                            createDate={selectedOrganisation.createdAt}
                             numberPosts={selectedOrganisation.posts}
                         />
-                    </NavLink> 
-                    : 
-                    <SideBarOrganisationInfo
-                        organisationName="Mental Health Hoax"
-                        organisationDescription="Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy."
-                        createDate="July 22, 1999"
-                        numberPosts="30"
-                        onCreateClicked={handleOrganisationEdit}
-                    />
+                    </NavLink>
                 }
             </div>
 

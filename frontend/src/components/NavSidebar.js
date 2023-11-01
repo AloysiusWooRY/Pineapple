@@ -45,36 +45,6 @@ export default function NavSideBar() {
                 </li>
                 <li>
                     <NavLink
-                        id="link-post"
-                        to="/organisation/123/post/123"
-                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
-                    >
-                        <ShieldExclamationIcon className="w-5 h-5" />
-                        <span className="ml-3">Post (Temp)</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
-                        id="link-organisation"
-                        to="/organisation/123"
-                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
-                    >
-                        <ShieldExclamationIcon className="w-5 h-5" />
-                        <span className="ml-3">Specific Org (Temp)</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
-                        id="link-post-new"
-                        to="/organisation/123/post/new"
-                        className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"
-                    >
-                        <ShieldExclamationIcon className="w-5 h-5" />
-                        <span className="ml-3">New Post (Temp)</span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
                         id="link-profile"
                         to="/profile"
                         className="flex items-center p-2 text-text-secondary rounded-lg hover:text-text-primary transition duration-300 group"

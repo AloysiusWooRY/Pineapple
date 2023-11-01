@@ -34,7 +34,7 @@ export default function NewPost() {
     const [eventLocation, setEventLocation] = useState('');
     const [eventCapacity, setEventCapacity] = useState('');
     const [donation, setDonation] = useState('');
-    const [image, setImage] = useState([]);
+    const [image, setImage] = useState(null);
 
     function handlePostCreated() {
         navigate(`../organisation/${id}`);
@@ -92,8 +92,8 @@ export default function NewPost() {
                 toast.error("Capacity has be a value!");
                 return;
             }
-            if(!validator.isInt(sanitisedCapacity, {gt: 1, lt: 100})) {
-                toast.error("Please enter a capacity from 2 to 100!");
+            if(!validator.isInt(sanitisedCapacity, {gt: 1, lt: 10000})) {
+                toast.error("Please enter a capacity from 2 to 9999!");
                 return;
             }
 
@@ -134,6 +134,8 @@ export default function NewPost() {
                 return;
             }
 
+            console.log(image);
+
             response = await postNew({
                 title: sanitisedTitle,
                 description: sanitisedMessage,
@@ -144,13 +146,13 @@ export default function NewPost() {
             });
         }
         
-        const jsonResponse = await response.json();
+        const json = await response.json();
 
         if (response.ok) {
             toast.success("Successfully created a new post!");
             handlePostCreated();
         } else {
-            toast.error(jsonResponse.error);
+            toast.error(json.error);
         }
     }
 
@@ -194,7 +196,7 @@ export default function NewPost() {
                     <InputField title="Donation Goal ($)" placeholder="Enter Donation Goal" type="number" width='1/6' additionalProps={{ min: '1', step: '0.01' }}
                         value={donation} onChange={(e) => setDonation(e.target.value)} />}
 
-                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setImage([...image, e.target.files[0]]) }} />
+                <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setImage(e.target.files[0]) }} />
 
                 <div className="self-start">
                     <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { handleCreatePost() }} />

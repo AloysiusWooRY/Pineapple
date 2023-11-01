@@ -14,19 +14,18 @@ import { Divider } from "../components/Miscellaneous";
 // Assets
 import { PlusCircleIcon, NewspaperIcon, HeartIcon, BookOpenIcon, GlobeAsiaAustraliaIcon, HandRaisedIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/home-banner-org.png";
-import Sample1 from "../assets/sample-nuts.jpg";
 
 // API
-import { organisationAll } from "../apis/exportedAPIs";
+import { organisationCategories, organisationAll } from "../apis/exportedAPIs";
 
 
 export default function OrganisationHome() {
     const navigate = useNavigate();
 
-    const [categories, setCategories] = useState(["all", "health", "education", "environment", "humanitarian"]);
+    const [allCategories, setAllCategories] = useState([]);
 
     const [allOrganisations, setAllOrganisations] = useState(null);
-    const [categoryFilteredOrganisations , setCategoryFilteredOrganisations] = useState(null);
+    const [categoryFilteredOrganisations, setCategoryFilteredOrganisations] = useState(null);
 
     const handleClick = (e) => {
         navigate("../organisation/new");
@@ -40,25 +39,41 @@ export default function OrganisationHome() {
                 return true;
             } else {
                 return item.category === category;
-            }   
+            }
         });
 
         setCategoryFilteredOrganisations(filteredItems);
     }
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchAllCategories() {
+            if (allCategories.length > 0)
+                return;
+
+            const response = await organisationCategories();
+
+            const json = await response.json();
+            if (response.ok) {
+                setAllCategories(['all', ...json.categories]);
+            } else {
+                toast.error(json.error);
+            }
+        }
+
+        async function fetchAllOrganisations() {
             const response = await organisationAll({ category: '' });
-            const jsonResponse = await response.json();
+            const json = await response.json();
 
             if (response.ok) {
-                setAllOrganisations(jsonResponse.organisations);
-                setCategoryFilteredOrganisations(jsonResponse.organisations);
+                setAllOrganisations(json.organisations);
+                setCategoryFilteredOrganisations(json.organisations);
             } else {
                 toast.error(response.error);
             }
         }
-        fetchData();
+
+        fetchAllCategories();
+        fetchAllOrganisations();
     }, []);
 
     return (
@@ -66,21 +81,24 @@ export default function OrganisationHome() {
             <section className="grid">
                 <Banner image={BannerImage} title="Organisations" button={{ icon: <PlusCircleIcon />, text: "Apply for New Organisation", onClick: handleClick }} />
 
-                <Tabs title="Organisation Categories" tabs={categories} heroIconsArr={[<NewspaperIcon />, <HeartIcon />, <BookOpenIcon />, <GlobeAsiaAustraliaIcon />, <HandRaisedIcon />]}
-                    onClick={(e) => handleCategoryOrganisations(e) } />
+                <Tabs title="Organisation Categories" tabs={allCategories} heroIconsArr={[<NewspaperIcon />, <HeartIcon />, <BookOpenIcon />, <GlobeAsiaAustraliaIcon />, <HandRaisedIcon />]}
+                    onClick={(e) => handleCategoryOrganisations(e)} />
 
                 <Divider padding={0} />
 
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
-                    {categoryFilteredOrganisations ? 
-                        (categoryFilteredOrganisations.map(item => (
+                    {categoryFilteredOrganisations && (categoryFilteredOrganisations.length > 0 ?
+                        categoryFilteredOrganisations.map(item => (
                             <NavLink key={"nav-link" + item._id} to={`/organisation/${item._id}`}>
-                                <CardHomeOrg key={item.id} image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
+                                <CardHomeOrg image={"http://localhost:4000/" + item.imagePath.poster} name={item.name} posts={item.posts} category={item.category} />
                             </NavLink>
-                        ))) 
-                        : <h1 className="grow text-text-primary py-4 text-6xl text-center">🍍No Organisations Here :(🍍</h1>
+                        ))
+                        :
+                        <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Organisations Here🍍</h1>
+                    )
                     }
                 </div>
+
             </section>
         </Layout >
     )

@@ -1,5 +1,5 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
@@ -7,14 +7,14 @@ import toast from 'react-hot-toast';
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import { InputField, InputTextBox, InputFile } from "../components/Inputs";
-import { RectangleButton } from "../components/Buttons";
+import { RectangleButton, StandardDropdown } from "../components/Buttons";
 
 // Assets
 import { PaperAirplaneIcon, NoSymbolIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/org-banner.png";
 
 // API
-import { organisationApply } from "../apis/exportedAPIs";
+import { organisationCategories, organisationApply } from "../apis/exportedAPIs";
 
 
 export default function NewOrganisation() {
@@ -23,36 +23,49 @@ export default function NewOrganisation() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    const [allCategories, setAllCategories] = useState([]);
+
     const [organisationName, setOrganisationName] = useState('');
     const [organisationDescription, setOrganisationDescription] = useState('');
-    const [bannerImage, setBannerImage] = useState([]);
-    const [posterImage, setPosterImage] = useState([]);
+    const [organisationCategory, setOrganisationCategory] = useState('all');
+    const [bannerImage, setBannerImage] = useState(null);
+    const [posterImage, setPosterImage] = useState(null);
+
+    useEffect(() => {
+        async function fetchAllCategories() {
+            if (allCategories.length > 0)
+                return;
+
+            const response = await organisationCategories();
+
+            const json = await response.json();
+            if (response.ok) {
+                setAllCategories(['all', ...json.categories]);
+            } else {
+                toast.error(json.error);
+            }
+        }
+        fetchAllCategories();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         const toastId = toast.loading('Loading...');
 
-        // TODO: Check for field length and file type
-
-        const formData = new FormData();
-        formData.append("name", organisationName);
-        formData.append("description", organisationDescription);
-        formData.append("banner", bannerImage[0]);
-        formData.append("poster", posterImage[0]);
-
         try {
             setIsLoading(true);
 
+            // TODO: Check for field length and file type
             const response = await organisationApply({
                 name: organisationName,
                 description: organisationDescription,
-                category: 'health',
-                banner: bannerImage[0],
-                poster: posterImage[0],
+                category: organisationCategory,
+                banner: bannerImage,
+                poster: posterImage,
             });
             const json = await response.json();
-            
+
             if (response.ok) {
                 toast.success("Success!", { id: toastId });
                 navigate("/organisation", { replace: true });
@@ -87,12 +100,14 @@ export default function NewOrganisation() {
                     value={organisationName} onChange={(e) => setOrganisationName(e.target.value)} />
                 <InputTextBox title="Description" placeholder="Explain what your organisation does" width='full'
                     value={organisationDescription} onChange={(e) => setOrganisationDescription(e.target.value)} />
-                <InputFile title="Upload Banner" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage([...bannerImage, e.target.files[0]]) }} />
-                <InputFile title="Upload Poster" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage([...posterImage, e.target.files[0]]) }} />
+                <StandardDropdown title="Category" titleLocation="top" width="1/4" options={allCategories}
+                    value={organisationCategory} onChange={(e) => { setOrganisationCategory(e.target.value); }} />
+                <InputFile title="Upload Banner" accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage(e.target.files[0]) }} />
+                <InputFile title="Upload Poster" accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage(e.target.files[0]) }} />
 
                 <div className="flex flex-row gap-2 items-center">
-                    <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
-                    <RectangleButton title="Cancel" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={handleCancel} />
+                    <RectangleButton title="Submit" width="fit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
+                    <RectangleButton title="Cancel" width="fit" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={handleCancel} />
                     <label id="error-new-organsation" className="text-text-warn">
                         {error ?? ''}
                     </label>
