@@ -1,6 +1,7 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Components
 import { FormatDateTime } from "../components/componentUtils";
@@ -34,6 +35,9 @@ export default function Post() {
     const [sortBy, setSortBy] = useState('newest');
 
     const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:15:00.000Z');
+    const [eventLocation, setEventLocation] = useState('Null Island');
+    const [eventCapacity, setEventCapacity] = useState(69);
+
     const [poster, setPoster] = useState('Wi Tu');
     const [postTime, setPostTime] = useState('6 days');
     const [postTitle, setPostTitle] = useState('On the beach at night');
@@ -63,28 +67,30 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
     // This is to load the post and organisation details for the selected post
     useEffect(() => {
         async function fetchData() {
-            const fetchedPost = await postIdPOST({id})
-            const fetchedData = await fetchedPost.json();
-    
-            if (fetchedData.error != "Invalid id") {
-                setPostContent(fetchedData.post.description);
-                setPostTitle(fetchedData.post.title);
+            const response = await postIdPOST({ id })
+            const jsonResponse = await response.json();
+
+            if (response.ok) {
+                setPostContent(jsonResponse.post.description);
+                setPostTitle(jsonResponse.post.title);
                 setPoster(user.name);
-                setPostType(fetchedData.post.donation ? "donation": fetchedData.post.event ? "event": "discussion");
-                setPostTime(fetchedData.post.updatedAt);
-    
-                if (fetchedData.post.organisation.donation) {
-                    setDonationCurrent(fetchedData.post.organisation.donation.amoount);
-                    setDonationGoal(fetchedData.post.organisation.donation.goal);
+                setPostType(jsonResponse.post.donation ? "donation" : jsonResponse.post.event ? "event" : "discussion");
+                setPostTime(jsonResponse.post.updatedAt);
+
+                if (jsonResponse.post.organisation.donation) {
+                    setDonationCurrent(jsonResponse.post.organisation.donation.amoount);
+                    setDonationGoal(jsonResponse.post.organisation.donation.goal);
                 }
-                if (fetchedData.post.organisation.event) {
-                    eventStartDateTime(fetchedData.post.createdAt);
+                if (jsonResponse.post.organisation.event) {
+                    setEventStartDateTime(jsonResponse.post.createdAt);
                 }
-    
-                setOrganisationName(fetchedData.post.organisation.name);
-                setOrganisationDescription(fetchedData.post.organisation.description);
-                setOrganisationCreateDate(fetchedData.post.organisation.createdAt);
-                setOrganisationPosts(fetchedData.post.organisation.posts);
+
+                setOrganisationName(jsonResponse.post.organisation.name);
+                setOrganisationDescription(jsonResponse.post.organisation.description);
+                setOrganisationCreateDate(jsonResponse.post.organisation.createdAt);
+                setOrganisationPosts(jsonResponse.post.organisation.posts);
+            } else {
+                toast.error(jsonResponse.error);
             }
         }
         fetchData();
@@ -163,10 +169,32 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     {postType === 'event' ?
                         <>
                             {!editMode ?
-                                <InputField title="Event Start" placeholder="Event Start" active={false}
-                                    value={FormatDateTime(eventStartDateTime)} width='fit' />
+                                <div className="flex flex-col flex-wrap">
+                                    <div className="w-1/5 min-w-fit">
+                                        <InputField title="Event Start" active={false} value={FormatDateTime(eventStartDateTime)} />
+                                    </div>
+                                    <div className="w-1/5 min-w-fit">
+                                        <InputField title="Capacity" type="number" active={false} value={eventCapacity} />
+                                    </div>
+                                    <div className="w-full min-w-fit">
+                                        <InputField title="Location" type="text" active={false} value={eventLocation} />
+                                    </div>
+                                </div>
                                 :
-                                <InputDate title="Event Start" width='fit' value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
+                                <div className="flex flex-col flex-wrap">
+                                    <div className="w-1/5 min-w-fit">
+                                        <InputDate title="Event Start" value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
+                                    </div>
+                                    <div className="w-1/5 min-w-fit">
+                                        <InputField title="Capacity" type="number"
+                                            value={eventCapacity} onChange={(e) => setEventCapacity(e.target.value)} additionalProps={{ min: '1', step: '1' }} />
+                                    </div>
+                                    <div className="w-full min-w-fit">
+                                        <InputField title="Location" type="text" 
+                                        value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} />
+                                    </div>
+                                </div>
+                                // <InputDate title="Event Start" width='fit' value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
                             }
 
                             <Divider padding={2} />

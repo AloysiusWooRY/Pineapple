@@ -22,7 +22,9 @@ export default function NewPost() {
 
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
-    const [startDateTime, setStartDateTime] = useState('');
+    const [eventStartDateTime, setEventStartDateTime] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventCapacity, setEventCapacity] = useState('');
     const [donation, setDonation] = useState('');
     const [image, setImage] = useState([]);
 
@@ -47,7 +49,19 @@ export default function NewPost() {
                     value={message} onChange={(e) => setMessage(e.target.value)} />
 
                 {selectedElement === 'event' &&
-                    <InputDate title="Event Start" width='fit' value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} />
+                    <div className="flex flex-col flex-wrap">
+                        <div className="w-1/5 min-w-fit">
+                            <InputDate title="Event Start" value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
+                        </div>
+                        <div className="w-1/5 min-w-fit">
+                            <InputField title="Capacity" placeholder="Enter Event Capacity" type="number"
+                                value={eventCapacity} onChange={(e) => setEventCapacity(e.target.value)} additionalProps={{ min: '1', step: '1' }} />
+                        </div>
+                        <div className="w-full min-w-fit">
+                            <InputField title="Location" placeholder="Enter Event Location" type="text"
+                                value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} />
+                        </div>
+                    </div>
                 }
 
                 {selectedElement === 'donation' &&

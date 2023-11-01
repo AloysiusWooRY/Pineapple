@@ -1,5 +1,6 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -15,15 +16,16 @@ import BannerImage from "../assets/post-banner.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { accountUpdate } from "../apis/exportedAPIs";
+import { accountUpdate, accountPaymentInfoPUT, accountPaymentInfoPOST, accountUpdatePassword } from "../apis/exportedAPIs";
 
 export default function Profile() {
     const { user } = useAuthContext();
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
-    const [paymentInfo, setPaymentInfo] = useState('1111 2222 3333 4444');
+    const [paymentInfo, setPaymentInfo] = useState('None');
     const [expiryMonthYear, setExpiryMonthYear] = useState('');
+    const [paymentUpdated, setPaymentUpdated] = useState(true);
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -36,35 +38,68 @@ export default function Profile() {
     const [displayPasswordPopup, setDisplayPasswordPopup] = useState(false);
 
     async function handleEditProfile() {
-        console.log("handle profile!");
+        const response = await accountUpdate({
+            name,
+            email,
+        });
+
+        if(response.ok) {
+            const newUser = {...user};
+            newUser.name = name;
+            newUser.email = email;
+            localStorage.setItem('user', JSON.stringify(newUser));
+        } else {
+            toast.error(response.error);
+        }
     }
 
     async function handleEditPayment() {
-        console.log("handle pay!");
+        const response = await accountPaymentInfoPUT({
+            cardNumber: paymentInfo,
+            expirationDate: expiryMonthYear,
+        });
 
-        console.log(expiryMonthYear);
+        if(response.ok) {
+            setPaymentUpdated(true);
+        } else {
+            toast.error(response.error);
+        }
     }
 
     async function handlePasswordChange(e) {
         e.preventDefault();
 
-        console.log("handle password!");
+        const response = await accountUpdatePassword({password: newPassword});
+
+        if(response.ok) {
+            setDisplayPasswordPopup(false);
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+            toast.success("Password Successfully Changed!");
+        } else {
+            toast.error(response.error);
+        }
     }
 
     useEffect(() => {
         async function fetchData() {
-            const patchProfile = await accountUpdate({
-                name: name,
-                email: email,
-            });
-            const fishtwo = await patchProfile.json();
-            setName(user.name)
-            setEmail(user.email)
-            console.log(fishtwo)
-          }
-
-          fetchData();
-    }, [name, email]);
+            if (paymentUpdated) {
+                const response = await accountPaymentInfoPOST();
+    
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+        
+                    setPaymentInfo(jsonResponse.cardNumber);
+                    setExpiryMonthYear(jsonResponse.expirationDate);
+                    setPaymentUpdated(false);
+                } else {
+                    toast.error(response.error);
+                }
+            }
+        }
+        fetchData();
+    }, [paymentUpdated]);
 
     return (
         <Layout>

@@ -44,7 +44,7 @@ export function InputField(props) {
                 value={value}
                 onChange={onChange}
                 {...additionalProps}
-                className={`p-2 w-${width} placeholder:text-theme-placeholder 
+                className={`p-2 w-${width} min-w-fit placeholder:text-theme-placeholder 
                         ${!active ?
                         'border-l-2 border-divider-color bg-transparent cursor-not-allowed text-text-disabled' :
                         'rounded-sm bg-input-background-neutral text-text-primary'}`}
@@ -120,7 +120,7 @@ export function InputDate(props) {
                 value={value}
                 onChange={onChange}
                 {...additionalProps}
-                className={`p-2 w-${width} placeholder:text-theme-placeholder
+                className={`p-2 w-${width} min-w-fit placeholder:text-theme-placeholder
                     ${!active ?
                         'border-l-2 border-divider-color bg-transparent cursor-not-allowed text-text-disabled' :
                         'rounded-sm bg-input-background-neutral text-text-primary'}`}

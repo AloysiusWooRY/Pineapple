@@ -138,11 +138,20 @@ const createPost = async (req, res) => {
             const { donation_goal } = req.info ?? req.body
             newOrg["donation"] = {}
 
+            // Check if exist
             if (!donation_goal) throw new MissingFieldError("Missing donation goal", req)
+            // Sanitize input
             const sanitizedGoal = validator.escape(validator.trim(donation_goal))
-            if (!validator.isNumeric(sanitizedGoal)) throw new ValidationError("Invalid goal", req)
-            if (!validator.isFloat(sanitizedGoal, { gt: 0.00, lt: 10000000 })) throw new ValidationError("Capacity out of range (1 to 10000000)", req)
-            if (!validator.isCurrency(sanitizedGoal, { digits_after_decimal: [0, 1, 2] })) throw new ValidationError("Invalid goal currency format", req)
+            // Check if string is numerical
+            if (!validator.isNumeric(sanitizedGoal))
+                throw new ValidationError("Invalid goal", req)
+            // Check if string is a positive float
+            if (!validator.isFloat(sanitizedGoal, { gt: 0.00, lt: 10000000 }))
+                throw new ValidationError("Goal out of range (1 to 10000000)", req)
+            // Check if string is in a valid currency format (2dp)
+            if (!validator.isCurrency(sanitizedGoal, { digits_after_decimal: [0, 1, 2] }))
+                throw new ValidationError("Invalid goal currency format", req)
+
             newOrg["donation"]["goal"] = sanitizedGoal
         }
 

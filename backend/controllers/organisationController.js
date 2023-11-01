@@ -78,7 +78,6 @@ const applyOrganisation = async (req, res) => {
             res.status(500).json({ error: "Something went wrong, try again later" })
         }
     }
-
 }
 
 const getAllCategories = async (req, res) => {

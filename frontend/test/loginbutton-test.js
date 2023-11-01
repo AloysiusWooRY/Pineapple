@@ -41,7 +41,7 @@ async function runLoginTest() {
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
     const passwordField = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
-    const loginButton = await driver.findElement(By.css('button[value="log-in"]'));
+    const loginButton = await driver.findElement(By.id("button-log-in"));
 
 
     // Include the CSRF token in the login request
