@@ -299,7 +299,7 @@ export default function Post() {
                 <SideBarOrganisationInfo
                     organisationName={organisationName}
                     organisationDescription={organisationDescription}
-                    createDate={FormatDateTime(organisationCreateDate)}
+                    createDate={organisationCreateDate}
                     numberPosts={organisationPosts}
                     onCreateClicked={handleCreatePost}
                 />

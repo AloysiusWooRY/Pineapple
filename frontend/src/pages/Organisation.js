@@ -4,7 +4,6 @@ import { useParams, NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Components
-import { FormatDateTime, timeAgo } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from "../components/SidebarOrganisationInfo";
 import DiscussionOverview from "../components/DiscussionOverview";
@@ -92,7 +91,7 @@ export default function Organisation() {
                                 title: item.title,
                                 discussionType: item.donation ? "donation" : item.event ? "event" : "discussion",
                                 votes: item.likes,
-                                timeSincePost: Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) < 24 ? Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) + " hours" : Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60 / 24)) + " days",
+                                createdAt: item.createdAt,
                                 username: item.owner.name,
                                 upvoted: null,
                                 imagePath: selectedOrganisation.imagePath.poster,
@@ -178,7 +177,7 @@ export default function Organisation() {
                         <SideBarOrganisationInfo
                             organisationName={selectedOrganisation.name}
                             organisationDescription={selectedOrganisation.description}
-                            createDate={FormatDateTime(selectedOrganisation.createdAt)}
+                            createDate={selectedOrganisation.createdAt}
                             numberPosts={selectedOrganisation.posts}
                         />
                     </NavLink>

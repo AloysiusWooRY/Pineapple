@@ -102,7 +102,7 @@ export default function Home() {
                     {categoryFilteredPosts ?
                         (categoryFilteredPosts.map((item) => (
                             <NavLink key={item._id} to={`/organisation/${item.organisation._id}/post/${item._id}`}>
-                                <CardHome organisation={{
+                                <CardHome post={{
                                     "id": item._id,
                                     "title": item.title,
                                     "description": item.description,
@@ -110,6 +110,8 @@ export default function Home() {
                                     "type": (item.donation ? "donation" : item.event ? "event" : "discussion"),
                                     "organisationName": item.organisation.name,
                                     "image": item.organisation.imagePath.poster,
+                                    "createdAt": item.createdAt,
+                                    "likes": item.likes,
                                 }} />
                             </NavLink>
                         ))) : ""
