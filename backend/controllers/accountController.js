@@ -102,7 +102,7 @@ const loginOTP = async (req, res) => {
         req.session.isAuthenticated = true
 
         const csrfToken = req.csrfToken()
-        res.cookie('jwt', token, {
+        res.cookie('jwt', newToken, {
             httpOnly: true,
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         })
