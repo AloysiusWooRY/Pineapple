@@ -28,7 +28,8 @@ const loginAccount = async (req, res) => {
         if (!email || !password) throw new MissingFieldError('Missing fields', req)
 
         // Validate login credentials
-        const account = await Account.findOne({ email })
+        const sanitiseEmail = validator.normalizeEmail(email)
+        const account = await Account.findOne({ sanitiseEmail })
         if (!account) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
         // Validate hashed password
@@ -56,7 +57,7 @@ const loginAccount = async (req, res) => {
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         })
 
-        res.status(200).json({ _id, name, email, csrfToken })
+        res.status(200).json({ _id, name, sanitiseEmail, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
             res.status(err.statusCode).json({ error: err.message })
