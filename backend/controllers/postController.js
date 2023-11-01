@@ -60,10 +60,7 @@ const getAllPost = async (req, res) => {
         if (sortByPinned) sort["isPinned"] = -1
         if (filter === "top") sort["likes"] = -1
 
-        const posts = await Post.find(query)
-            .sort(sort)
-            .populate("organisation", "-requestedBy")
-            .populate("owner", "name")
+        const posts = await Post.find(query).sort(sort).populate("organisation", "-requestedBy")
 
         const postIds = posts.map(post => post._id)
         const userLiked = await Like.find({ post: { $in: postIds }, account: userId }).select("post value")
@@ -141,11 +138,20 @@ const createPost = async (req, res) => {
             const { donation_goal } = req.info ?? req.body
             newOrg["donation"] = {}
 
+            // Check if exist
             if (!donation_goal) throw new MissingFieldError("Missing donation goal", req)
+            // Sanitize input
             const sanitizedGoal = validator.escape(validator.trim(donation_goal))
-            if (!validator.isNumeric(sanitizedGoal)) throw new ValidationError("Invalid goal", req)
-            if (!validator.isFloat(sanitizedGoal, { gt: 0.00, lt: 10000000 })) throw new ValidationError("Capacity out of range (1 to 10000000)", req)
-            if (!validator.isCurrency(sanitizedGoal, { digits_after_decimal: [0, 1, 2] })) throw new ValidationError("Invalid goal currency format", req)
+            // Check if string is numerical
+            if (!validator.isNumeric(sanitizedGoal))
+                throw new ValidationError("Invalid goal", req)
+            // Check if string is a positive float
+            if (!validator.isFloat(sanitizedGoal, { gt: 0.00, lt: 10000000 }))
+                throw new ValidationError("Goal out of range (1 to 10000000)", req)
+            // Check if string is in a valid currency format (2dp)
+            if (!validator.isCurrency(sanitizedGoal, { digits_after_decimal: [0, 1, 2] }))
+                throw new ValidationError("Invalid goal currency format", req)
+
             newOrg["donation"]["goal"] = sanitizedGoal
         }
 
@@ -331,7 +337,7 @@ const deletePostImage = async (req, res) => {
         fs.unlinkSync(`public/${imagePath}`)
 
         logger.http(`Post image successfully deleted: ${_id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -384,7 +390,7 @@ const deletePost = async (req, res) => {
         }
 
         logger.http(`Post successfully deleted: ${_id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -518,7 +524,7 @@ const pinPost = async (req, res) => {
         await existingPost.save()
 
         logger.http(`Post pinned: ${existingPost._id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -552,7 +558,7 @@ const unpinPost = async (req, res) => {
         await existingPost.save()
 
         logger.http(`Post pinned: ${existingPost._id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })

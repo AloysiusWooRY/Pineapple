@@ -78,7 +78,7 @@ const deleteReply = async (req, res) => {
         await Like.deleteMany({ reply: replyId })
 
         logger.http(`Reply successfully deleted`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
