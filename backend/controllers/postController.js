@@ -215,7 +215,7 @@ const getPostById = async (req, res) => {
         }
 
         logger.http(`Post retrieved successfully, (ID: ${id})`, { actor: "USER", req })
-        res.status(200).json({ filteredPost })
+        res.status(200).json({ post: filteredPost })
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
