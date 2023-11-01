@@ -27,15 +27,11 @@ export default function Organisation() {
 
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('newest');
-    const [allPosts, setAllPosts] = useState(null)
 
-    const [selectedOrganisation, setSelectedOrganisation] = useState({
-        name: 'Mental Health Hoax',
-        description: 'Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.',
-        createDate: 'July 22, 1999',
-        posts: 30,
-        default: true,
-    });
+    const [allPosts, setAllPosts] = useState(null);
+    const [categoryFilteredPosts, setCategoryFilteredPosts] = useState(null);
+
+    const [selectedOrganisation, setSelectedOrganisation] = useState(null);
 
     const [editOrganisationMode, setEditOrganisationMode] = useState(false);
     const [editOrganisation, setEditOrganisation] = useState({
@@ -46,22 +42,59 @@ export default function Organisation() {
         error: null,
     });
 
+    // Loads the organisation by id
+    useEffect(() => {
+        async function fetchData() {
+            const response = await organisationId({id});
+
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                setSelectedOrganisation(jsonResponse.organisation);
+            }
+        }
+        fetchData()
+    }, []);
+
+    // Loads all posts
+    useEffect(() => {
+        async function fetchData() {
+            const response = await postAll({
+                organisation: id,
+                category: "",
+                filter: "",
+                sortByPinned: true,
+            })
+            const jsonResponse = await response.json();
+
+            if (response.ok) {
+                setAllPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setCategoryFilteredPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+            } else {
+                toast.error(jsonResponse.error);
+            }
+        }
+        fetchData();
+    }, []);
+
     function OrganisationPosts() {
         let posts = [];
-        console.log(selectedOrganisation);
-        (allPosts != null && !selectedOrganisation.default) ? (
-            allPosts.posts.map(item => (
+        const currentDate = new Date();
+
+        (categoryFilteredPosts != null && selectedOrganisation != null) ? (
+            
+            categoryFilteredPosts.map(item => (
                 posts.push(
-                <NavLink to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
+                <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
                     <DiscussionOverview
                         key={"post-" + item._id}
                         title={item.title} 
                         discussionType={item.donation ? "donation": item.event ? "event": "discussion"}
                         votes={item.likes} 
-                        timeSincePost={item.updatedAt}
-                        posterUsername={user.name} 
+                        timeSincePost={(Math.floor((currentDate - (new Date(item.updatedAt))) / (1000 * 60 * 60 * 24)))}
+                        posterUsername={item.owner.name} 
                         upvoted={null}
-                        imagePath={selectedOrganisation.organisation.imagePath.poster}
+                        imagePath={selectedOrganisation.imagePath.poster}
                     />
                 </NavLink>
                 )
@@ -70,7 +103,7 @@ export default function Organisation() {
         :
         posts.push(
             <div key={"key-post-" + id}>
-                <NavLink to={`/organisation/${selectedOrganisation._id}/post/123`}>
+                <NavLink key={"nav-link-" + id} to={`/organisation/123/post/123`}>
                     <DiscussionOverview
                         id={"post-" + id}
                         title={"What if we could print a brain?"} discussionType={"discussion"}
@@ -83,57 +116,58 @@ export default function Organisation() {
         return posts;
     }
 
-    useEffect(() => {
-        async function fetchData() {
-            const response = await organisationId({id})
-            const jsonResponse = await response.json()
-
-            if (response.ok) {
-                console.log(jsonResponse);
-                setSelectedOrganisation(jsonResponse);
-            } else {
-                toast.error(jsonResponse.error);
+    function handleCategoryPosts(e) {
+        const category = e.target.getAttribute('data-value');
+        const filteredItems = allPosts.filter(item => {
+            if (category === "donation") {
+                return item.donation;
             }
-        }
-        fetchData()
-    }, []);
+            else if (category === "event") {
+                return item.event;
+            }
+            else if (category === "discussion") {
+                return !item.donation && !item.event;
+            }
+            return true;
+        });
 
-    useEffect(() => {
-        async function fetchData() {
-            const response = await postAll({
-                organisation: id,
-                category: "",
-                filter: "",
-                sortByPinned: true,
-            })
-            const jsonResponse = await response.json()
-            setAllPosts(jsonResponse)
+        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
+    }
+
+    function handleSortPosts(e) {
+        const sortByValue = e.target.value;
+        setSortBy(sortByValue);
+
+        if (sortByValue === "newest") {
+            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
         }
-        fetchData()
-    }, []);
+        else if(sortByValue === "top") {
+            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => b.likes - a.likes));
+        }
+    }
 
     async function handleOrganisationEdit(e) {
         e.preventDefault();
 
         console.log("handle edit org!");
-        console.log(selectedOrganisation)
+        console.log(selectedOrganisation);
     }
 
     return (
         <Layout>
             <div className="flex flex-row gap-2">
                 <section className="h-96 flex-grow">
-                    <Banner image={BannerImage} title="Mental Health Hoax"
-                        button={{ icon: <PencilIcon />, text: "Edit", onClick: () => setEditOrganisationMode(!editOrganisationMode) }} />
+                    <Banner image={BannerImage} title={selectedOrganisation ? selectedOrganisation.name : "Mental Health Hoax"} />
+                    {/* button={{ icon: <PencilIcon />, text: "Edit", onClick: () => setEditOrganisationMode(!editOrganisationMode) }} */}
 
                     <div className="flex flex-row justify-between mt-2">
                         <div className="flex basis-4/5">
                             <Tabs title="Post Types" tabs={['all', 'discussion', 'event', 'donation']} heroIconsArr={[<NewspaperIcon />, <ChatBubbleLeftRightIcon />, <CalendarDaysIcon />, <CurrencyDollarIcon />]}
-                                onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
+                                onClick={(e) => handleCategoryPosts(e)} />
                         </div>
 
                         <div className="basis-1/5">
-                            <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => setSortBy(e.target.value)} />
+                            <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => handleSortPosts(e)} />
                         </div>
                     </div>
 
@@ -146,21 +180,21 @@ export default function Organisation() {
                     </div>
                 </section>
 
-                {selectedOrganisation ? 
+                {selectedOrganisation != null ? 
                     <NavLink to={`/organisation/${selectedOrganisation._id}/post/new`}>
                         <SideBarOrganisationInfo
                             organisationName={selectedOrganisation.name}
                             organisationDescription={selectedOrganisation.description}
-                            createDate={selectedOrganisation.createdAt}
+                            createDate={new Date(selectedOrganisation.createdAt).toLocaleDateString()}
                             numberPosts={selectedOrganisation.posts}
                         />
                     </NavLink> 
                     : 
                     <SideBarOrganisationInfo
-                        organisationName={selectedOrganisation.name}
-                        organisationDescription={selectedOrganisation.description}
-                        createDate={selectedOrganisation.createDate}
-                        numberPosts={selectedOrganisation.posts}
+                        organisationName="Mental Health Hoax"
+                        organisationDescription="Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy."
+                        createDate="July 22, 1999"
+                        numberPosts="30"
                         onCreateClicked={handleOrganisationEdit}
                     />
                 }
