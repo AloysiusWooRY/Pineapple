@@ -88,14 +88,16 @@ export default function Organisation() {
                 posts.push(
                     <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
                         <DiscussionOverview
-                            key={"post-" + item._id}
-                            title={item.title}
-                            discussionType={item.donation ? "donation" : item.event ? "event" : "discussion"}
-                            votes={item.likes}
-                            timeSincePost={(Math.floor((currentDate - (new Date(item.updatedAt))) / (1000 * 60 * 60 * 24)))}
-                            posterUsername={item.owner.name}
-                            upvoted={null}
-                            imagePath={selectedOrganisation.imagePath.poster}
+                            post={{
+                                id: item._id,
+                                title: item.title,
+                                discussionType: item.donation ? "donation": item.event ? "event": "discussion",
+                                votes: item.likes,
+                                timeSincePost: Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) < 24 ? Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) + " hours" : Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60 / 24)) + " days",
+                                username: item.owner.name,
+                                upvoted: null,
+                                imagePath: selectedOrganisation.imagePath.poster,
+                            }}
                         />
                     </NavLink>
                 )
