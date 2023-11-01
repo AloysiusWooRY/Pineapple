@@ -29,7 +29,7 @@ const loginAccount = async (req, res) => {
 
         // Validate login credentials
         const sanitiseEmail = validator.normalizeEmail(email)
-        const account = await Account.findOne({ sanitiseEmail })
+        const account = await Account.findOne({ email: sanitiseEmail })
         if (!account) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
         // Validate hashed password
