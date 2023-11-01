@@ -17,6 +17,7 @@ import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function NavSideBar() {
+    const { user } = useAuthContext();
     const { logout } = useLogout();
 
     const [expandAdminMenu, setExpandAdminMenu] = useState(true);
@@ -54,7 +55,7 @@ export default function NavSideBar() {
                     </NavLink>
                 </li>
 
-                <li
+                { user.isAdmin && <li
                     className="flex items-center p-2 gap-2 text-text-secondary rounded-lg hover:cursor-pointer hover:text-text-primary transition duration-300 group"
                     onClick={() => setExpandAdminMenu(!expandAdminMenu)}
                 >
@@ -67,8 +68,8 @@ export default function NavSideBar() {
                     ) : (
                         <ChevronUpIcon className="w-4 h-4" />
                     )}
-                </li>
-                {expandAdminMenu && (
+                </li>}
+                {user.isAdmin && expandAdminMenu && (
                     <ul className="ml-6 space-y-2">
                         <li>
                             <NavLink
