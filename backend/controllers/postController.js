@@ -328,7 +328,7 @@ const deletePostImage = async (req, res) => {
         fs.unlinkSync(`public/${imagePath}`)
 
         logger.http(`Post image successfully deleted: ${_id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -381,7 +381,7 @@ const deletePost = async (req, res) => {
         }
 
         logger.http(`Post successfully deleted: ${_id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -515,7 +515,7 @@ const pinPost = async (req, res) => {
         await existingPost.save()
 
         logger.http(`Post pinned: ${existingPost._id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -549,7 +549,7 @@ const unpinPost = async (req, res) => {
         await existingPost.save()
 
         logger.http(`Post pinned: ${existingPost._id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })

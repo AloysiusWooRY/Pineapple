@@ -67,7 +67,7 @@ const applyOrganisation = async (req, res) => {
         fs.renameSync(`uploads/poster/${poster.filename}`, `public/${posterPath}`)
 
         logger.http(`Organisation application successful: ${_id}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (req.info && req.info.banner) fs.unlinkSync(`uploads/banner/${req.info.banner.filename}`)
         if (req.info && req.info.poster) fs.unlinkSync(`uploads/poster/${req.info.poster.filename}`)
