@@ -48,9 +48,9 @@ export default function Organisation() {
             const response = await organisationId({id});
 
             if (response.ok) {
-                const jsonResponse = await response.json();
-                console.log(jsonResponse);
-                setSelectedOrganisation(jsonResponse.organisation);
+                const json = await response.json();
+                console.log(json);
+                setSelectedOrganisation(json.organisation);
             }
         }
         fetchData()
@@ -65,13 +65,13 @@ export default function Organisation() {
                 filter: "",
                 sortByPinned: true,
             })
-            const jsonResponse = await response.json();
+            const json = await response.json();
 
             if (response.ok) {
-                setAllPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-                setCategoryFilteredPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setAllPosts(json.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setCategoryFilteredPosts(json.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
             } else {
-                toast.error(jsonResponse.error);
+                toast.error(json.error);
             }
         }
         fetchData();

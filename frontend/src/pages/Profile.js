@@ -86,12 +86,15 @@ export default function Profile() {
         async function fetchData() {
             if (paymentUpdated) {
                 const response = await accountPaymentInfoPOST();
-    
+
+                if (response.status === 204) {
+                    return;
+                }
+
+                const json = await response.json();
                 if (response.ok) {
-                    const jsonResponse = await response.json();
-        
-                    setPaymentInfo(jsonResponse.cardNumber);
-                    setExpiryMonthYear(jsonResponse.expirationDate);
+                    setPaymentInfo(json.cardNumber);
+                    setExpiryMonthYear(json.expirationDate);
                     setPaymentUpdated(false);
                 } else {
                     toast.error(response.error);
@@ -138,7 +141,7 @@ export default function Profile() {
                         });
                     }} />
                 <InputField title="Credit Card Number" placeholder="Enter Credit Card Number" type="tel" width="1/3"
-                    active={isPaymentActive} value={paymentInfo} onChange={(e) => setPaymentInfo(e.target.value)} />
+                    active={isPaymentActive} value={paymentInfo ? paymentInfo: "None"} onChange={(e) => setPaymentInfo(e.target.value)} />
 
                 <InputMonthYear title="Expiry" width="1/3" setFormattedValue={setExpiryMonthYear} active={isPaymentActive} />
             </div>

@@ -144,13 +144,13 @@ export default function NewPost() {
             });
         }
         
-        const jsonResponse = await response.json();
+        const json = await response.json();
 
         if (response.ok) {
             toast.success("Successfully created a new post!");
             handlePostCreated();
         } else {
-            toast.error(jsonResponse.error);
+            toast.error(json.error);
         }
     }
 

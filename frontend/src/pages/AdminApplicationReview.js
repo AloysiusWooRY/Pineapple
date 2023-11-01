@@ -1,5 +1,6 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -16,26 +17,92 @@ import BannerImage from "../assets/banner-admin-moderation.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { adminApplication } from "../apis/exportedAPIs";
 
 export default function AdminApplicationReview() {
     const { user } = useAuthContext();
 
+    const [allOrganisations, setAllOrganisations] = useState(null);
+
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('newest');
     const [searchField, setSearchField] = useState('');
+    const [isFiltered, setIsFiltered] = useState(false);
 
     const [viewingApplicationMode, setViewingApplicationMode] = useState(false);
     const [applicationName, setApplicationName] = useState('');
     const [applicationDescription, setApplicationDescription] = useState('');
 
     function GenerateReviews() {
-        const tableData = [
+        let tableData = [];
+        allOrganisations != null ? (
+            allOrganisations.organisations.map((item) => {
+                tableData.push({
+                    date: item.createdAt,
+                    organisationName: item.name,
+                    approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
+                })
+            })
+        ) 
+        :
+        tableData = [
             { date: '10-10-2023', organisationName: 'Organ Isation', approvalStatus: <ApprovalType type="pending" /> },
             { date: '12-10-2023', organisationName: 'WorseHelp', approvalStatus: <ApprovalType type="approved" /> },
         ];
 
         return tableData;
     }
+
+    function handleCategoryFilter(e) {
+        setSelectedCategory(e.target.getAttribute('data-value'));
+        console.log(e.target.getAttribute('data-value'));
+
+        if(e.target.getAttribute('data-value') != null) {
+            let tableData = [];
+            let filteredReviews = allOrganisations;
+            if (selectedCategory === "pending") {
+                setIsFiltered(true);
+                filteredReviews = allOrganisations.filter(item => item.approved === false);
+            }
+            else if(selectedCategory === "approved") {
+                setIsFiltered(true);
+                filteredReviews = allOrganisations.filter(item => item.approved === true);
+            }
+
+            filteredReviews != null ? (
+                filteredReviews.organisations.map((item) => {
+                    tableData.push({
+                        date: item.createdAt,
+                        organisationName: item.name,
+                        approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
+                    })
+                })
+            ) 
+            :
+            tableData = [
+                { date: '10-10-2023', organisationName: 'Organ Isation', approvalStatus: <ApprovalType type="pending" /> },
+                { date: '12-10-2023', organisationName: 'WorseHelp', approvalStatus: <ApprovalType type="approved" /> },
+            ];
+            console.log(tableData);
+        } 
+    }
+    
+    useEffect(() => {
+        async function fetchData() {
+            const response = await adminApplication({
+                status: "",
+                filter: "",
+            });
+            const jsonResponse = await response.json();
+    
+            if (response.ok) {            
+                setAllOrganisations(jsonResponse);
+            } else {
+                toast.error(jsonResponse.error);
+            }
+        }
+        fetchData();
+    }, []);
 
     function HandleLoadApplication(e) {
         setApplicationName(e);
@@ -67,7 +134,7 @@ export default function AdminApplicationReview() {
                 </div>
 
                 <Tabs title="Application Status" tabs={['all', 'pending', 'approved']} heroIconsArr={[<NewspaperIcon />, <ClipboardIcon />, <CheckIcon />]}
-                    onClick={(e) => setSelectedCategory(e.target.getAttribute('data-value'))} />
+                    onClick={(e) => handleCategoryFilter(e)} />
 
                 <Divider padding={0} />
 

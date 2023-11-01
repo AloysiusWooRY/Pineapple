@@ -26,6 +26,8 @@ export default function Post() {
     const { user } = useAuthContext();
     const { id } = useParams();
 
+    const navigate = useNavigate();
+
     const [organisationName, setOrganisationName] = useState('Mental Health Hoax');
     const [organisationDescription, setOrganisationDescription] = useState('Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.');
     const [organisationCreateDate, setOrganisationCreateDate] = useState('July 22, 1999');
@@ -33,8 +35,6 @@ export default function Post() {
 
     const [postType, setPostType] = useState('event');
     const [sortBy, setSortBy] = useState('newest');
-
-    const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:15:00.000Z');
     const [eventLocation, setEventLocation] = useState('Null Island');
     const [eventCapacity, setEventCapacity] = useState(69);
 
@@ -55,6 +55,10 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
 
     const [donationCurrent, setDonationCurrent] = useState(34);
     const [donationGoal, setDonationGoal] = useState(124);
+    const [isDonation, setIsDonation] = useState(false);
+
+    const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:15:00.000Z');
+    const [isEvent, setIsEvent] = useState(false);
 
     const [displayDonationPopup, setDisplayDonationPopup] = useState(false);
     const [donationAmount, setDonationAmount] = useState('');
@@ -64,33 +68,38 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
     const [editMode, setEditMode] = useState(false);
     const [comment, setComment] = useState('');
 
+    const [organisationId, setOrganisationId] = useState(null);
+
     // This is to load the post and organisation details for the selected post
     useEffect(() => {
         async function fetchData() {
             const response = await postIdPOST({ id })
-            const jsonResponse = await response.json();
+            const json = await response.json();
 
             if (response.ok) {
-                setPostContent(jsonResponse.post.description);
-                setPostTitle(jsonResponse.post.title);
-                setPoster(user.name);
-                setPostType(jsonResponse.post.donation ? "donation" : jsonResponse.post.event ? "event" : "discussion");
-                setPostTime(jsonResponse.post.updatedAt);
-
-                if (jsonResponse.post.organisation.donation) {
-                    setDonationCurrent(jsonResponse.post.organisation.donation.amoount);
-                    setDonationGoal(jsonResponse.post.organisation.donation.goal);
+                setPostContent(json.post.description);
+                setPostTitle(json.post.title);
+                setPoster(json.post.owner.name);
+                setPostType(json.post.donation ? "donation" : json.post.event ? "event" : "discussion");
+                setPostTime(json.post.updatedAt);
+                setOrganisationId(json.post.organisation._id);
+    
+                if (json.post.organisation.donation) {
+                    setDonationCurrent(json.post.organisation.donation.amoount);
+                    setDonationGoal(json.post.organisation.donation.goal);
+                    setIsDonation(true);
                 }
-                if (jsonResponse.post.organisation.event) {
-                    setEventStartDateTime(jsonResponse.post.createdAt);
+                if (json.post.organisation.event) {
+                    setEventStartDateTime(json.post.createdAt);
+                    setIsEvent(true);
                 }
 
-                setOrganisationName(jsonResponse.post.organisation.name);
-                setOrganisationDescription(jsonResponse.post.organisation.description);
-                setOrganisationCreateDate(jsonResponse.post.organisation.createdAt);
-                setOrganisationPosts(jsonResponse.post.organisation.posts);
+                setOrganisationName(json.post.organisation.name);
+                setOrganisationDescription(json.post.organisation.description);
+                setOrganisationCreateDate(json.post.organisation.createdAt);
+                setOrganisationPosts(json.post.organisation.posts);
             } else {
-                toast.error(jsonResponse.error);
+                toast.error(json.error);
             }
         }
         fetchData();
@@ -136,6 +145,30 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
 
     function handleDelete() {
         console.log("handle delete!");
+    }
+
+    async function handleEdit() {
+        if (editMode) {
+            const response = await postIdPATCH({
+                id,
+                title: postTitle,
+                description: postContent,
+                event: isEvent,
+                event_time: eventStartDateTime,
+                donation: isDonation,
+            });
+
+            if (response.ok) {
+                toast.success("Post has been successfully changed!");
+            } else {
+                toast.error(response.error);
+            }
+        }
+        setEditMode(!editMode);
+    }
+
+    function handleCreatePost() {
+        navigate(`../organisation/${organisationId}/post/new`);
     }
 
     return (
@@ -250,7 +283,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     <div className="py-2"></div>
 
                     <div className="flex flex-row space-x-2 self-start">
-                        <ToggleButton title="Edit" active={editMode} onClick={(e) => { setEditMode(!editMode) }} />
+                        {(user.name === poster) && <ToggleButton title="Edit" active={editMode} onClick={(e) => { handleEdit() }} />}
                         {editMode && <RectangleButton title="Delete" onClick={handleDelete} heroIcon={<TrashIcon />} colour="bg-button-red" />}
                     </div>
 
@@ -276,6 +309,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                     organisationDescription={organisationDescription}
                     createDate={organisationCreateDate}
                     numberPosts={organisationPosts}
+                    onCreateClicked={handleCreatePost}
                 />
 
             </div>

@@ -11,24 +11,23 @@ import { textNerfer } from "./componentUtils";
 // ~
 
 export default function CardHome(props) {
-    const { image, title, organisation, category } = props;
-
+    const { organisation } = props;
     return (
         <a
-            id={"card-home-" + textNerfer(title)}
+            id={"card-home-" + organisation.id}
             className="w-full flex rounded outline-none gap-2 p-2 no-underline cursor-pointer hover:bg-background-minor">
-            <img src={image} className="h-36 basis-28 shrink-0 rounded object-cover object-center" />
+            <img src={organisation.image} className="h-36 basis-28 shrink-0 rounded object-cover object-center" />
             <div className="w-[calc(100vh-8rem)] flex flex-col justify-center gap-1 flex-shrink">
                 <div className="w-full flex gap-1">
                     <span className="w-full text-text-primary text-2xl overflow-hidden text-ellipsis whitespace-nowrap">
-                        {title}
+                        {organisation.title}
                     </span>
                 </div>
                 <div className="flex items-center text-sm text-text-yellow-pineapple">
-                    {organisation}
+                    {organisation.organisationName}
                 </div>
                 <div className="flex items-center text-sm gap-1 text-text-green-pineapple">
-                    {category}
+                    {organisation.category}
                 </div>
             </div>
         </a>

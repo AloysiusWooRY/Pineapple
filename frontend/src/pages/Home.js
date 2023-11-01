@@ -33,12 +33,12 @@ export default function Home() {
                 sortByPinned: false,
             });
 
-            const jsonResponse = await fetchedData.json();
+            const json = await fetchedData.json();
             if (fetchedData.ok) {
-                setAllPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-                setCategoryFilteredPosts(jsonResponse.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setAllPosts(json.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setCategoryFilteredPosts(json.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
             } else {
-                toast.error(jsonResponse.error);
+                toast.error(json.error);
             }
         }
 
@@ -47,20 +47,23 @@ export default function Home() {
 
     function handleCategoryPosts(e) {
         const category = e.target.getAttribute('data-value');
-        const filteredItems = allPosts.filter(item => {
-            if (category === "donation") {
-                return item.donation;
-            }
-            else if (category === "event") {
-                return item.event;
-            }
-            else if (category === "discussion") {
-                return !item.donation && !item.event;
-            }
-            return true;
-        });
 
-        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
+        if (allPosts) {
+            const filteredItems = allPosts.filter(item => {
+                if (category === "donation") {
+                    return item.donation;
+                }
+                else if (category === "event") {
+                    return item.event;
+                }
+                else if (category === "discussion") {
+                    return !item.donation && !item.event;
+                }
+                return true;
+            });
+    
+            setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
+        }
     }
 
     function handleSortPosts(e) {
@@ -99,9 +102,14 @@ export default function Home() {
                     {categoryFilteredPosts ?
                         (categoryFilteredPosts.map((item) => (
                             <NavLink key={item._id} to={`/organisation/${item.organisation._id}/post/${item._id}`}>
-                                <CardHome _id={item._id} image={`http://localhost:4000/comptra.png`} title={item.title}
-                                    organisation={item.organisation.name}
-                                    category={item.organisation.category} />
+                                <CardHome organisation={{
+                                    "id": item._id,
+                                    "title": item.title,
+                                    "description": item.description,
+                                    "category": item.category,
+                                    "organisationName": item.organisation.name,
+                                    "image": item.organisation.imagePath.poster,
+                                }} />
                             </NavLink>
                         ))) : ""
                     }
