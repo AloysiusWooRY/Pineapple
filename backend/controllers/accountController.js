@@ -36,7 +36,7 @@ const loginAccount = async (req, res) => {
         const match = await bcrypt.compare(password, account.password)
         if (!match) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
-        const { _id, name } = account
+        const { _id, name, isAdmin, moderation } = account
 
         // Create JWT token
         const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
@@ -57,7 +57,7 @@ const loginAccount = async (req, res) => {
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         })
 
-        res.status(200).json({ _id, name, sanitiseEmail, csrfToken })
+        res.status(200).json({ _id, name, sanitiseEmail, isAdmin, moderation, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
             res.status(err.statusCode).json({ error: err.message })
