@@ -53,8 +53,9 @@ const loginAccount = async (req, res) => {
         } else {
             // Generate secret
             const secret = authenticator.generateSecret()
+            const encryptedSecret = CryptoJS.AES.encrypt(secret, process.env.ENCRYPTION_SECRET).toString()
 
-            account.twoFASecret = secret
+            account.twoFASecret = encryptedSecret
             account.save()
 
             // Generate QR from secret
