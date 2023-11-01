@@ -43,15 +43,20 @@ export default function SetupAuthenticatorQR() {
             return;
         }
 
-        response = await accountLoginOTP({ token: authenticatorCode });
-        if (response.ok) {
-            // Save the user to local storage
-            localStorage.setItem("user", JSON.stringify(json));
+        if (state.referrer === 'login') {
+            response = await accountLoginOTP({ token: authenticatorCode });
+            if (response.ok) {
+                // Save the user to local storage
+                localStorage.setItem("user", JSON.stringify(json));
 
-            // Update the auth context
-            dispatch({ type: "LOGIN", payload: json });
+                // Update the auth context
+                dispatch({ type: "LOGIN", payload: json });
+            } else {
+                toast.error(json.error);
+            }
         } else {
-            toast.error(json.error);
+            toast.success(json.message, { duration: 6000 });
+            navigate("/");
         }
     };
 

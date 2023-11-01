@@ -38,7 +38,7 @@ export default function Login() {
         }
 
         if (json.message === "2FA not setup") {
-            navigate('../setup-authenticator-qr', { state: { email: email, password: password, qrImageBase64: json.qrImage } });
+            navigate('../setup-authenticator-qr', { state: { referrer: 'register', qrImageBase64: json.qrImage } });
         } else {
             setStage(2);
         }
@@ -56,6 +56,8 @@ export default function Login() {
 
             // Update the auth context
             dispatch({ type: "LOGIN", payload: json });
+
+            toast.success(`Welcome back, ${json.name}!`, { duration: 6000 });
         } else {
             toast.error(json.error);
         }
