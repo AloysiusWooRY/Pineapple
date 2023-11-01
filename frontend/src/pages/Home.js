@@ -106,7 +106,8 @@ export default function Home() {
                                     "id": item._id,
                                     "title": item.title,
                                     "description": item.description,
-                                    "category": item.category,
+                                    "category": item.organisation.category,
+                                    "type": (item.donation ? "donation" : item.event ? "event" : "discussion"),
                                     "organisationName": item.organisation.name,
                                     "image": item.organisation.imagePath.poster,
                                 }} />

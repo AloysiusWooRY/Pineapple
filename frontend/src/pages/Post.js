@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Components
-import { FormatDateTime } from "../components/componentUtils";
+import { FormatDateTime, databaseDateTimeToISO } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
 import Comment from "../components/Comment";
@@ -28,37 +28,25 @@ export default function Post() {
 
     const navigate = useNavigate();
 
-    const [organisationName, setOrganisationName] = useState('Mental Health Hoax');
-    const [organisationDescription, setOrganisationDescription] = useState('Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.');
-    const [organisationCreateDate, setOrganisationCreateDate] = useState('July 22, 1999');
-    const [organisationPosts, setOrganisationPosts] = useState(30);
+    const [organisationId, setOrganisationId] = useState(null);
+    const [organisationName, setOrganisationName] = useState('');
+    const [organisationDescription, setOrganisationDescription] = useState('');
+    const [organisationCreateDate, setOrganisationCreateDate] = useState('');
+    const [organisationPosts, setOrganisationPosts] = useState(0);
 
+    const [poster, setPoster] = useState('');
+    const [postTime, setPostTime] = useState('');
+    const [postTitle, setPostTitle] = useState('');
+    const [postContent, setPostContent] = useState('');
     const [postType, setPostType] = useState('event');
     const [sortBy, setSortBy] = useState('newest');
-    const [eventLocation, setEventLocation] = useState('Null Island');
-    const [eventCapacity, setEventCapacity] = useState(69);
 
-    const [poster, setPoster] = useState('Wi Tu');
-    const [postTime, setPostTime] = useState('6 days');
-    const [postTitle, setPostTitle] = useState('On the beach at night');
-    const [postContent, setPostContent] = useState(
-        'On the beach at night, Stands a child with her father, Watching the east, the autumn sky.\n\n\
-Up through the darkness, While ravening clouds, the burial clouds, in black masses spreading, Lower sullen and fast athwart and down the sky,\n\
-Amid a transparent clear belt of ether yet left in the east, Ascends large and calm the lord-star Jupiter, And nigh at hand, only a very little above,\n\
-Swim the delicate sisters the Pleiades.\n\n\
-Weep not, child, Weep not, my darling, With these kisses let me remove your tears, The ravening clouds shall not long be victorious,\n\
-They shall not long possess the sky, they devour the stars only in apparition, Jupiter shall emerge, be patient, watch again another night,\n\
-the Pleiades shall emerge, They are immortal, all those stars both silvery and golden shall shine out again,\n\n\
-The great stars and the little ones shall shine out again, they endure, The vast immortal suns and the long-enduring pensive moons shall again shine.\n\n\
-Then dearest child mournest thou only for Jupiter? Considerest thou alone the burial of the stars?'
-    );
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventCapacity, setEventCapacity] = useState(0);
+    const [eventStartDateTime, setEventStartDateTime] = useState('');
 
-    const [donationCurrent, setDonationCurrent] = useState(34);
-    const [donationGoal, setDonationGoal] = useState(124);
-    const [isDonation, setIsDonation] = useState(false);
-
-    const [eventStartDateTime, setEventStartDateTime] = useState('2023-10-28T08:15:00.000Z');
-    const [isEvent, setIsEvent] = useState(false);
+    const [donationCurrent, setDonationCurrent] = useState(0);
+    const [donationGoal, setDonationGoal] = useState(0);
 
     const [displayDonationPopup, setDisplayDonationPopup] = useState(false);
     const [donationAmount, setDonationAmount] = useState('');
@@ -66,38 +54,38 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
     const [donationError, setDonationError] = useState(null);
 
     const [editMode, setEditMode] = useState(false);
+    const [newImage, setNewImage] = useState(null);
+
     const [comment, setComment] = useState('');
-
-    const [organisationId, setOrganisationId] = useState(null);
-
+    
     // This is to load the post and organisation details for the selected post
     useEffect(() => {
         async function fetchData() {
-            const response = await postIdPOST({ id })
+            const response = await postIdPOST({ id });
             const json = await response.json();
 
             if (response.ok) {
+                setOrganisationName(json.post.organisation.name);
+                setOrganisationDescription(json.post.organisation.description);
+                setOrganisationCreateDate(json.post.organisation.createdAt);
+                setOrganisationPosts(json.post.organisation.posts);
+
                 setPostContent(json.post.description);
                 setPostTitle(json.post.title);
                 setPoster(json.post.owner.name);
                 setPostType(json.post.donation ? "donation" : json.post.event ? "event" : "discussion");
                 setPostTime(json.post.updatedAt);
                 setOrganisationId(json.post.organisation._id);
-    
-                if (json.post.organisation.donation) {
-                    setDonationCurrent(json.post.organisation.donation.amoount);
-                    setDonationGoal(json.post.organisation.donation.goal);
-                    setIsDonation(true);
-                }
-                if (json.post.organisation.event) {
-                    setEventStartDateTime(json.post.createdAt);
-                    setIsEvent(true);
-                }
 
-                setOrganisationName(json.post.organisation.name);
-                setOrganisationDescription(json.post.organisation.description);
-                setOrganisationCreateDate(json.post.organisation.createdAt);
-                setOrganisationPosts(json.post.organisation.posts);
+                if (json.post.donation) {
+                    setDonationCurrent(json.post.donation.amoount);
+                    setDonationGoal(json.post.donation.goal);
+                }
+                if (json.post.event) {
+                    setEventLocation(json.post.event.location);
+                    setEventCapacity(json.post.event.capacity);
+                    setEventStartDateTime(json.post.event.time);
+                }
             } else {
                 toast.error(json.error);
             }
@@ -153,17 +141,22 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                 id,
                 title: postTitle,
                 description: postContent,
-                event: isEvent,
-                event_time: eventStartDateTime,
-                donation: isDonation,
+                event: (postType === 'event' ? true : false),
+                event_time: databaseDateTimeToISO(eventStartDateTime),
+                event_capacity: eventCapacity,
+                event_location: eventLocation,
+                donation: (postType === 'donation' ? true : false),
+                attachment: newImage,
             });
+            const json = await response.json();
 
             if (response.ok) {
                 toast.success("Post has been successfully changed!");
             } else {
-                toast.error(response.error);
+                toast.error(json.error);
             }
         }
+
         setEditMode(!editMode);
     }
 
@@ -216,18 +209,17 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                                 :
                                 <div className="flex flex-col flex-wrap">
                                     <div className="w-1/5 min-w-fit">
-                                        <InputDate title="Event Start" value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
+                                        <InputDate title="Event Start" value={databaseDateTimeToISO(eventStartDateTime)} onChange={(e) => setEventStartDateTime(e.target.value)} />
                                     </div>
                                     <div className="w-1/5 min-w-fit">
                                         <InputField title="Capacity" type="number"
                                             value={eventCapacity} onChange={(e) => setEventCapacity(e.target.value)} additionalProps={{ min: '1', step: '1' }} />
                                     </div>
                                     <div className="w-full min-w-fit">
-                                        <InputField title="Location" type="text" 
-                                        value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} />
+                                        <InputField title="Location" type="text"
+                                            value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} />
                                     </div>
                                 </div>
-                                // <InputDate title="Event Start" width='fit' value={eventStartDateTime} onChange={(e) => setEventStartDateTime(e.target.value)} />
                             }
 
                             <Divider padding={2} />
@@ -271,7 +263,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                                 value={postContent} width='full' onChange={(e) => setPostContent(e.target.value)} />
                             <div className="flex flex-row items-center space-x-2 justify-between">
                                 <div className="grow">
-                                    <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { return }} />
+                                    <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setNewImage(e.target.files[0]) }} />
                                 </div>
                                 <div className="pt-4">
                                     <RectangleButton title="Remove Current Image" onClick={handleDelete} heroIcon={<TrashIcon />} colour="bg-button-red" />
@@ -307,7 +299,7 @@ Then dearest child mournest thou only for Jupiter? Considerest thou alone the bu
                 <SideBarOrganisationInfo
                     organisationName={organisationName}
                     organisationDescription={organisationDescription}
-                    createDate={organisationCreateDate}
+                    createDate={FormatDateTime(organisationCreateDate)}
                     numberPosts={organisationPosts}
                     onCreateClicked={handleCreatePost}
                 />

@@ -10,3 +10,9 @@ export function FormatDateTime(InputDateTime, FormatString = 'DD h:mma') {
         .fromISO(InputDateTime)
         .toFormat(FormatString);
 }
+
+export function databaseDateTimeToISO(databaseDateTime) {
+    return DateTime
+        .fromISO(databaseDateTime)
+        .toFormat('yyyy-MM-dd\'T\'HH:mm');
+}

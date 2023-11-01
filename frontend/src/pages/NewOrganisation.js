@@ -61,8 +61,8 @@ export default function NewOrganisation() {
                 name: organisationName,
                 description: organisationDescription,
                 category: organisationCategory,
-                banner: bannerImage[0],
-                poster: posterImage[0],
+                banner: bannerImage,
+                poster: posterImage,
             });
             const json = await response.json();
 
@@ -102,8 +102,8 @@ export default function NewOrganisation() {
                     value={organisationDescription} onChange={(e) => setOrganisationDescription(e.target.value)} />
                 <StandardDropdown title="Category" titleLocation="top" width="1/4" options={allCategories}
                     value={organisationCategory} onChange={(e) => { setOrganisationCategory(e.target.value); }} />
-                <InputFile title="Upload Banner" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage([...bannerImage, e.target.files[0]]) }} />
-                <InputFile title="Upload Poster" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage([...posterImage, e.target.files[0]]) }} />
+                <InputFile title="Upload Banner" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage(e.target.files[0]) }} />
+                <InputFile title="Upload Poster" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage(e.target.files[0]) }} />
 
                 <div className="flex flex-row gap-2 items-center">
                     <RectangleButton title="Submit" width="fit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />

@@ -4,6 +4,7 @@ import { useParams, NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Components
+import { FormatDateTime } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from "../components/SidebarOrganisationInfo";
 import DiscussionOverview from "../components/DiscussionOverview";
@@ -35,17 +36,17 @@ export default function Organisation() {
 
     const [editOrganisationMode, setEditOrganisationMode] = useState(false);
     const [editOrganisation, setEditOrganisation] = useState({
-        name: 'Mental Health Hoax',
-        description: 'Crazy? I was crazy once. They locked me in a room. A rubber room. A rubber room with rats. And rats make me crazy.',
-        bannerImage: [],
-        posterImage: [],
+        name: '',
+        description: '',
+        bannerImage: null,
+        posterImage: null,
         error: null,
     });
 
     // Loads the organisation by id
     useEffect(() => {
-        async function getAllOrganisations() {
-            const response = await organisationId({id});
+        async function fetchOrganisation() {
+            const response = await organisationId({ id });
 
             if (response.ok) {
                 const json = await response.json();
@@ -53,12 +54,12 @@ export default function Organisation() {
                 setSelectedOrganisation(json.organisation);
             }
         }
-        getAllOrganisations()
+        fetchOrganisation();
     }, []);
 
     // Loads all posts
     useEffect(() => {
-        async function getAllPosts() {
+        async function fetchPosts() {
             const response = await postAll({
                 organisation: id,
                 category: "",
@@ -74,7 +75,7 @@ export default function Organisation() {
                 toast.error(json.error);
             }
         }
-        getAllPosts();
+        fetchPosts();
     }, []);
 
     function OrganisationPosts() {
@@ -82,27 +83,29 @@ export default function Organisation() {
         const currentDate = new Date();
 
         (categoryFilteredPosts != null && selectedOrganisation != null) ? (
-            
+
             categoryFilteredPosts.map(item => (
                 posts.push(
-                <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
-                    <DiscussionOverview
-                        post ={{
-                            title: item.title,
-                            discussionType: item.donation ? "donation": item.event ? "event": "discussion",
-                            votes: item.likes,
-                            timeSincePost: Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) < 24 ? Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) + " hours" : Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60 / 24)) + " days",
-                            username: item.owner.name,
-                            upvoted: null,
-                            imagePath: selectedOrganisation.imagePath.poster,
-                        }}
-                    />
-                </NavLink>
+                    <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
+                        <DiscussionOverview
+                            key={"post-" + item._id}
+                            title={item.title}
+                            discussionType={item.donation ? "donation" : item.event ? "event" : "discussion"}
+                            votes={item.likes}
+                            timeSincePost={(Math.floor((currentDate - (new Date(item.updatedAt))) / (1000 * 60 * 60 * 24)))}
+                            posterUsername={item.owner.name}
+                            upvoted={null}
+                            imagePath={selectedOrganisation.imagePath.poster}
+                        />
+                    </NavLink>
                 )
             ))
         )
-        :
-        <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No posts Here🍍</h1>
+            :
+            posts.push(
+                <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Posts Here🍍</h1>
+            );
+
 
         return posts;
     }
@@ -132,7 +135,7 @@ export default function Organisation() {
         if (sortByValue === "newest") {
             setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
         }
-        else if(sortByValue === "top") {
+        else if (sortByValue === "top") {
             setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => b.likes - a.likes));
         }
     }
@@ -148,7 +151,7 @@ export default function Organisation() {
         <Layout>
             <div className="flex flex-row gap-2">
                 <section className="h-96 flex-grow">
-                    <Banner image={BannerImage} title={selectedOrganisation ? selectedOrganisation.name : "Mental Health Hoax"} />
+                    {selectedOrganisation && <Banner image={BannerImage} title={selectedOrganisation.name} />}
                     {/* button={{ icon: <PencilIcon />, text: "Edit", onClick: () => setEditOrganisationMode(!editOrganisationMode) }} */}
 
                     <div className="flex flex-row justify-between mt-2">
@@ -167,21 +170,19 @@ export default function Organisation() {
                     </div>
 
                     <div className="flex flex-col py-2 gap-2">
-                       {<OrganisationPosts />}
+                        {categoryFilteredPosts && <OrganisationPosts />}
                     </div>
                 </section>
 
-                {selectedOrganisation != null ? 
+                {selectedOrganisation &&
                     <NavLink to={`/organisation/${selectedOrganisation._id}/post/new`}>
                         <SideBarOrganisationInfo
                             organisationName={selectedOrganisation.name}
                             organisationDescription={selectedOrganisation.description}
-                            createDate={new Date(selectedOrganisation.createdAt).toLocaleDateString()}
+                            createDate={FormatDateTime(selectedOrganisation.createdAt)}
                             numberPosts={selectedOrganisation.posts}
                         />
-                    </NavLink> 
-                    : 
-                    ""
+                    </NavLink>
                 }
             </div>
 
