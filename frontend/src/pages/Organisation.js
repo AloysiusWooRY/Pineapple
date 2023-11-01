@@ -82,8 +82,7 @@ export default function Organisation() {
         let posts = [];
         const currentDate = new Date();
 
-        (categoryFilteredPosts != null && selectedOrganisation != null) ? (
-
+        categoryFilteredPosts.length > 0 ?
             categoryFilteredPosts.map(item => (
                 posts.push(
                     <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
@@ -91,7 +90,7 @@ export default function Organisation() {
                             post={{
                                 id: item._id,
                                 title: item.title,
-                                discussionType: item.donation ? "donation": item.event ? "event": "discussion",
+                                discussionType: item.donation ? "donation" : item.event ? "event" : "discussion",
                                 votes: item.likes,
                                 timeSincePost: Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) < 24 ? Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60)) + " hours" : Math.floor((currentDate - new Date(item.updatedAt)) / (1000 * 60 * 60 / 24)) + " days",
                                 username: item.owner.name,
@@ -102,7 +101,6 @@ export default function Organisation() {
                     </NavLink>
                 )
             ))
-        )
             :
             posts.push(
                 <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Posts Here🍍</h1>
