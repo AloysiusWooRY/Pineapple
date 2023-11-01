@@ -90,7 +90,7 @@ export default function OrganisationHome() {
                     {categoryFilteredOrganisations && (categoryFilteredOrganisations.length > 0 ?
                         categoryFilteredOrganisations.map(item => (
                             <NavLink key={"nav-link" + item._id} to={`/organisation/${item._id}`}>
-                                <CardHomeOrg image={`http://localhost:4000/comptra.png`} name={item.name} posts={item.posts} category={item.category} />
+                                <CardHomeOrg image={"http://localhost:4000/" + item.imagePath.poster} name={item.name} posts={item.posts} category={item.category} />
                             </NavLink>
                         ))
                         :

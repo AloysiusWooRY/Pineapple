@@ -38,7 +38,7 @@ export default function Post() {
     const [postTime, setPostTime] = useState('');
     const [postTitle, setPostTitle] = useState('');
     const [postContent, setPostContent] = useState('');
-    const [postType, setPostType] = useState('event');
+    const [postType, setPostType] = useState('');
     const [sortBy, setSortBy] = useState('newest');
 
     const [eventLocation, setEventLocation] = useState('');

@@ -14,16 +14,16 @@ export const postNew = async ({ title = null, description = null, organisation =
     const csrfToken = await getCSRF();
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("organisation", organisation);
-    formData.append("event", event);
-    formData.append("event_location", event_location);
-    formData.append("event_capacity", event_capacity);
-    formData.append("event_time", event_time);
-    formData.append("donation", donation);
-    formData.append("donation_goal", donation_goal);
-    formData.append("attachment", attachment);
+    if (title) formData.append("title", title);
+    if (description) formData.append("description", description);
+    if (organisation) formData.append("organisation", organisation);
+    if (event) formData.append("event", event);
+    if (event_location) formData.append("event_location", event_location);
+    if (event_capacity) formData.append("event_capacity", event_capacity);
+    if (event_time) formData.append("event_time", event_time);
+    if (donation) formData.append("donation", donation);
+    if (donation_goal) formData.append("donation_goal", donation_goal);
+    if (attachment) formData.append("attachment", attachment);
 
     return await POSTRequest({
         apiURL: '/api/post/new',
@@ -47,16 +47,16 @@ export const postIdPATCH = async ({ id = null, title = null, description = null,
     const csrfToken = await getCSRF();
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("organisation", organisation);
-    formData.append("event", event);
-    formData.append("event_location", event_location);
-    formData.append("event_capacity", event_capacity);
-    formData.append("event_time", event_time);
-    formData.append("donation", donation);
-    formData.append("donation_goal", donation_goal);
-    formData.append("attachment", attachment);
+    if (title) formData.append("title", title);
+    if (description) formData.append("description", description);
+    if (organisation) formData.append("organisation", organisation);
+    if (event) formData.append("event", event);
+    if (event_location) formData.append("event_location", event_location);
+    if (event_capacity) formData.append("event_capacity", event_capacity);
+    if (event_time) formData.append("event_time", event_time);
+    if (donation) formData.append("donation", donation);
+    if (donation_goal) formData.append("donation_goal", donation_goal);
+    if (attachment) formData.append("attachment", attachment);
 
     return await PATCHRequest({
         apiURL: '/api/post/{id}',

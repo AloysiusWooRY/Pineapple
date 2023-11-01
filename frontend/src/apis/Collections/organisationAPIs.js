@@ -4,11 +4,11 @@ export const organisationApply = async ({name = null, description = null, catego
     const csrfToken = await getCSRF();
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("banner", banner);
-    formData.append("poster", poster);
+    if (name) formData.append("name", name);
+    if (description) formData.append("description", description);
+    if (category) formData.append("category", category);
+    if (banner) formData.append("banner", banner);
+    if (poster) formData.append("poster", poster);
     
     return await POSTRequest({
         apiURL: '/api/organisation/apply',

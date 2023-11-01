@@ -68,8 +68,8 @@ export default function Organisation() {
             const json = await response.json();
 
             if (response.ok) {
-                setAllPosts(json.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-                setCategoryFilteredPosts(json.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+                setAllPosts(json.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+                setCategoryFilteredPosts(json.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
             } else {
                 toast.error(json.error);
             }
@@ -102,7 +102,7 @@ export default function Organisation() {
             ))
             :
             posts.push(
-                <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Posts Here🍍</h1>
+                <h1 className="text-text-primary py-4 text-3xl text-center">🍍No Organisations Here🍍</h1>
             );
 
         return posts;
@@ -123,7 +123,7 @@ export default function Organisation() {
             return true;
         });
 
-        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
+        setCategoryFilteredPosts(sortBy === "newest" ? filteredItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : filteredItems.sort((a, b) => b.likes - a.likes));
     }
 
     function handleSortPosts(e) {
@@ -131,7 +131,7 @@ export default function Organisation() {
         setSortBy(sortByValue);
 
         if (sortByValue === "newest") {
-            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+            setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
         }
         else if (sortByValue === "top") {
             setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => b.likes - a.likes));

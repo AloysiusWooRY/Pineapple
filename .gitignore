@@ -3,5 +3,6 @@ node_modules/
 env
 .envtest
 envtest
+/backend/public/*
 /backend/logs/*
 /backend/*.log
