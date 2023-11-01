@@ -33,7 +33,7 @@ export default function IdleTimerComponent() {
     }
 
     // idleTime sets how long user idles before prompting that auto logout is imminent (time in minutes)
-    const { isIdle } = useIdle({ onIdle: handleIdle, idleTime: 60 });
+    const { isIdle } = useIdle({ onIdle: handleIdle, idleTime: 30 });
 
     useEffect(() => {
         let interval;
