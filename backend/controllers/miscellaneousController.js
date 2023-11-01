@@ -3,8 +3,7 @@ const fs = require('fs')
 const logger = require("../utils/logger")
 const sendEmail = require('../utils/sendEmail')
 const path = require('path')
-const ClamScan = require('clamscan');
-// const clamscan = new ClamScan().init()
+const CryptoJS = require("crypto-js")
 
 const Account = require('../models/accountModel')
 
@@ -34,7 +33,8 @@ const emailTest = async (req, res) => {
 
 // Test
 const test = async (req, res) => {
-    res.status(200).json({})
+    const t = CryptoJS.lib.WordArray.random(32).toString()
+    res.status(200).json({ t })
 }
 
 const clamTest = async (req, res) => {
