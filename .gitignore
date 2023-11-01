@@ -1,5 +1,4 @@
 node_modules/
 .env
 env
-/backend/*.log
-/backend/public
+/backend/logs/*

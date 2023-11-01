@@ -1,6 +1,7 @@
 const moment = require('moment')
 const { createLogger, transports, format } = require('winston')
 const { combine, timestamp, printf, simple, json } = format
+const DailyRotateFile = require('winston-daily-rotate-file');
 
 const fileLogFormat = printf(({ level, message, timestamp, actor, req }) => {
     const formattedTimestamp = moment(timestamp).format('DD.MM HH:mm:ss')
@@ -35,10 +36,19 @@ const logger = createLogger({
         new transports.Console({
             format: combine(timestamp(), consoleLogFormat)
         }),
-        new transports.File({
-            filename: 'server-info.log',
+        new DailyRotateFile({
+            filename: 'logs/%DATE%/all.log',
+            datePattern: 'DDMMYYYY',
+            maxFiles: '30d',
             format: combine(timestamp(), fileLogFormat)
         }),
+        new DailyRotateFile({
+            level: 'error',
+            filename: 'logs/%DATE%/error.log',
+            datePattern: 'DDMMYYYY',
+            maxFiles: '30d',
+            format: combine(timestamp(), fileLogFormat)
+        })
     ]
 })
 
