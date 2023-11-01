@@ -1,5 +1,8 @@
 // React / Packages
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import validator from "validator";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -14,9 +17,14 @@ import BannerImage from "../assets/org-banner.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { postNew } from "../apis/exportedAPIs";
+import { useParams } from "react-router-dom";
 
 export default function NewPost() {
     const { user } = useAuthContext();
+    const { id } = useParams();
+
+    const navigate = useNavigate();
 
     const [selectedElement, setSelectedElement] = useState('discussion');
 
@@ -27,6 +35,124 @@ export default function NewPost() {
     const [eventCapacity, setEventCapacity] = useState('');
     const [donation, setDonation] = useState('');
     const [image, setImage] = useState([]);
+
+    function handlePostCreated() {
+        navigate(`../organisation/${id}`);
+    }
+
+    function validateDate() {
+        // Calculate the current date
+        const currentDate = new Date();
+        const givenDate = new Date(eventStartDateTime);
+
+        // Calculate the difference in milliseconds
+        const timeDifference = givenDate - currentDate;
+
+        // Calculate the number of milliseconds in a year
+        const millisecondsInYear = 365 * 24 * 60 * 60 * 1000;
+
+        // Check if the date is within 1 year in the future
+        const isWithinOneYear = timeDifference >= 0 && timeDifference <= millisecondsInYear;
+
+        if (isWithinOneYear) return true;
+        else return false;
+    }
+
+    async function handleCreatePost() {
+        let response = null;
+
+        const sanitisedTitle = validator.escape(validator.trim(title));
+        const sanitisedMessage = validator.escape(validator.trim(message));
+
+        if (!sanitisedTitle) {
+            toast.error("Please do not leave the title blank!");
+            return false;
+        }
+        if (!sanitisedMessage) {
+            toast.error("Please do not leave the message blank!");
+            return false;
+        }
+
+        if (selectedElement === "discussion") {
+            response = await postNew({
+                title: sanitisedTitle,
+                description: sanitisedMessage,
+                organisation: id,
+                attachment: image,
+            });
+        }
+        else if (selectedElement === "event") {
+            if (!validateDate()) {
+                toast.error("Please select a date within a year from now!");
+                return;
+            }
+
+            const sanitisedCapacity = validator.escape(validator.trim(eventCapacity));
+            if (!validator.isNumeric(sanitisedCapacity)) {
+                toast.error("Capacity has be a value!");
+                return;
+            }
+            if(!validator.isInt(sanitisedCapacity, {gt: 1, lt: 100})) {
+                toast.error("Please enter a capacity from 2 to 100!");
+                return;
+            }
+
+            const sanitisedLocation = validator.escape(validator.trim(eventLocation));
+            if (!sanitisedLocation) {
+                toast.error("Please do not leave the location blank!");
+                return false;
+            }
+
+            response = await postNew({
+                title: sanitisedTitle,
+                description: sanitisedMessage,
+                organisation: id,
+                event: selectedElement === "event",
+                event_location: sanitisedLocation,
+                event_capacity: sanitisedCapacity,
+                event_time: eventStartDateTime,
+                attachment: image,
+            });
+        }
+        else if (selectedElement === "donation") {
+            if (!donation) {
+                toast.error("Please do not leave the donation goal blank!");
+                return;
+            }
+
+            const sanitisedDonationGoal = validator.escape(validator.trim(donation));
+            if (!validator.isNumeric(sanitisedDonationGoal)) {
+                toast.error("Amount has be a value!");
+                return;
+            }
+            if (!validator.isFloat(sanitisedDonationGoal, {gt: 0.00, lt: 1000000})) {
+                toast.error("Invalid amount!");
+                return;
+            }
+            if (!validator.isCurrency(sanitisedDonationGoal, {digits_after_decimal: [0, 1, 2]})) {
+                toast.error("Invalid currency format!");
+                return;
+            }
+
+            response = await postNew({
+                title: sanitisedTitle,
+                description: sanitisedMessage,
+                organisation: id,
+                donation: selectedElement === "donation",
+                donation_goal: sanitisedDonationGoal,
+                attachment: image,
+            });
+        }
+        
+        const jsonResponse = await response.json();
+
+        if (response.ok) {
+            toast.success("Successfully created a new post!");
+            handlePostCreated();
+        } else {
+            toast.error(jsonResponse.error);
+        }
+    }
 
     return (
         <Layout>
@@ -71,7 +197,7 @@ export default function NewPost() {
                 <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setImage([...image, e.target.files[0]]) }} />
 
                 <div className="self-start">
-                    <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
+                    <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { handleCreatePost() }} />
                 </div>
             </div>
         </Layout>

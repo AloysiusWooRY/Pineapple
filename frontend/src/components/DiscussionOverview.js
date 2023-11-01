@@ -21,7 +21,7 @@ export default function DiscussionOverview(props) {
             className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor"
             id={id}>
             <div className="w-full flex flex-col justify-start gap-1 flex-shrink">
-                <span className="w-full text-text-primary text-2xl overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="w-full text-text-primary text-2xl overflow-hidden text-ellipsis whitespace">
                     {title}
                 </span>
 
