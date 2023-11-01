@@ -7,6 +7,7 @@ import { organisationAll, organisationAllName, organisationApply, organisationCa
 import { postAll, postIdDEL, postIdDislike, postIdImageDEL, postIdLike, postIdPATCH, postIdPOST, postNew, postIdPin, postIdUnpin } from "./Collections/postAPIs";
 import { replyId, replyIdDislike, replyIdLike, replyNew } from "./Collections/replyAPIs";
 import { transactionNew } from "./Collections/transactionAPIs";
+import { adminAccountAll, adminApplication, adminAccountEditRole, adminApplicationIdApprove, adminApplicationIdReject } from "./Collections/adminAPIs";
 
 export {
     accountForgotPassword, accountLogin, accountLoginOTP, accountLogout, accountPaymentInfoPOST, accountPaymentInfoPUT, accountRegister,
@@ -17,3 +18,4 @@ export { organisationAll, organisationAllName, organisationApply, organisationCa
 export { postAll, postIdDEL, postIdDislike, postIdImageDEL, postIdLike, postIdPATCH, postIdPOST, postNew, postIdPin, postIdUnpin };
 export { replyId, replyIdDislike, replyIdLike, replyNew };
 export { transactionNew };
+export { adminAccountAll, adminApplication, adminAccountEditRole, adminApplicationIdApprove, adminApplicationIdReject };
