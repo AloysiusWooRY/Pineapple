@@ -3,6 +3,8 @@ const chai = require("chai");
 const { expect } = chai;
 let csrfToken = null;
 let cookie = null;
+const email = process.env.TEST_USER_EMAIL;
+const password = process.env.TEST_USER_PASS;
 
 const cookieFilter = (cookieString) => {
   const cookies = cookieString
@@ -20,11 +22,10 @@ const cookieFilter = (cookieString) => {
   return cookieObject;
 };
 
-describe("Connection Test", () => {
+describe("To test normal user's related functionality", () => {
   it("Get CSRF Token", async () => {
-    const apiUrl = "http://localhost:4000/api/get-csrf-token";
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/get-csrf-token", {
         method: "GET",
       });
       expect(response.status).to.equal(200);
@@ -37,15 +38,9 @@ describe("Connection Test", () => {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-});
-
-describe("Login Test, Successful login", () => {
-  it("Test Account Credentials", async () => {
-    const apiUrl = "http://localhost:4000/api/account/login";
-    const email = process.env.TEST_USER;
-    const password = process.env.TEST_PASS;
+  it("Successfully Login to Test User Account", async () => {
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/account/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,77 +56,67 @@ describe("Login Test, Successful login", () => {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-});
-describe("Update Account Test", () => {
-  it("Unsuccessful update password, WeakPassword", async () => {
-    const apiUrl = "http://localhost:4000/api/account/update-password";
-    const password = "WeakPassword";
+  it("Unsuccessfully update password, WeakPassword", async () => {
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(
+        "http://localhost:4000/api/account/update-password",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-csrf-token": csrfToken,
+            cookie: Object.values(cookie).join("; "),
+          },
+          body: JSON.stringify({ password: "WeakPassword" }),
+        }
+      );
+      expect(response.status).to.equal(400);
+    } catch (error) {
+      throw new Error(`HTTP request failed: ${error.message}`);
+    }
+  });
+  it("Unsuccessfully update account, bad email syntax, 😀@gmail.com", async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/account/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ name: "test", email: "😀@gmail.com" }),
       });
       expect(response.status).to.equal(400);
     } catch (error) {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Unsuccessful update account, bad email syntax, 😀@gmail.com", async () => {
-    const apiUrl = "http://localhost:4000/api/account/update";
-    const name = "test";
-    const email = "😀@gmail.com";
+  it("Successfully update account, correct name syntax, Tester", async () => {
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/account/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ name, email }),
-      });
-      expect(response.status).to.equal(400);
-    } catch (error) {
-      throw new Error(`HTTP request failed: ${error.message}`);
-    }
-  });
-  it("Successful update account, correct name syntax, Tester", async () => {
-    const apiUrl = "http://localhost:4000/api/account/update";
-    const name = "Tester";
-    const email = "test@gmail.com";
-    try {
-      const response = await fetch(apiUrl, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-csrf-token": csrfToken,
-          cookie: Object.values(cookie).join("; "),
-        },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name: "Tester", email }),
       });
       expect(response.status).to.equal(200);
     } catch (error) {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Successful update account, bad name syntax, <alert>HELLO</alert>", async () => {
-    const apiUrl = "http://localhost:4000/api/account/update";
-    const name = "<alert>HELLO</alert>";
-    const email = "test@gmail.com";
+  it("Successfully update account, bad name syntax, <alert>HELLO</alert>", async () => {
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/account/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name: "<alert>HELLO</alert>", email }),
       });
       expect(response.status).to.equal(200);
     } catch (error) {
@@ -139,12 +124,10 @@ describe("Update Account Test", () => {
     }
   });
 });
-
 describe("Login to get Name to check for Name", () => {
   it("Get CSRF Token", async () => {
-    const apiUrl = "http://localhost:4000/api/get-csrf-token";
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/get-csrf-token", {
         method: "GET",
       });
       expect(response.status).to.equal(200);
@@ -158,12 +141,8 @@ describe("Login to get Name to check for Name", () => {
     }
   });
   it("Checks if input has been sanitized with bad name syntax", async () => {
-    const apiUrl = "http://localhost:4000/api/account/login";
-    const email = process.env.TEST_USER;
-    const password = process.env.TEST_PASS;
-
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/account/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,9 +151,7 @@ describe("Login to get Name to check for Name", () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
       expect(response.status).to.equal(200);
-
       const jsonResponse = await response.json();
       expect(jsonResponse["name"]).to.not.equal("<alert>HELLO</alert>");
     } catch (error) {

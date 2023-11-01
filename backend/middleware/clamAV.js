@@ -16,7 +16,7 @@ const clamAV = async (req, res, next) => {
         // const scanResultsPoster = await clamscan.isInfected(posterPath);
         if (isInfected) throw new InfectedFileError('Infected file detected');
 
-        res.status(200).send()
+        res.status(200).json({})
         // next();
     } catch (err) {
         console.log(err)

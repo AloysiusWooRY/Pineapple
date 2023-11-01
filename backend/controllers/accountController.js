@@ -36,7 +36,7 @@ const loginAccount = async (req, res) => {
         const match = await bcrypt.compare(password, account.password)
         if (!match) throw new ValidationError('Incorrect email or password. Please try again.', req)
 
-        const { _id, name } = account
+        const { _id, name, isAdmin, moderation } = account
 
         // Create JWT token
         const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
@@ -57,7 +57,7 @@ const loginAccount = async (req, res) => {
             maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
         })
 
-        res.status(200).json({ _id, name, sanitiseEmail, csrfToken })
+        res.status(200).json({ _id, name, sanitiseEmail, isAdmin, moderation, csrfToken })
     } catch (err) {
         if (err.statusCode === 400)
             res.status(err.statusCode).json({ error: err.message })
@@ -151,7 +151,7 @@ const updateAccount = async (req, res) => {
         // Check if no changes were made
         if (sanitizedName === account.name && sanitizedEmail === account.email) {
             logger.http(`No changes made`, { actor: "USER", req })
-            return res.status(204).send()
+            return res.status(204).json({})
         }
 
         // Update the account details
@@ -200,7 +200,7 @@ const updatePassword = async (req, res) => {
 
 
         logger.http(`Update successful`, { actor: "USER", req })
-        res.status(200).send();
+        res.status(200).json({});
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -253,7 +253,7 @@ const forgotPassword = async (req, res) => {
 
         // Log event
         logger.http(`Reset code sent to ${email}`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404 || err.statusCode === 409)
             res.status(err.statusCode).json({ error: err.message })
@@ -286,7 +286,7 @@ const validateCode = async (req, res) => {
 
         // Log event
         logger.http(`Successful code validation`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -334,7 +334,7 @@ const resetPassword = async (req, res) => {
         await ResetCode.deleteOne({ _id: resetCode._id })
 
         logger.http(`Reset successful`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -354,7 +354,7 @@ const getPaymentInfo = async (req, res) => {
         if (!account) throw new DataNotFoundError('No such account', req)
         if (!account.paymentInfo) {
             logger.http(`No existing payment information`, { actor: "USER", req })
-            return res.status(204).send()
+            return res.status(204).json({})
         }
 
         const decryptedPaymentInfo = JSON.parse(
@@ -407,7 +407,7 @@ const setPaymentInfo = async (req, res) => {
         if (!account) throw new DataNotFoundError('No such account', req)
 
         logger.http(`Successfully set payment information`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -424,7 +424,7 @@ const logoutAccount = async (req, res) => {
         req.session.destroy()
 
         logger.http(`Successfully logout`, { actor: "USER", req })
-        res.status(200).send()
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 401)
             res.status(err.statusCode).json({ error: err.message })
