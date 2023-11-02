@@ -6,3 +6,5 @@ envtest
 /backend/public/*
 /backend/logs/*
 /backend/*.log
+frontend/test/testenv.js
+frontend/test/output.txt

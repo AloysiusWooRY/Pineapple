@@ -1,8 +1,11 @@
+const testenv = require('./testenv');
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const { Options } = chrome;
 const { exec } = require('child_process');
 const { log } = require('console');
+const email = testenv.TEST_USER_EMAIL;
+const password = testenv.TEST_USER_PASS;
 
 async function getCsrToken() {
   return new Promise((resolve, reject) => {
@@ -31,18 +34,16 @@ async function runLoginTest() {
     .setChromeOptions(chromeOptions)
     .build();
 
+  //login button testing
   try {
     const csrfToken = await getCsrToken();
-    const emailUser = 'testser@gmail.com';
-    const emailPass = 'Ge2023!!!';
 
     driver.get('https://mystifying-swirles.cloud/login');
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
     const passwordField = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
-    const loginButton = await driver.findElement(By.id("button-log-in"));
-
+    const loginButton = await driver.findElement(By.css('button[id="button-log-in"]'));
 
     // Include the CSRF token in the login request
     const csrfHeader = { 'X-CSRF-TOKEN': csrfToken };
@@ -51,28 +52,51 @@ async function runLoginTest() {
       // Other headers, if needed
     });
     
-    await emailField.sendKeys('testuser@gmail.com');
-    await passwordField.sendKeys('Ge2023!!!');
+    await emailField.sendKeys(email);
+    await passwordField.sendKeys(password);
     await loginButton.click();
+    
     // Include the CSRF token in the request headers
-    await driver.executeScript(function (headers) {
+    await driver.executeScript(function (headers,email,password) {
       fetch('/login', {
         method: 'POST', 
         headers: headers,  // Include the CSRF token in the headers
         body: JSON.stringify({
-          email: 'testuser@gmail.com',
-          password: 'Ge2023!!!',
+          email: email,
+          password: password,
           // Include other login data as needed
         }),
       });
-    }, headers);
+    }, headers,email,password);
     
     try {
-      await driver.findElement(By.css('a[id="link-home-"]'));
+      await driver.sleep(2000);
+      await driver.findElement(By.css('a[id="link-home"]'));
       console.log('Login button successful.');
     } catch (error) {
       console.error('Login button failed.');
     }
+    //menu bar test
+    try{
+      const menuOrg = await driver.findElement(By.css('a[id="link-organisation-home"]'));
+      await menuOrg.click()
+      await driver.sleep(2000);
+      await driver.findElement(By.xpath('//h2[contains(text(),"Organisations")]'));
+      console.log('Organisation Menu button successful.');
+    } catch (error) {
+      console.error('Organisation Menu button unsuccessful.')
+    }
+
+    try{
+      const menuPro = await driver.findElement(By.css('a[id="link-profile"]'));
+      await menuPro.click()
+      await driver.sleep(2000);
+      await driver.findElement(By.xpath('//h2[contains(text(),"Profile")]'));
+      console.log('Profile Menu button successful.');
+    } catch (error) {
+      console.log('Profile buttons unsuccessful.')
+    }
+
   } finally {
     await driver.quit();
   }
