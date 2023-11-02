@@ -33,7 +33,7 @@ async function runLoginTest() {
 
   try {
     const csrfToken = await getCsrToken();
-    const emailUser = 'testUser@gmail.com';
+    const emailUser = 'testser@gmail.com';
     const emailPass = 'Ge2023!!!';
 
     driver.get('https://mystifying-swirles.cloud/login');
@@ -51,7 +51,7 @@ async function runLoginTest() {
       // Other headers, if needed
     });
     
-    await emailField.sendKeys('testUser@gmail.com');
+    await emailField.sendKeys('testuser@gmail.com');
     await passwordField.sendKeys('Ge2023!!!');
     await loginButton.click();
     // Include the CSRF token in the request headers
@@ -60,7 +60,7 @@ async function runLoginTest() {
         method: 'POST', 
         headers: headers,  // Include the CSRF token in the headers
         body: JSON.stringify({
-          email: 'testUser@gmail.com',
+          email: 'testuser@gmail.com',
           password: 'Ge2023!!!',
           // Include other login data as needed
         }),
@@ -68,8 +68,7 @@ async function runLoginTest() {
     }, headers);
     
     try {
-      console.log('test')
-      await driver.wait(until.elementLocated(By.css('input[placeholder="Enter Recovery Code"]'), 100));
+      await driver.findElement(By.css('a[id="link-home-"]'));
       console.log('Login button successful.');
     } catch (error) {
       console.error('Login button failed.');
