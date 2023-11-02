@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "../.env" });
 require("dotenv").config({ path: "./.envtest" });
 const chai = require("chai");
 const { expect } = chai;
@@ -5,6 +6,7 @@ let csrfToken = null;
 let cookie = null;
 const email = process.env.TEST_USER_EMAIL;
 const password = process.env.TEST_USER_PASS;
+const dev_secret = process.env.DEV_SECRET;
 
 const cookieFilter = (cookieString) => {
   const cookies = cookieString
@@ -48,6 +50,24 @@ describe("To test normal user's update account information details", () => {
           cookie: Object.values(cookie).join("; "),
         },
         body: JSON.stringify({ email, password }),
+      });
+      cookieString = response.headers.get("set-cookie");
+      cookie = { ...cookie, ...cookieFilter(cookieString) };
+      expect(response.status).to.equal(200);
+    } catch (error) {
+      throw new Error(`HTTP request failed: ${error.message}`);
+    }
+  });
+  it("Successfully verify OTP validation", async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/account/login-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+          cookie: Object.values(cookie).join("; "),
+        },
+        body: JSON.stringify({ token: dev_secret }),
       });
       cookieString = response.headers.get("set-cookie");
       cookie = { ...cookie, ...cookieFilter(cookieString) };
@@ -141,7 +161,7 @@ describe("Login to get Name to check for Name", () => {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Checks if input has been sanitized with bad name syntax", async () => {
+  it("Successfully Login to Test User Account", async () => {
     try {
       const response = await fetch("http://localhost:4000/api/account/login", {
         method: "POST",
@@ -152,17 +172,35 @@ describe("Login to get Name to check for Name", () => {
         },
         body: JSON.stringify({ email, password }),
       });
+      cookieString = response.headers.get("set-cookie");
+      cookie = { ...cookie, ...cookieFilter(cookieString) };
       expect(response.status).to.equal(200);
+    } catch (error) {
+      throw new Error(`HTTP request failed: ${error.message}`);
+    }
+  });
+  it("Successfully checks if the name given by server is equal to our bad syntax, expects to be different and sanitised", async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/account/login-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+          cookie: Object.values(cookie).join("; "),
+        },
+        body: JSON.stringify({ token: dev_secret }),
+      });
+      cookieString = response.headers.get("set-cookie");
+      cookie = { ...cookie, ...cookieFilter(cookieString) };
       const jsonResponse = await response.json();
       expect(jsonResponse["name"]).to.not.equal("<alert>HELLO</alert>");
     } catch (error) {
-      throw new Error(
-        `Input field for name is not sanitized: ${error.message}`
+      throw new Error(`Input field for name is not sanitized: ${error.message}`
       );
     }
   });
+  
 });
-
 describe("To test normal user's update Payment Info", () => {
   const apiUrl = "http://localhost:4000/api/account/payment-info";
   it("Successful Get payment info", async () => {

@@ -1,9 +1,13 @@
+require("dotenv").config({ path: "../.env" });
 require("dotenv").config({ path: "./.envtest" });
 const chai = require("chai");
 const moment = require("moment");
 const { expect } = chai;
 let csrfToken = null;
 let cookie = null;
+const email = process.env.TEST_MOD_EMAIL;
+const password = process.env.TEST_MOD_PASS;
+const dev_secret = process.env.DEV_SECRET;
 let organisationId = process.env.TEST_ORGANISATION_1_ID;
 let postId = null;
 let commentId = null;
@@ -50,12 +54,9 @@ describe("Connection Test", () => {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Successfully login with Test Account, Test Mod", async () => {
-    const apiUrl = "http://localhost:4000/api/account/login";
-    const email = process.env.TEST_USER_EMAIL;
-    const password = process.env.TEST_USER_PASS;
+  it("Successfully Login to Test User Account", async () => {
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:4000/api/account/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,11 +67,32 @@ describe("Connection Test", () => {
       });
       cookieString = response.headers.get("set-cookie");
       cookie = { ...cookie, ...cookieFilter(cookieString) };
+      expect(response.status).to.equal(200);
+    } catch (error) {
+      throw new Error(`HTTP request failed: ${error.message}`);
+    }
+  });
+  it("Successfully verify OTP validation", async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:4000/api/account/login-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-csrf-token": csrfToken,
+            cookie: Object.values(cookie).join("; "),
+          },
+          body: JSON.stringify({ token: dev_secret }),
+        }
+      );
+      cookieString = response.headers.get("set-cookie");
+      cookie = { ...cookie, ...cookieFilter(cookieString) };
       myHeader = {
         "Content-Type": "application/json",
         "x-csrf-token": csrfToken,
-        cookie: Object.values(cookie).join("; ")
-      }
+        cookie: Object.values(cookie).join("; "),
+      };
       expect(response.status).to.equal(200);
     } catch (error) {
       throw new Error(`HTTP request failed: ${error.message}`);
@@ -100,7 +122,10 @@ describe("Post Test on specified test organisation, name '3103 Crisis Fund'", ()
   formdata.append("event", "false");
   formdata.append("event_location", "here");
   formdata.append("event_capacity", "5");
-  formdata.append("event_time",moment().add(100, "years").format("YYYY-MM-DDTHH:mm"));
+  formdata.append(
+    "event_time",
+    moment().add(100, "years").format("YYYY-MM-DDTHH:mm")
+  );
   formdata.append("donation", "true");
   formdata.append("donation_goal", "1000");
 
@@ -484,7 +509,7 @@ describe("Cleanup, delete Reply,Comment,Post", () => {
 describe("Test if user is able to delete a post that does not belong to user", () => {
   it("Unsuccessfully DELETE post that does not belong to test user", async () => {
     const apiUrl = "http://localhost:4000/api/post";
-    const otherPostId = process.env.TEST_EXISTING_POST_1_ID
+    const otherPostId = process.env.TEST_EXISTING_POST_1_ID;
     const finalUrl = `${apiUrl}/${otherPostId}`;
     try {
       const response = await fetch(finalUrl, {
