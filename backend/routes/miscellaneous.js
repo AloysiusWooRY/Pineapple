@@ -3,10 +3,10 @@ const {
     ping,
     generateCSRF,
     emailTest,
-    test,
-    clamTest
+    test
 } = require('../controllers/miscellaneousController')
 const rateLimit = require('../utils/rateLimiter')
+const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router()
 
@@ -17,12 +17,9 @@ router.get('/ping', rateLimit(), ping)
 router.get('/get-csrf-token', rateLimit(5, 100), generateCSRF)
 
 // GET: Send email
-router.get('/email', rateLimit(5, 100), emailTest)
+router.get('/email', rateLimit(), requireAuth(isAdmin = true), emailTest)
 
 // GET: Test
 router.get('/test', rateLimit(5, 100), test)
-
-// GET: Clam Test
-router.get('/clam-test', rateLimit(5, 100), clamTest)
 
 module.exports = router

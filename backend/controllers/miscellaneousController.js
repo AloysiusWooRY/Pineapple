@@ -25,8 +25,8 @@ const generateCSRF = async (req, res) => {
 const emailTest = async (req, res) => {
     const { email } = req.body
     await sendEmail("PasswordReset", email, {
-        code: 696969,
-        name: "Jia Hao"
+        code: "SUCCESS",
+        name: "Connection Test"
     })
     res.status(200).json({})
 }
@@ -37,25 +37,9 @@ const test = async (req, res) => {
     res.status(200).json({ t })
 }
 
-const clamTest = async (req, res) => {
-    const filePath = path.join(__dirname, '../uploads/1.png')
-    try {
-        // clamscan.scan(filePath, (err, file, isInfected) => {
-        //     if (err) console.log(err)
-        //     else console.log(`Infection: ${isInfected}`)
-        // })
-        res.status(200).json({})
-    } catch (err) {
-        console.log(err)
-        logger.error(err.message, { actor: "USER", req })
-        res.status(500).json({ error: "Something went wrong, try again later" })
-    }
-}
-
 module.exports = {
     ping,
     generateCSRF,
     emailTest,
-    test,
-    clamTest
+    test
 }
