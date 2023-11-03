@@ -102,7 +102,7 @@ export default function Organisation() {
             ))
             :
             posts.push(
-                <h1 className="text-text-primary py-4 text-3xl text-center">🍍No Organisations Here🍍</h1>
+                <h1 className="text-text-primary py-4 text-3xl text-center">🍍No Posts Here🍍</h1>
             );
 
         return posts;
@@ -172,16 +172,16 @@ export default function Organisation() {
                     </div>
                 </section>
 
-                {selectedOrganisation &&
-                    <NavLink to={`/organisation/${selectedOrganisation._id}/post/new`}>
-                        <SideBarOrganisationInfo
-                            organisationName={selectedOrganisation.name}
-                            organisationDescription={selectedOrganisation.description}
-                            createDate={selectedOrganisation.createdAt}
-                            numberPosts={selectedOrganisation.posts}
-                        />
-                    </NavLink>
-                }
+                {selectedOrganisation && <SideBarOrganisationInfo
+                    organisationContent={{
+                        '_id': selectedOrganisation._id,
+                        'name': selectedOrganisation.name,
+                        'description': selectedOrganisation.description,
+                        'posterPath': selectedOrganisation.imagePath.poster,
+                        'posts': selectedOrganisation.posts,
+                        'createDate': selectedOrganisation.createdAt,
+                    }}
+                />}
             </div>
 
             <Popup title="Edit Organisation"

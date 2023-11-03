@@ -28,11 +28,8 @@ export default function Post() {
 
     const navigate = useNavigate();
 
-    const [organisationId, setOrganisationId] = useState(null);
     const [organisationName, setOrganisationName] = useState('');
-    const [organisationDescription, setOrganisationDescription] = useState('');
-    const [organisationCreateDate, setOrganisationCreateDate] = useState('');
-    const [organisationPosts, setOrganisationPosts] = useState(0);
+    const [organisationDetails, setOrganisationDetails] = useState(null);
 
     const [poster, setPoster] = useState('');
     const [postTime, setPostTime] = useState('');
@@ -57,7 +54,7 @@ export default function Post() {
     const [newImage, setNewImage] = useState(null);
 
     const [comment, setComment] = useState('');
-    
+
     // This is to load the post and organisation details for the selected post
     useEffect(() => {
         async function fetchData() {
@@ -66,16 +63,13 @@ export default function Post() {
 
             if (response.ok) {
                 setOrganisationName(json.post.organisation.name);
-                setOrganisationDescription(json.post.organisation.description);
-                setOrganisationCreateDate(json.post.organisation.createdAt);
-                setOrganisationPosts(json.post.organisation.posts);
+                setOrganisationDetails(json.post.organisation);
 
                 setPostContent(json.post.description);
                 setPostTitle(json.post.title);
                 setPoster(json.post.owner.name);
                 setPostType(json.post.donation ? "donation" : json.post.event ? "event" : "discussion");
                 setPostTime(json.post.updatedAt);
-                setOrganisationId(json.post.organisation._id);
 
                 if (json.post.donation) {
                     setDonationCurrent(json.post.donation.amoount);
@@ -159,11 +153,7 @@ export default function Post() {
 
         setEditMode(!editMode);
     }
-
-    function handleCreatePost() {
-        navigate(`../organisation/${organisationId}/post/new`);
-    }
-
+    
     return (
         <Layout>
             <div className="flex flex-row items-start gap-2">
@@ -296,14 +286,16 @@ export default function Post() {
                 </div>
 
 
-                <SideBarOrganisationInfo
-                    organisationName={organisationName}
-                    organisationDescription={organisationDescription}
-                    createDate={organisationCreateDate}
-                    numberPosts={organisationPosts}
-                    onCreateClicked={handleCreatePost}
-                />
-
+                {organisationDetails && <SideBarOrganisationInfo
+                    organisationContent={{
+                        '_id': organisationDetails._id,
+                        'name': organisationDetails.name,
+                        'description': organisationDetails.description,
+                        'posterPath': organisationDetails.imagePath.poster,
+                        'posts': organisationDetails.posts,
+                        'createDate': organisationDetails.createdAt,
+                    }}
+                />}
             </div>
 
             <Popup title="Make Donation"

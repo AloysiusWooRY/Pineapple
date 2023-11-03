@@ -24,7 +24,6 @@
     "react-idle-timer": "^5.7.2",
     "react-password-strength-bar": "^0.4.1",
     "react-router-dom": "^6.15.0",
-    "react-scripts": "5.0.1",
     "react-step-progress-bar": "^1.0.3",
     "selenium-webdriver": "^4.14.0",
     "validator": "^13.11.0",
@@ -33,7 +32,7 @@
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -58,6 +57,7 @@
   "devDependencies": {
     "chai": "^4.3.10",
     "mocha": "^10.2.0",
+    "react-scripts": "5.0.1",
     "tailwindcss": "^3.3.3"
   },
   "resolutions": {
