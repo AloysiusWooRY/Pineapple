@@ -7,6 +7,7 @@ let cookie = null;
 const email = process.env.TEST_USER_EMAIL;
 const password = process.env.TEST_USER_PASS;
 const dev_secret = process.env.DEV_SECRET;
+console.log (email);
 
 const cookieFilter = (cookieString) => {
   const cookies = cookieString
@@ -60,15 +61,18 @@ describe("To test normal user's update account information details", () => {
   });
   it("Successfully verify OTP validation", async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/account/login-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-csrf-token": csrfToken,
-          cookie: Object.values(cookie).join("; "),
-        },
-        body: JSON.stringify({ token: dev_secret }),
-      });
+      const response = await fetch(
+        "http://localhost:4000/api/account/login-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-csrf-token": csrfToken,
+            cookie: Object.values(cookie).join("; "),
+          },
+          body: JSON.stringify({ token: dev_secret }),
+        }
+      );
       cookieString = response.headers.get("set-cookie");
       cookie = { ...cookie, ...cookieFilter(cookieString) };
       expect(response.status).to.equal(200);
@@ -181,25 +185,28 @@ describe("Login to get Name to check for Name", () => {
   });
   it("Successfully checks if the name given by server is equal to our bad syntax, expects to be different and sanitised", async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/account/login-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-csrf-token": csrfToken,
-          cookie: Object.values(cookie).join("; "),
-        },
-        body: JSON.stringify({ token: dev_secret }),
-      });
+      const response = await fetch(
+        "http://localhost:4000/api/account/login-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-csrf-token": csrfToken,
+            cookie: Object.values(cookie).join("; "),
+          },
+          body: JSON.stringify({ token: dev_secret }),
+        }
+      );
       cookieString = response.headers.get("set-cookie");
       cookie = { ...cookie, ...cookieFilter(cookieString) };
       const jsonResponse = await response.json();
       expect(jsonResponse["name"]).to.not.equal("<alert>HELLO</alert>");
     } catch (error) {
-      throw new Error(`Input field for name is not sanitized: ${error.message}`
+      throw new Error(
+        `Input field for name is not sanitized: ${error.message}`
       );
     }
   });
-  
 });
 describe("To test normal user's update Payment Info", () => {
   const apiUrl = "http://localhost:4000/api/account/payment-info";
@@ -228,7 +235,11 @@ describe("To test normal user's update Payment Info", () => {
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ cardNumber: "411111111111111", expirationDate: "23/24", cvc: "123"}),
+        body: JSON.stringify({
+          cardNumber: "411111111111111",
+          expirationDate: "23/24",
+          cvc: "123",
+        }),
       });
       expect(response.status).to.equal(400);
     } catch (error) {
@@ -244,14 +255,18 @@ describe("To test normal user's update Payment Info", () => {
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ cardNumber: "41111111111111111", expirationDate: "23/24", cvc: "123"}),
+        body: JSON.stringify({
+          cardNumber: "41111111111111111",
+          expirationDate: "23/24",
+          cvc: "123",
+        }),
       });
       expect(response.status).to.equal(400);
     } catch (error) {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Unsuccessful Change payment info, Date with invalid month of 13", async () => {
+  it("Unsuccessful Change payment info, with invalid month of 13", async () => {
     try {
       const response = await fetch(apiUrl, {
         method: "PUT",
@@ -260,14 +275,18 @@ describe("To test normal user's update Payment Info", () => {
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ cardNumber: "4111111111111111", expirationDate: "13/24", cvc: "123"}),
+        body: JSON.stringify({
+          cardNumber: "4111111111111111",
+          expirationDate: "13/24",
+          cvc: "123",
+        }),
       });
       expect(response.status).to.equal(400);
     } catch (error) {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Unsuccessful Change payment info, Date with invalid month of 00", async () => {
+  it("Unsuccessful Change payment info, with invalid month of 00", async () => {
     try {
       const response = await fetch(apiUrl, {
         method: "PUT",
@@ -276,14 +295,18 @@ describe("To test normal user's update Payment Info", () => {
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ cardNumber: "4111111111111111", expirationDate: "00/24", cvc: "123"}),
+        body: JSON.stringify({
+          cardNumber: "4111111111111111",
+          expirationDate: "00/24",
+          cvc: "123",
+        }),
       });
       expect(response.status).to.equal(400);
     } catch (error) {
       throw new Error(`HTTP request failed: ${error.message}`);
     }
   });
-  it("Unsuccessful Change payment info, Date with invalid year thats in the past of 22", async () => {
+  it("Unsuccessful Change payment info, with invalid year thats in the past", async () => {
     try {
       const response = await fetch(apiUrl, {
         method: "PUT",
@@ -292,7 +315,11 @@ describe("To test normal user's update Payment Info", () => {
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: JSON.stringify({ cardNumber: "4111111111111111", expirationDate: "12/22", cvc: "123"}),
+        body: JSON.stringify({
+          cardNumber: "4111111111111111",
+          expirationDate: "12/22",
+          cvc: "123",
+        }),
       });
       expect(response.status).to.equal(400);
     } catch (error) {
