@@ -3,15 +3,14 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const { Options } = chrome;
 const { exec } = require('child_process');
-const { log } = require('console');
-const { tryParse } = require('selenium-webdriver/http');
 const email = testenv.TEST_USER_EMAIL;
 const password = testenv.TEST_USER_PASS;
 const authCode = testenv.AUTH_CODE;
+const COOKIE = testenv.COOKIE;
 
-async function getCsrToken() {
+async function getCsrfToken() {
   return new Promise((resolve, reject) => {
-    exec('curl --location "https://mystifying-swirles.cloud/api/get-csrf-token" --header "Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGYwNGU3NzQ5YmI5YWVkMzBhNWZmMmQiLCJpYXQiOjE2OTg1NTU3MDgsImV4cCI6MTY5ODY0MjEwOH0.NqIxJRicf-ItEcBxxCCpe0SJkaYKKj8wpWK80j_x_uY"', (error, stdout, stderr) => {
+    exec(`curl --location "https://mystifying-swirles.cloud/api/get-csrf-token" --header "Cookie: ${COOKIE}"`, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running curl: ${error}`);
         reject(error);
@@ -38,7 +37,7 @@ async function runLoginTest() {
 
   //login button testing
   try {
-    const csrfToken = await getCsrToken();
+    const csrfToken = await getCsrfToken();
 
     driver.get('https://mystifying-swirles.cloud/login');
 
