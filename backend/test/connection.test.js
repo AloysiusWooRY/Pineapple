@@ -162,7 +162,7 @@ describe("Action Rate Limit (20). Flood the login request 20 times with wrong cr
       email = process.env.TEST_USER_EMAIL;
       password = process.env.TEST_USER_PASS;
     }
-    it(`Login attempt #${i}`, async () => {
+    it(`Login attempt #${i}, check if Session timeout error will be thrown at the last attempt`, async () => {
       try {
         const response = await fetch("http://localhost:4000/api/account/login", {
           method: "POST",

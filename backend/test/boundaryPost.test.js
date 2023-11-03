@@ -128,7 +128,7 @@ describe("Post Test on specified test organisation, name '3103 Crisis Fund'", ()
   );
   formdata.append("donation", "true");
   formdata.append("donation_goal", "1000");
-
+  formdata.append("token", dev_secret);
   it("Unuccessfully CREATE post,Title, more than 256 characters long", async () => {
     formdata.set("title", longContent260);
     try {
@@ -138,7 +138,7 @@ describe("Post Test on specified test organisation, name '3103 Crisis Fund'", ()
           "x-csrf-token": csrfToken,
           cookie: Object.values(cookie).join("; "),
         },
-        body: formdata,
+        body: formdata, 
       });
       expect(response.status).to.equal(400);
     } catch (error) {
@@ -231,7 +231,7 @@ describe("Post Test on specified test organisation, name '3103 Crisis Fund'", ()
     }
   });
 });
-describe("Donation Test, it tests /api/transatction/new", () => {
+describe("Donation Test, it tests /api/transaction/new", () => {
   apiUrl = "http://localhost:4000/api/transaction/new";
   it("Unsuccessful Change payment info, CVC with One Digit", async () => {
     try {
@@ -506,8 +506,8 @@ describe("Cleanup, delete Reply,Comment,Post", () => {
   });
 });
 
-describe("Test if user is able to delete a post that does not belong to user", () => {
-  it("Unsuccessfully DELETE post that does not belong to test user", async () => {
+describe("Test if test Moderator is able to delete a post where the tester isn't a moderator of", () => {
+  it("Unsuccessfully DELETE post", async () => {
     const apiUrl = "http://localhost:4000/api/post";
     const otherPostId = process.env.TEST_EXISTING_POST_1_ID;
     const finalUrl = `${apiUrl}/${otherPostId}`;
