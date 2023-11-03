@@ -50,12 +50,12 @@ export const accountUpdate = async ({name = null, email = null} = {}) => {
     });
 }
 
-export const accountUpdatePassword = async ({password = null} = {}) => {
+export const accountUpdatePassword = async ({oldPassword = null, newPassword = null} = {}) => {
     const csrfToken = await getCSRF();
     return await PATCHRequest({
         apiURL: '/api/account/update-password',
         csrfToken,
-        requestBody: { password },
+        requestBody: { oldPassword, newPassword },
         templatedObject: null,
     });
 }

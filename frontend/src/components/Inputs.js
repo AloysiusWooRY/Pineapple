@@ -130,17 +130,17 @@ export function InputDate(props) {
 }
 
 export function InputMonthYear(props) {
-    const { title, errorMsg, setFormattedValue, width = 'full', bottomPadding = 4, active = true } = props;
+    const { title, errorMsg, setFormattedValue, width = 'full', bottomPadding = 4, active = true, currentMonth, currentYear } = props;
 
-    const [selectedMonth, setSelectedMonth] = useState('');
-    const [selectedYear, setSelectedYear] = useState('');
+    const [selectedMonth, setSelectedMonth] = useState(null);
+    const [selectedYear, setSelectedYear] = useState(null);
 
     useEffect(() => {
-        setFormattedValue(`${selectedMonth}/${selectedYear}`);
+        setFormattedValue(`${selectedMonth ? selectedMonth : currentMonth}/${selectedYear ? selectedYear : currentYear}`);
     }, [selectedMonth, selectedYear]);
 
     return (
-        <div 
+        <div
         className={`flex flex-row w-${width} space-x-2 pb-${bottomPadding}`}
         value={`${selectedMonth}/${selectedYear}`}>
             <div className={`flex flex-col w-1/2`}>
@@ -151,7 +151,7 @@ export function InputMonthYear(props) {
                         'rounded-sm bg-input-background-neutral text-text-primary'}
                 rounded-sm`}>
                     <select id={"input-" + textNerfer(title) + "-month"}
-                        value={selectedMonth}
+                        value={selectedMonth ? selectedMonth : currentMonth}
                         disabled={!active}
                         onChange={(e) => {
                             setSelectedMonth(e.target.value);
@@ -194,7 +194,7 @@ export function InputMonthYear(props) {
                     min="23"
                     max="99"
                     disabled={!active}
-                    value={selectedYear}
+                    value={selectedYear ? selectedYear : currentYear}
                     onChange={(e) => {
                         setSelectedYear(e.target.value);
                     }}
