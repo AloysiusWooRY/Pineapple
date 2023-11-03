@@ -29,7 +29,7 @@ const applyOrganisation = async (req, res) => {
         if (!poster) throw new MissingFieldError("Missing poster image", req)
         if (!category) throw new MissingFieldError("Missing category", req)
 
-        const isTokenValid = isTester ? token === process.env.DEV_SECRET : await verifyRecaptchaToken(token)
+        const isTokenValid = isTester ? token === process.env.DEV_SECRET || await verifyRecaptchaToken(token) : await verifyRecaptchaToken(token)
         if (!isTokenValid) throw new ValidationError("Invalid token", req)
 
         const sanitizedName = validator.escape(validator.trim(name))

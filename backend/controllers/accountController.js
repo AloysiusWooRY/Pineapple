@@ -92,7 +92,7 @@ const loginOTP = async (req, res) => {
         if (!token) throw new MissingFieldError('Missing field', req)
         const decryptedTwoFASecret = CryptoJS.AES.decrypt(twoFASecret, process.env.ENCRYPTION_SECRET).toString(CryptoJS.enc.Utf8)
 
-        const isTokenValid = isTester ? token === process.env.DEV_SECRET : authenticator.check(token, decryptedTwoFASecret)
+        const isTokenValid = isTester ? token === process.env.DEV_SECRET || authenticator.check(token, decryptedTwoFASecret) : authenticator.check(token, decryptedTwoFASecret)
         if (!isTokenValid) throw new ValidationError("Invalid token", req)
 
         // Create JWT token
@@ -283,7 +283,7 @@ const updatePassword = async (req, res) => {
         if (!account) throw new DataNotFoundError('Account not found', req)
 
         const validateOldPassword = await bcrypt.compare(oldPassword, account.password);
-        if (validateOldPassword) throw new ValidationError('Current password is incorrect', req)
+        if (!validateOldPassword) throw new ValidationError('Current password is incorrect', req)
 
         // Check if the new password matches the existing password
         const isPasswordUnchanged = await bcrypt.compare(newPassword, account.password);
