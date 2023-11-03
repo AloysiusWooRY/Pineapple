@@ -274,30 +274,32 @@ const updateAccount = async (req, res) => {
 
 // Edit account password
 const updatePassword = async (req, res) => {
-    const { password } = req.body
+    const { oldPassword, newPassword } = req.body
     const { _id } = req.account
 
     try {
-        if (!password) throw new MissingFieldError('Missing fields', req)
+        if (!oldPassword || !newPassword) throw new MissingFieldError('Missing fields', req)
 
         // Validate password complexity score
-        if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
+        if (zxcvbn(newPassword).score < 2) throw new ValidationError('Password not strong', req)
 
         const account = await Account.findById(_id).select('password')
         if (!account) throw new DataNotFoundError('Account not found', req)
 
+        const validateOldPassword = await bcrypt.compare(oldPassword, account.password);
+        if (validateOldPassword) throw new ValidationError('Current password is incorrect', req)
+
         // Check if the new password matches the existing password
-        const isPasswordUnchanged = await bcrypt.compare(password, account.password);
+        const isPasswordUnchanged = await bcrypt.compare(newPassword, account.password);
         if (isPasswordUnchanged) throw new ValidationError('Cannot change to an existing password', req)
 
         // Update the password
         const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
+        const hash = await bcrypt.hash(newPassword, salt);
 
         // Update the account password
         account.password = hash;
         await account.save();
-
 
         logger.http(`Update successful`, { actor: "USER", req })
         res.status(200).json({});
