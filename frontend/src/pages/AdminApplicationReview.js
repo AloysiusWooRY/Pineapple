@@ -30,6 +30,7 @@ export default function AdminApplicationReview() {
     const [sortBy, setSortBy] = useState('newest');
     const [searchField, setSearchField] = useState('');
     const [isFiltered, setIsFiltered] = useState(false);
+    const [isSorted, setIsSorted] = useState(false);
 
     const [viewingApplicationMode, setViewingApplicationMode] = useState(false);
 
@@ -38,6 +39,7 @@ export default function AdminApplicationReview() {
     const [applicationDescription, setApplicationDescription] = useState('');
     const [applicationImagePoster, setApplicationImagePoster] = useState('');
     const [applicationImageBanner, setApplicationImageBanner] = useState('');
+    const [applicationApprovedStatus, setApplicationApprovedStatus] = useState(false);
 
     useEffect(() => {
         async function getAllApplications() {
@@ -56,25 +58,20 @@ export default function AdminApplicationReview() {
             }
         }
         getAllApplications();
-        console.log("Running")
     }, [organisationSubmitted]);
 
     function GenerateReviews() {
         let tableData = [];
-        allOrganisations != null ? (
-            allOrganisations.map((item) => {
-                tableData.push({
-                    date: FormatDateTime(item.createdAt),
-                    organisationName: item.name,
-                    approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
-                })
+        allOrganisations ?
+        allOrganisations.map((item) => {
+            tableData.push({
+                date: FormatDateTime(item.createdAt),
+                organisationName: item.name,
+                approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
             })
-        ) 
+        })
         :
-        tableData = [
-            { date: '10-10-2023', organisationName: 'Organ Isation', approvalStatus: <ApprovalType type="pending" /> },
-            { date: '12-10-2023', organisationName: 'WorseHelp', approvalStatus: <ApprovalType type="approved" /> },
-        ];
+        tableData = [];
 
         return tableData;
     }
@@ -93,47 +90,55 @@ export default function AdminApplicationReview() {
                     setIsFiltered(true);
                     return item.approved === true;
                 }
+                setSortBy("newest");
                 setIsFiltered(false);
                 return true;
             });
 
-            (filteredReviews && filteredReviews.length > 0) ? (
-                filteredReviews.map((item) => {
-                    tableData.push({
-                        date: FormatDateTime(item.createdAt),
-                        organisationName: item.name,
-                        approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
-                    })
+            filteredReviews.map((item) => {
+                tableData.push({
+                    date: FormatDateTime(item.createdAt),
+                    organisationName: item.name,
+                    approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
                 })
-            )
-            :
-            tableData = [
-                { date: '10-10-2023', organisationName: 'Organ Isation', approvalStatus: <ApprovalType type="pending" /> },
-                { date: '12-10-2023', organisationName: 'WorseHelp', approvalStatus: <ApprovalType type="approved" /> },
-            ];
+            });
+
             setAllOrganisationsFiltered(tableData);
         }
     }
     
     function handleSorted(e) {
+        let sortedTableData = [];
         setSortBy(e.target.value);
-        console.log(allOrganisationsFiltered);
 
-        const sortedTableData = allOrganisationsFiltered.slice().sort((a, b) => {
-            // Extract the 'type' prop from the 'approvalStatus' objects
-            const typeA = a.approvalStatus === 'pending' ? 'pending' : 'approved';
-            const typeB = b.approvalStatus === 'pending' ? 'pending' : 'approved';
-          
-            // Use the 'type' values to compare and sort
-            if (typeA === 'pending' && typeB === 'approved') {
-              return -1; // 'pending' comes before 'approved'
-            } else if (typeA === 'approved' && typeB === 'pending') {
-              return 1; // 'approved' comes after 'pending'
-            } else {
-              return 0; // Keep the order unchanged for other cases
+        if(!isFiltered) {
+            if (e.target.value === "status") {
+                setIsSorted(true);
+                sortedTableData = GenerateReviews().slice().sort((a, b) => {
+                    const typeA = a.approvalStatus.props.type;
+                    const typeB = b.approvalStatus.props.type;
+                
+                    if (typeA === 'pending' && typeB === 'approved') {
+                        return -1;
+                    } else if (typeA === 'approved' && typeB === 'pending') {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
             }
-        });
-        console.log(sortedTableData);
+            else if (e.target.value === "newest" && isSorted) {
+                setIsSorted(false);
+                sortedTableData = GenerateReviews().slice().sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+
+                    return dateB - dateA;
+                });
+            }
+        } 
+
+        setAllOrganisationsFiltered(sortedTableData);
     }
 
     function HandleLoadApplication(e) {
@@ -142,6 +147,7 @@ export default function AdminApplicationReview() {
         setApplicationImagePoster(allOrganisations[e].imagePath.poster);
         setApplicationImageBanner(allOrganisations[e].imagePath.banner);
         setApplicationOrganisationId(allOrganisations[e]._id);
+        setApplicationApprovedStatus(allOrganisations[e].approved);
 
         setViewingApplicationMode(true);
     }
@@ -191,22 +197,18 @@ export default function AdminApplicationReview() {
                 <Divider padding={0} />
 
                 <div className="mt-2 w-full">
-                    { !isFiltered ?
-                        <Table rows={GenerateReviews()} title="Applications" onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} />
-                        :
-                        <Table rows={allOrganisationsFiltered} title="Applications" onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} />
-                    }
+                    { (allOrganisationsFiltered && allOrganisationsFiltered.length > 0 && (isFiltered || isSorted)) ?
+                    <Table rows={allOrganisationsFiltered} title="Applications" onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} nullData="Applications" />
+                        : <Table rows={GenerateReviews()} title="Applications" onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} nullData="Applications" /> }
                 </div>
             </section>
 
             <Popup title="Viewing Application" overrideButton
                 variableThatDeterminesIfPopupIsActive={viewingApplicationMode}
-                setVariableThatDeterminesIfPopupIsActive={setViewingApplicationMode}
-            >
-                <InputField title="Name of Organisation" type="text" width='full' active={false}
-                    value={applicationName} />
-                <InputTextBox title="Description" width='full' active={false}
-                    value={applicationDescription} />
+                setVariableThatDeterminesIfPopupIsActive={setViewingApplicationMode} >
+
+                <InputField title="Name of Organisation" type="text" width='full' active={false} value={applicationName} />
+                <InputTextBox title="Description" width='full' active={false} value={applicationDescription} />
 
                 <div className="flex flex-col pb-2 space-y-2 items-start justify-between">
                     <div>
@@ -226,8 +228,8 @@ export default function AdminApplicationReview() {
                 </div>
 
                 <div className="flex flex-row pt-4 space-x-2 self-start">
-                    <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} />
-                    <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} />
+                    { !applicationApprovedStatus && <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} /> }
+                    { !applicationApprovedStatus && <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} /> }
                 </div>
             </Popup>
         </Layout >
