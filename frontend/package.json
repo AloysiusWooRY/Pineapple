@@ -27,7 +27,8 @@
     "react-step-progress-bar": "^1.0.3",
     "selenium-webdriver": "^4.14.0",
     "validator": "^13.11.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "word-wrap": "^1.2.5"
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
