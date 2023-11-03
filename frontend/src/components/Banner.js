@@ -2,7 +2,7 @@
 import React from "react";
 
 // Components
-import { textNerfer } from "./componentUtils";
+import { textNerfer, constructResourceURL } from "./componentUtils";
 
 // Assets
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
@@ -17,7 +17,7 @@ export default function Banner(props) {
     return (
         <div className="flex h-36 bg-cover bg-center bg-no-repeat outline-none rounded-tr-lg" 
         id={"banner-" + textNerfer(title)}
-        style={{ backgroundImage: `url(${image})` }}>
+        style={{ backgroundImage: image.startsWith('/static') ? `url(${image})` : constructResourceURL(image)}}>
             <div className="h-full w-full p-4 bg-gradient-to-t from-theme-primary flex items-end">
                 <h2 className="text-text-primary text-6xl">{title}</h2>
                 {

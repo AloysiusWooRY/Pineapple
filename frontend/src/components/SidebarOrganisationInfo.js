@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 // Components
-import { FormatDateTime } from "./componentUtils";
+import { FormatDateTime, constructResourceURL } from "./componentUtils";
 import { RoundedButton } from './Buttons';
 import { Divider } from './Miscellaneous';
 
@@ -20,7 +20,7 @@ export default function SideBarOrganisationInfo(props) {
     return (
         <section className="rounded-tr-lg rounded-br-lg h-fit w-96 bg-theme-primary">
             <div className="flex h-44 bg-cover bg-center bg-no-repeat outline-none rounded-tr-lg"
-                style={{ backgroundImage: `url(http://localhost:4000/${organisationContent.posterPath})` }}
+                style={{ backgroundImage: constructResourceURL(organisationContent.posterPath) }}
             >
                 <div className="h-full w-full p-4 bg-gradient-to-t from-theme-primary flex items-end cursor-pointer"
                     onClick={() => navigate(`/organisation/${organisationContent._id}`)}>

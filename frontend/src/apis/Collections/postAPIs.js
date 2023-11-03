@@ -10,7 +10,7 @@ export const postAll = async ({ organisation = null, category = null, filter = n
     });
 }
 
-export const postNew = async ({ title = null, description = null, organisation = null, event = null, event_location = null, event_capacity = null, event_time = null, donation = null, donation_goal = null, attachment = null }) => {
+export const postNew = async ({ title = null, description = null, organisation = null, event = null, event_location = null, event_capacity = null, event_time = null, donation = null, donation_goal = null, token = null, attachment = null }) => {
     const csrfToken = await getCSRF();
 
     const formData = new FormData();
@@ -23,6 +23,7 @@ export const postNew = async ({ title = null, description = null, organisation =
     if (event_time) formData.append("event_time", event_time);
     if (donation) formData.append("donation", donation);
     if (donation_goal) formData.append("donation_goal", donation_goal);
+    if (token) formData.append("token", token);
     if (attachment) formData.append("attachment", attachment);
 
     return await POSTRequest({

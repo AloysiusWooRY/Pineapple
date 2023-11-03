@@ -6,6 +6,7 @@ import validator from "validator";
 import ReCAPTCHA from "react-google-recaptcha";
 
 // Components
+import { getCaptchaSiteKey } from "../components/componentUtils";
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
 import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
@@ -58,8 +59,14 @@ export default function Register() {
             return setConfirmPasswordErr(ERR_PASSWORD_MISMATCH);
         }
 
+        // DEV TOKEN HERE
         try {
-            const response = await accountRegister({ name: name, email: email, password: password, token: 'backdoor' });
+            const response = await accountRegister({ 
+                name: name, 
+                email: email, 
+                password: password, 
+                token: recaptchaToken,
+            });
             const json = await response.json();
 
             if (response.ok) {
@@ -116,7 +123,7 @@ export default function Register() {
                         id="captcha-register"
                         className="flex justify-center pt-2 pb-4">
                         <ReCAPTCHA
-                            sitekey="6LeQDqooAAAAAHzIRnk97IoeBTb_JBFtY07NtW9b"
+                            sitekey="6LeZRPEoAAAAAAsHZlKI2jCO7EktXk3BHRFDu2UW"
                             onChange={(token) => setRecaptchaToken(token)}
                         />
                     </div>

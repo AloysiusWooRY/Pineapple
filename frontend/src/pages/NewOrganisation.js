@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
+import ReCAPTCHA from "react-google-recaptcha";
 
 // Components
+import { getCaptchaSiteKey } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import { InputField, InputTextBox, InputFile } from "../components/Inputs";
@@ -28,6 +30,7 @@ export default function NewOrganisation() {
     const [organisationName, setOrganisationName] = useState('');
     const [organisationDescription, setOrganisationDescription] = useState('');
     const [organisationCategory, setOrganisationCategory] = useState('all');
+    const [recaptchaToken, setRecaptchaToken] = useState(null);
     const [bannerImage, setBannerImage] = useState(null);
     const [posterImage, setPosterImage] = useState(null);
 
@@ -45,6 +48,7 @@ export default function NewOrganisation() {
                 toast.error(json.error);
             }
         }
+
         fetchAllCategories();
     }, []);
 
@@ -56,11 +60,12 @@ export default function NewOrganisation() {
         try {
             setIsLoading(true);
 
-            // TODO: Check for field length and file type
+            // DEV TOKEN HERE
             const response = await organisationApply({
                 name: organisationName,
                 description: organisationDescription,
                 category: organisationCategory,
+                token: recaptchaToken,
                 banner: bannerImage,
                 poster: posterImage,
             });
@@ -100,12 +105,23 @@ export default function NewOrganisation() {
                     value={organisationName} onChange={(e) => setOrganisationName(e.target.value)} />
                 <InputTextBox title="Description" placeholder="Explain what your organisation does" width='full'
                     value={organisationDescription} onChange={(e) => setOrganisationDescription(e.target.value)} />
-                <StandardDropdown title="Category" titleLocation="top" width="1/4" options={allCategories}
-                    value={organisationCategory} onChange={(e) => { setOrganisationCategory(e.target.value); }} />
+                <div className="w-1/4">
+                    <StandardDropdown title="Category" titleLocation="top" options={allCategories}
+                        value={organisationCategory} onChange={(e) => { setOrganisationCategory(e.target.value); }} />
+                </div>
                 <InputFile title="Upload Banner" accept=".png,.jpeg,.jpg" onChange={(e) => { setBannerImage(e.target.files[0]) }} />
                 <InputFile title="Upload Poster" accept=".png,.jpeg,.jpg" onChange={(e) => { setPosterImage(e.target.files[0]) }} />
 
-                <div className="flex flex-row gap-2 items-center">
+                <div
+                    id="captcha-new-organisation"
+                    className="pt-2 pb-4">
+                    <ReCAPTCHA
+                        sitekey="6LeZRPEoAAAAAAsHZlKI2jCO7EktXk3BHRFDu2UW"
+                        onChange={(token) => setRecaptchaToken(token)}
+                    />
+                </div>
+
+                <div className="flex flex-row gap-2 py-4 items-center">
                     <RectangleButton title="Submit" width="fit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
                     <RectangleButton title="Cancel" width="fit" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={handleCancel} />
                     <label id="error-new-organsation" className="text-text-warn">

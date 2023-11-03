@@ -15,7 +15,6 @@ import { InputField, InputTextBox, InputFile } from "../components/Inputs";
 
 // Assets
 import { NewspaperIcon, ChatBubbleLeftRightIcon, CalendarDaysIcon, CurrencyDollarIcon, PencilIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/home-banner-org.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -84,7 +83,7 @@ export default function Organisation() {
         categoryFilteredPosts.length > 0 ?
             categoryFilteredPosts.map(item => (
                 posts.push(
-                    <DiscussionOverview
+                    <DiscussionOverview key={item._id}
                         post={{
                             id: item._id,
                             title: item.title,
@@ -148,7 +147,8 @@ export default function Organisation() {
         <Layout>
             <div className="flex flex-row gap-2">
                 <section className="h-96 flex-grow">
-                    {selectedOrganisation && <Banner image={"http://localhost:4000/" + selectedOrganisation.imagePath.banner} title={selectedOrganisation.name} />}
+                    {/* {selectedOrganisation && <Banner image={"http://localhost:4000/" + selectedOrganisation.imagePath.banner} title={selectedOrganisation.name} />} */}
+                    {selectedOrganisation && <Banner image={selectedOrganisation.imagePath.banner} title={selectedOrganisation.name} />}
                     {/* button={{ icon: <PencilIcon />, text: "Edit", onClick: () => setEditOrganisationMode(!editOrganisationMode) }} */}
 
                     <div className="flex flex-row justify-between mt-2">
