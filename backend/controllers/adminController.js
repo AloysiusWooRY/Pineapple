@@ -49,7 +49,7 @@ const editRoleAccount = async (req, res) => {
         const existingAccount = await Account.findById(userId)
         if (!existingAccount) throw new DataNotFoundError("No such account", req)
 
-        if (_id === new mongoose.Types.ObjectId(userId)) throw new ValidationError("Invalid id", req)
+        if (_id.equals(new mongoose.Types.ObjectId(userId))) throw new ValidationError("Invalid id", req)
         if (!USER_ROLE.includes(role)) throw new ValidationError("Invalid role", req)
 
         switch (role) {
