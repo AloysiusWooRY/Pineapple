@@ -48,9 +48,8 @@ export default function IdleTimerComponent() {
         }
 
         if (remainingTime === 0 && showModal) {
-            // alert("Time out!");
-            setShowModal(false);//close the modal
-            handleLogout()
+            setShowModal(false);
+            handleLogout();
         }
 
         return () => {

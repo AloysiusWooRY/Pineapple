@@ -1,5 +1,6 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -9,6 +10,7 @@ import Popup from "../components/Popup";
 import { RoundedButton, StandardDropdown } from "../components/Buttons";
 import { SearchField } from "../components/Inputs";
 import { UserType } from "../components/Miscellaneous";
+import { FormatDateTime } from "../components/componentUtils";
 
 // Assets
 import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/solid";
@@ -16,6 +18,7 @@ import BannerImage from "../assets/banner-admin-moderation.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
+import { adminAccountAll, adminAccountEditRole, organisationAll } from "../apis/exportedAPIs";
 
 export default function AdminModeration() {
     const { user } = useAuthContext();
@@ -23,30 +26,92 @@ export default function AdminModeration() {
     const [searchField, setSearchField] = useState('');
 
     const [allOrganisations, setAllOrganisations] = useState(['Org-1', 'Org-2', 'Org-3']);
+    const [allUsers, setAllUsers] = useState(null);
 
     const [viewingUserMode, setViewingUserMode] = useState(false);
+    const [userId, setUserId] = useState(null);
     const [username, setUsername] = useState('John Xina');
     const [userRole, setUserRole] = useState('administrator');
     const [userModerates, setUserModerates] = useState(['Org-1', 'Org-3']);
 
+    useEffect(() => {
+        async function fetchAllUsers() {
+            const response = await adminAccountAll();
+            const json = await response.json();
+    
+            if (response.ok) {
+                setAllUsers(json.accounts);
+                console.log(json.accounts);
+            } else {
+                toast.error(json.error);
+            }
+        }
+
+        async function fetchAllOrganisations() {
+            const response = await organisationAll();
+            const json = response.json();
+    
+            if (response.ok) {
+                setAllUsers(json.organisations);
+            } else {
+                toast.error(json.error);
+            }
+        }
+
+        fetchAllOrganisations();
+        fetchAllUsers();
+    }, []);
+
     function GenerateUsers() {
-        const tableData = [
-            { name: 'John Xina', email: 'jxina@hotmail.com', role: <UserType type="user" /> },
-            { name: 'The Wok', email: 'twok@gmail.com', role: <UserType type="moderator" /> },
-            { name: 'Bing Chilling', email: 'bchill@outlook.com', role: <UserType type="administrator" /> }
-        ];
+        let tableData = [];
+        allUsers ?
+        allUsers.map((item) => {
+            tableData.push({ 
+                name: item.name, 
+                email: item.email, 
+                role: <UserType type={ item.isAdmin ? "administrator" : item.moderation.length > 0 ? "moderator" : "user" } /> 
+            });
+        })
+        :
+        tableData = [];
 
         return tableData;
     }
 
     function HandleLoadUser(e) {
-        setUsername(e);
+        setUsername(allUsers[e].name);
+        setUserRole(allUsers[e].isAdmin ? "administrator" : allUsers[e].moderation.length > 0 ? "moderator" : "user");
+        setUserId(allUsers[e]._id);
 
         setViewingUserMode(true);
     }
 
-    async function fetchData() {
-        
+    async function handleModerationSubmit(e) {
+        e.preventDefault();
+
+        const foundUser = allUsers.find(item => item._id === userId);
+        const foundUserRole = foundUser.isAdmin ? "administrator" : foundUser.moderation.length > 0 ? "moderator" : "user";
+
+        if (foundUserRole === userRole) {
+            toast.error("Same role selected!");
+            return;
+        }
+
+        console.log(userRole);
+        const response = await adminAccountEditRole({
+            account: userId,
+            role: userRole,
+            moderation: userModerates,
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            toast.success(`The user ${username} has been given the new role of a ${userRole}!`);
+        } else {
+            toast.error(json.error);
+        }
+        setViewingUserMode(false);
     }
 
     return (
@@ -60,7 +125,9 @@ export default function AdminModeration() {
 
                 <div className="flex flex-grow pt-2 gap-2">
                     <div className="w-full">
-                        <Table rows={GenerateUsers()} title="Users" onClick={(e) => HandleLoadUser(e.target.parentElement.getAttribute('data-index'))} />
+                       { allUsers && allUsers.length > 0 ? 
+                       <Table rows={GenerateUsers()} title="Users" onClick={(e) => HandleLoadUser(e.target.parentElement.getAttribute('data-index'))} nullData="Users" /> 
+                       : <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Users Here🍍</h1> }
                     </div>
                 </div>
             </section>
@@ -68,6 +135,7 @@ export default function AdminModeration() {
             <Popup title={`Editing User ${username}`}
                 variableThatDeterminesIfPopupIsActive={viewingUserMode}
                 setVariableThatDeterminesIfPopupIsActive={setViewingUserMode}
+                onSubmit={handleModerationSubmit}
             >
                 <StandardDropdown title="Role" titleLocation="top" options={['user', 'moderator', 'administrator']}
                     value={userRole} onChange={(e) => { setUserRole(e.target.value); }} />
