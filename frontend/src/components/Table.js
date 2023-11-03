@@ -11,7 +11,13 @@ import { textNerfer } from "./componentUtils";
 // ~
 
 export default function Table(props) {
-    const { title, rows, onClick = null } = props;
+    const { title, rows, onClick = null, nullData } = props;
+
+    if (rows.length <= 0) {
+        return (
+            <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No {nullData} Here🍍</h1>
+        );
+    }
 
     return (
         <div>
