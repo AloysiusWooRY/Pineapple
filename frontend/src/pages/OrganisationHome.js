@@ -88,10 +88,14 @@ export default function OrganisationHome() {
 
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
                     {categoryFilteredOrganisations && (categoryFilteredOrganisations.length > 0 ?
-                        categoryFilteredOrganisations.map(item => (
-                            <NavLink key={"nav-link" + item._id} to={`/organisation/${item._id}`}>
-                                <CardHomeOrg image={"http://localhost:4000/" + item.imagePath.poster} name={item.name} posts={item.posts} category={item.category} />
-                            </NavLink>
+                        categoryFilteredOrganisations.map(organisation => (
+                                <CardHomeOrg organisationContent={{
+                                    'id': organisation._id,
+                                    'name': organisation.name,
+                                    'category': organisation.category,
+                                    'posterPath': organisation.imagePath.poster,
+                                    'posts': organisation.posts,
+                                }} />
                         ))
                         :
                         <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Organisations Here🍍</h1>

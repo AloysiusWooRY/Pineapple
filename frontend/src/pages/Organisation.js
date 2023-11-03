@@ -84,20 +84,19 @@ export default function Organisation() {
         categoryFilteredPosts.length > 0 ?
             categoryFilteredPosts.map(item => (
                 posts.push(
-                    <NavLink key={"post-link-" + item._id} to={`/organisation/${selectedOrganisation._id}/post/${item._id}`}>
-                        <DiscussionOverview
-                            post={{
-                                id: item._id,
-                                title: item.title,
-                                discussionType: item.donation ? "donation" : item.event ? "event" : "discussion",
-                                votes: item.likes,
-                                createdAt: item.createdAt,
-                                username: item.owner.name,
-                                upvoted: null,
-                                imagePath: selectedOrganisation.imagePath.poster,
-                            }}
-                        />
-                    </NavLink>
+                    <DiscussionOverview
+                        post={{
+                            id: item._id,
+                            title: item.title,
+                            discussionType: item.donation ? "donation" : item.event ? "event" : "discussion",
+                            votes: item.likes,
+                            createdAt: item.createdAt,
+                            username: item.owner.name,
+                            upvoted: null,
+                            imagePath: item.imagePath,
+                            organisationId: id,
+                        }}
+                    />
                 )
             ))
             :
@@ -149,7 +148,7 @@ export default function Organisation() {
         <Layout>
             <div className="flex flex-row gap-2">
                 <section className="h-96 flex-grow">
-                    {selectedOrganisation && <Banner image={BannerImage} title={selectedOrganisation.name} />}
+                    {selectedOrganisation && <Banner image={"http://localhost:4000/" + selectedOrganisation.imagePath.banner} title={selectedOrganisation.name} />}
                     {/* button={{ icon: <PencilIcon />, text: "Edit", onClick: () => setEditOrganisationMode(!editOrganisationMode) }} */}
 
                     <div className="flex flex-row justify-between mt-2">

@@ -3,7 +3,7 @@ import React from "react";
 import { OrganisationType } from "./Miscellaneous";
 
 // Components
-import { textNerfer } from "./componentUtils";
+// ~
 
 // Assets
 // ~
@@ -12,23 +12,25 @@ import { textNerfer } from "./componentUtils";
 // ~
 
 export default function CardHomeOrg(props) {
-    const { image, name, posts, category } = props;
+    const { organisationContent } = props;
 
     return (
         <a
-            id={"card-org-" + textNerfer(name)}
+            id={"card-org-" + organisationContent.id}
+            href={`/organisation/${organisationContent.id}`}
             className="h-fit w-fit flex flex-col rounded outline-none gap-1 p-2 no-underline cursor-pointer hover:bg-background-minor">
-            <img src={image} className="h-72 w-52 shrink-0 rounded object-cover object-center" />
+            <div className="h-72 w-52 shrink-0 bg-cover bg-center rounded"
+                style={{ backgroundImage: `url(http://localhost:4000/${organisationContent.posterPath})` }}></div>
             <div className="w-full flex flex-col justify-center flex-shrink">
                 <div className="w-full flex">
                     <span className="w-full text-text-primary overflow-hidden text-sm whitespace-nowrap">
-                        {name}
+                        {organisationContent.name}
                     </span>
                 </div>
                 <div className="flex pb-1 items-center text-xs text-text-secondary">
-                    {posts} Posts
+                    {organisationContent.posts} Posts
                 </div>
-                <OrganisationType type={category} />
+                <OrganisationType type={organisationContent.category} />
             </div>
         </a>
     );

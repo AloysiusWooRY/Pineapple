@@ -40,7 +40,7 @@ export default function NewOrganisation() {
 
             const json = await response.json();
             if (response.ok) {
-                setAllCategories(['all', ...json.categories]);
+                setAllCategories([...json.categories]);
             } else {
                 toast.error(json.error);
             }

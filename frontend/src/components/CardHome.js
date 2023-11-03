@@ -36,12 +36,8 @@ export default function CardHome(props) {
             id={"card-home-" + postContent.postId}
             href={`/organisation/${postContent.organisationId}/post/${postContent.postId}`}
             className="w-full flex rounded outline-none gap-2 p-2 no-underline cursor-pointer hover:bg-background-minor">
-            {postContent.image ?
-                <img src={("http://localhost:4000/" + postContent.image)}
-                    className="h-36 basis-36 shrink-0 rounded bg-cover bg-center" />
-                :
-                <div className="h-36 basis-36 shrink-0 rounded bg-cover bg-center" style={{ backgroundImage: `url(${getDefaultImage()})` }}></div>
-            }
+            <div className="h-36 w-36 shrink-0 bg-cover bg-center rounded"
+                style={{ backgroundImage: postContent.image ? `url(http://localhost:4000/${postContent.image})` : `url(${getDefaultImage()})` }}></div>
             <div className="w-[calc(100vh-8rem)] flex flex-col justify-center gap-1 flex-shrink">
                 <div className="w-full flex gap-1">
                     <span className="w-full text-text-primary text-2xl">
