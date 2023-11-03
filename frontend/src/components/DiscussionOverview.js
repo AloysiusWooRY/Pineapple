@@ -2,7 +2,7 @@
 import React from "react";
 
 // Components
-import { constructResourceURL } from "./componentUtils";
+import { constructDivResourceURL } from "./componentUtils";
 import { PostType } from './Miscellaneous';
 import { timeAgo } from "./componentUtils";
 
@@ -61,7 +61,7 @@ export default function DiscussionOverview(props) {
             </a>
 
             <div className="h-36 w-36 shrink-0 bg-cover bg-center rounded"
-                style={{ backgroundImage: post.imagePath ? constructResourceURL(post.imagePath) : `url(${getDefaultImage()})` }}></div>
+                style={{ backgroundImage: post.imagePath ? constructDivResourceURL(post.imagePath) : `url(${getDefaultImage()})` }}></div>
         </div>
     );
 };

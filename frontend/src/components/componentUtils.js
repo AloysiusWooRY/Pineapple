@@ -5,8 +5,12 @@ export const textNerfer = (input) => {
     return input.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
 }
 
-export function constructResourceURL(path) {
-    return `url(http://localhost:4000/${path}`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);;
+export function constructDivResourceURL(path) {
+    return `url(http://localhost:4000/${path})`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);
+}
+
+export function constructImgResourceURL(path) {
+    return `http://localhost:4000/${path}`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);
 }
 
 export function FormatDateTime(InputDateTime, FormatString = 'DD h:mma') {

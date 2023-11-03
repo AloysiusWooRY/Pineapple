@@ -3,7 +3,7 @@ import React from "react";
 import { OrganisationType } from "./Miscellaneous";
 
 // Components
-import { constructResourceURL } from "./componentUtils";
+import { constructDivResourceURL } from "./componentUtils";
 
 // Assets
 // ~
@@ -20,7 +20,7 @@ export default function CardHomeOrg(props) {
             href={`/organisation/${organisationContent.id}`}
             className="h-fit w-fit flex flex-col rounded outline-none gap-1 p-2 no-underline cursor-pointer hover:bg-background-minor">
             <div className="h-72 w-52 shrink-0 bg-cover bg-center rounded"
-                style={{ backgroundImage: constructResourceURL(organisationContent.posterPath) }}></div>
+                style={{ backgroundImage: constructDivResourceURL(organisationContent.posterPath) }}></div>
             <div className="w-full flex flex-col justify-center flex-shrink">
                 <div className="w-full flex">
                     <span className="w-full text-text-primary overflow-hidden text-sm whitespace-nowrap">
