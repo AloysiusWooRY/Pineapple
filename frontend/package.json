@@ -33,6 +33,7 @@
     "preinstall": "npx npm-force-resolutions",
     "start": "react-scripts start",
     "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
+    "prod-build": "npm install react-scripts && set \"GENERATE_SOURCEMAP=false\" && react-scripts build && npm uninstall react-scripts --no-save",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -57,7 +58,7 @@
   "devDependencies": {
     "chai": "^4.3.10",
     "mocha": "^10.2.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "tailwindcss": "^3.3.3"
   },
   "resolutions": {
