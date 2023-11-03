@@ -39,6 +39,7 @@ export default function AdminApplicationReview() {
     const [applicationDescription, setApplicationDescription] = useState('');
     const [applicationImagePoster, setApplicationImagePoster] = useState('');
     const [applicationImageBanner, setApplicationImageBanner] = useState('');
+    const [applicationApprovedStatus, setApplicationApprovedStatus] = useState(false);
 
     useEffect(() => {
         async function getAllApplications() {
@@ -146,6 +147,7 @@ export default function AdminApplicationReview() {
         setApplicationImagePoster(allOrganisations[e].imagePath.poster);
         setApplicationImageBanner(allOrganisations[e].imagePath.banner);
         setApplicationOrganisationId(allOrganisations[e]._id);
+        setApplicationApprovedStatus(allOrganisations[e].approved);
 
         setViewingApplicationMode(true);
     }
@@ -226,8 +228,8 @@ export default function AdminApplicationReview() {
                 </div>
 
                 <div className="flex flex-row pt-4 space-x-2 self-start">
-                    <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} />
-                    <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} />
+                    { !applicationApprovedStatus && <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} /> }
+                    { !applicationApprovedStatus && <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} /> }
                 </div>
             </Popup>
         </Layout >
