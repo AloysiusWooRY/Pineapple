@@ -13,7 +13,7 @@ const requireAuth = async (req, res, next) => {
 
         // Validate JWT
         const { _id } = jwt.verify(token, process.env.JWT_LOGIN_SECRET)
-        const account = await Account.findOne({ _id }).select('_id name email twoFASecret moderation isAdmin')
+        const account = await Account.findOne({ _id }).select('_id name email twoFASecret moderation isAdmin isTester')
         if (!account) throw new AuthenticationError('Account not found', req)
 
         req.account = account

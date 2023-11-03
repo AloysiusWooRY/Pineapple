@@ -20,7 +20,6 @@ const {
     MissingFieldError,
     DataNotFoundError,
     DuplicateRequestError,
-    CaptchaValidationError
 } = require("../errors/customError")
 
 // Login account
@@ -87,13 +86,14 @@ const loginAccount = async (req, res) => {
 
 // Login OTP
 const loginOTP = async (req, res) => {
-    const { _id, name, email, twoFASecret, moderation, isAdmin } = req.account
+    const { _id, name, email, twoFASecret, moderation, isAdmin, isTester } = req.account
     const { token } = req.body
     try {
         if (!token) throw new MissingFieldError('Missing field', req)
         const decryptedTwoFASecret = CryptoJS.AES.decrypt(twoFASecret, process.env.ENCRYPTION_SECRET).toString(CryptoJS.enc.Utf8)
 
-        if (!token === process.env.DEV_SECRET && !authenticator.check(token, decryptedTwoFASecret)) throw new ValidationError("Invalid token", req)
+        const isTokenValid = isTester ? token === process.env.DEV_SECRET : authenticator.check(token, decryptedTwoFASecret)
+        if (!isTokenValid) throw new ValidationError("Invalid token", req)
 
         // Create JWT token
         const newToken = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
@@ -132,12 +132,8 @@ const registerAccount = async (req, res) => {
         if (!name || !email || !password || !token) throw new MissingFieldError('Missing fields', req)
 
         // reCAPTCHA verification
-        if (token !== "backdoor") {
-            const isTokenValid = await verifyRecaptchaToken(token);
-            if (!isTokenValid) {
-                throw new CaptchaValidationError('Invalid reCAPTCHA', req)
-            }
-        }
+        const isTokenValid = token === process.env.DEV_SECRET || await verifyRecaptchaToken(token)
+        if (!isTokenValid) throw new ValidationError("Invalid token", req)
 
         // Sanitize and validate credentials
         const sanitizedName = validator.escape(validator.trim(name))

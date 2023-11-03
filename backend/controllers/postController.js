@@ -3,6 +3,8 @@ const validator = require('validator')
 const fs = require('fs')
 const moment = require('moment');
 
+const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
+
 const Organisation = require('../models/organisationModel')
 const Post = require('../models/postModel')
 const Comment = require('../models/commentModel')
@@ -13,9 +15,7 @@ const logger = require("../utils/logger")
 const {
     ValidationError,
     MissingFieldError,
-    DataNotFoundError,
-    DuplicateRequestError,
-    CaptchaValidationError
+    DataNotFoundError
 } = require("../errors/customError")
 const {
     POST_FILTERS,
@@ -88,11 +88,17 @@ const getAllPost = async (req, res) => {
 
 const createPost = async (req, res) => {
 
-    const userId = req.account._id
+    const { _id: userId, isTester } = req.account
+
     try {
-        const { title, description, organisation, attachment, event, donation } = req.info ?? req.body
+        const { title, description, organisation, attachment, event, donation, token } = req.info ?? req.body
 
         const newOrg = { owner: userId }
+
+        // reCAPTCHA verification
+        if (!token) throw new MissingFieldError("Missing token", req)
+        const isTokenValid = isTester ? token === process.env.DEV_SECRET : await verifyRecaptchaToken(token)
+        if (!isTokenValid) throw new ValidationError("Invalid token", req)
 
         // Fields validation
         if (!title) throw new MissingFieldError("Missing title", req)

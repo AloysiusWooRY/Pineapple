@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const validator = require('validator')
 
+const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
 const Organisation = require('../models/organisationModel')
 const logger = require("../utils/logger")
 const {
@@ -14,18 +15,22 @@ const { ORG_CATEGORIES, MAX_TEXT_LEN, MAX_LONG_TEXT_LEN } = require("../utils/gl
 // Apply for new organisation
 const applyOrganisation = async (req, res) => {
 
-    const userId = req.account._id
+    const { _id: userId, isTester } = req.account
 
     try {
         if (!req.info) throw new MissingFieldError("Missing images", req)
-        const { name, description, category, banner, poster } = req.info
+        const { name, description, category, banner, poster, token } = req.info
 
         // Fields validation
+        if (!token) throw new MissingFieldError("Missing token", req)
         if (!name) throw new MissingFieldError("Missing name", req)
         if (!description) throw new MissingFieldError("Missing description", req)
         if (!banner) throw new MissingFieldError("Missing banner image", req)
         if (!poster) throw new MissingFieldError("Missing poster image", req)
         if (!category) throw new MissingFieldError("Missing category", req)
+
+        const isTokenValid = isTester ? token === process.env.DEV_SECRET : await verifyRecaptchaToken(token)
+        if (!isTokenValid) throw new ValidationError("Invalid token", req)
 
         const sanitizedName = validator.escape(validator.trim(name))
         if (sanitizedName.length > MAX_TEXT_LEN) throw new ValidationError("Length of 'name' too long (Max: 256 characters)", req)
