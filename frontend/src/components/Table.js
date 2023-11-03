@@ -11,13 +11,7 @@ import { textNerfer } from "./componentUtils";
 // ~
 
 export default function Table(props) {
-    const { title, rows, onClick = null, nullData } = props;
-
-    if (rows.length <= 0) {
-        return (
-            <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No {nullData} Here🍍</h1>
-        );
-    }
+    const { title, rows, onClick = null } = props;
 
     return (
         <div>
@@ -45,8 +39,9 @@ export default function Table(props) {
                             onClick={onClick}>
                             {Object.values(row).map((value, j) => (
                                 <td
-                                    id={"table-row-col-" + textNerfer(title) + "-" + j}
-                                    key={"key-table-row-col-" + textNerfer(title) + "-" + j}
+                                    id={"table-row-" + i + "-col-" + textNerfer(title) + "-" + j}
+                                    key={"key-table-row-" + i + "-col-" + textNerfer(title) + "-" + j}
+                                    data-index={i}
                                     className="w-1/3 px-6 py-2 font-medium text-text-primary">
                                     {value}
                                 </td>

@@ -1,6 +1,5 @@
 // React / Packages
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
 import toast from 'react-hot-toast';
 
 // Components
@@ -100,7 +99,7 @@ export default function Home() {
                 {categoryFilteredPosts && (categoryFilteredPosts.length > 0 ?
                     <div className="grid grid-cols-2 max-lg:grid-cols-1 p-2">
                     {categoryFilteredPosts.map((item) => (
-                            <CardHome postContent={{
+                            <CardHome key={item._id} postContent={{
                                 "postId": item._id,
                                 "title": item.title,
                                 "description": item.description,

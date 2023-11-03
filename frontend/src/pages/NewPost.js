@@ -1,8 +1,9 @@
 // React / Packages
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import validator from "validator";
+import ReCAPTCHA from "react-google-recaptcha";
 
 // Components
 import Layout from "../layouts/Layout";
@@ -17,16 +18,18 @@ import BannerImage from "../assets/org-banner.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { postNew } from "../apis/exportedAPIs";
-import { useParams } from "react-router-dom";
+import { postNew, organisationId } from "../apis/exportedAPIs";
 
 export default function NewPost() {
     const { user } = useAuthContext();
-    const { id } = useParams();
 
     const navigate = useNavigate();
 
     const [selectedElement, setSelectedElement] = useState('discussion');
+
+    const { id } = useParams();
+    const [organisationName, setOrganisationName] = useState('');
+    const [organisationBannerPath, setOrganisationBannerPath] = useState('');
 
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
@@ -35,6 +38,24 @@ export default function NewPost() {
     const [eventCapacity, setEventCapacity] = useState('');
     const [donation, setDonation] = useState('');
     const [image, setImage] = useState(null);
+
+    const [recaptchaToken, setRecaptchaToken] = useState(null);
+
+    useEffect(() => {
+        async function fetchOrganisation() {
+            const response = await organisationId({id: id});
+
+            const json = await response.json();
+            if (response.ok) {
+                setOrganisationName(json.organisation.name);
+                setOrganisationBannerPath(json.organisation.imagePath.banner);
+            } else {
+                toast.error(json.error);
+            }
+        }
+
+        fetchOrganisation();
+    }, []);
 
     function handlePostCreated() {
         navigate(`../organisation/${id}`);
@@ -73,11 +94,13 @@ export default function NewPost() {
             return false;
         }
 
+        // DEV TOKEN HERE
         if (selectedElement === "discussion") {
             response = await postNew({
                 title: sanitisedTitle,
                 description: sanitisedMessage,
                 organisation: id,
+                token: recaptchaToken,
                 attachment: image,
             });
         }
@@ -92,7 +115,7 @@ export default function NewPost() {
                 toast.error("Capacity has be a value!");
                 return;
             }
-            if(!validator.isInt(sanitisedCapacity, {gt: 1, lt: 10000})) {
+            if (!validator.isInt(sanitisedCapacity, { gt: 1, lt: 10000 })) {
                 toast.error("Please enter a capacity from 2 to 9999!");
                 return;
             }
@@ -103,6 +126,7 @@ export default function NewPost() {
                 return false;
             }
 
+            // DEV TOKEN HERE
             response = await postNew({
                 title: sanitisedTitle,
                 description: sanitisedMessage,
@@ -111,6 +135,7 @@ export default function NewPost() {
                 event_location: sanitisedLocation,
                 event_capacity: sanitisedCapacity,
                 event_time: eventStartDateTime,
+                token: recaptchaToken,
                 attachment: image,
             });
         }
@@ -125,27 +150,29 @@ export default function NewPost() {
                 toast.error("Amount has be a value!");
                 return;
             }
-            if (!validator.isFloat(sanitisedDonationGoal, {gt: 0.00, lt: 1000000})) {
+            if (!validator.isFloat(sanitisedDonationGoal, { gt: 0.00, lt: 1000000 })) {
                 toast.error("Invalid amount!");
                 return;
             }
-            if (!validator.isCurrency(sanitisedDonationGoal, {digits_after_decimal: [0, 1, 2]})) {
+            if (!validator.isCurrency(sanitisedDonationGoal, { digits_after_decimal: [0, 1, 2] })) {
                 toast.error("Invalid currency format!");
                 return;
             }
 
             console.log(image);
 
+            // DEV TOKEN HERE
             response = await postNew({
                 title: sanitisedTitle,
                 description: sanitisedMessage,
                 organisation: id,
                 donation: selectedElement === "donation",
                 donation_goal: sanitisedDonationGoal,
+                token: recaptchaToken,
                 attachment: image,
             });
         }
-        
+
         const json = await response.json();
 
         if (response.ok) {
@@ -159,7 +186,7 @@ export default function NewPost() {
     return (
         <Layout>
             <section className="grid">
-                <Banner image={BannerImage} title="New Post" />
+                <Banner image={organisationBannerPath} title={`New Post - ${organisationName}`} />
             </section>
 
             <div className="flex flex-col p-4 gap-2">
@@ -197,6 +224,15 @@ export default function NewPost() {
                         value={donation} onChange={(e) => setDonation(e.target.value)} />}
 
                 <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setImage(e.target.files[0]) }} />
+
+                <div
+                    id="captcha-new-post"
+                    className="pt-2 pb-4">
+                    <ReCAPTCHA
+                        sitekey="6LeZRPEoAAAAAAsHZlKI2jCO7EktXk3BHRFDu2UW"
+                        onChange={(token) => setRecaptchaToken(token)}
+                    />
+                </div>
 
                 <div className="self-start">
                     <RectangleButton title="Submit" heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { handleCreatePost() }} />

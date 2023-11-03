@@ -89,7 +89,7 @@ export default function OrganisationHome() {
                 <div className="grid p-2 gap-2 sm:flex flex-wrap">
                     {categoryFilteredOrganisations && (categoryFilteredOrganisations.length > 0 ?
                         categoryFilteredOrganisations.map(organisation => (
-                                <CardHomeOrg organisationContent={{
+                                <CardHomeOrg key={organisation._id} organisationContent={{
                                     'id': organisation._id,
                                     'name': organisation.name,
                                     'category': organisation.category,

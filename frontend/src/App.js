@@ -32,7 +32,7 @@ function App() {
             position="top-center"
             reverseOrder={false}
           />
-            {user ? <IdleTimerComponent /> : null}
+            {/* {user ? <IdleTimerComponent /> : null} */}
             <Routes>
               <Route
                 path="/"
