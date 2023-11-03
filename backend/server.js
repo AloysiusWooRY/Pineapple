@@ -28,7 +28,8 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 3600000 }
+    rolling: true,
+    cookie: { httpOnly: true, maxAge: 3600000 }
 }));
 
 const corsOptions = {
@@ -41,6 +42,7 @@ app.use(cors(corsOptions))
 const csrfProtection = csurf({ cookie: true });
 app.use(csrfProtection)
 app.use(csrfErrorHandler)
+
 
 // Middleware: for logging
 app.use((req, res, next) => {
