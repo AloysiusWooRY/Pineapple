@@ -8,7 +8,8 @@ let cookie = null;
 const email = process.env.TEST_MOD_EMAIL;
 const password = process.env.TEST_MOD_PASS;
 const dev_secret = process.env.DEV_SECRET;
-let organisationId = process.env.TEST_ORGANISATION_1_ID;
+const organisationId = process.env.TEST_ORGANISATION_1_ID;
+const otherPostId = process.env.TEST_EXISTING_POST_1_ID;
 let postId = null;
 let commentId = null;
 let replyId = null;
@@ -114,7 +115,7 @@ describe("Connection Test", () => {
   });
 });
 
-describe("Post Test on specified test organisation, name '3103 Crisis Fund'", () => {
+describe("Post Test on specified test organisation", () => {
   var formdata = new FormData();
   formdata.append("title", "test CreatePost");
   formdata.append("description", "test Description");
@@ -122,10 +123,7 @@ describe("Post Test on specified test organisation, name '3103 Crisis Fund'", ()
   formdata.append("event", "false");
   formdata.append("event_location", "here");
   formdata.append("event_capacity", "5");
-  formdata.append(
-    "event_time",
-    moment().add(100, "years").format("YYYY-MM-DDTHH:mm")
-  );
+  formdata.append("event_time",moment().add(100, "years").format("YYYY-MM-DDTHH:mm"));
   formdata.append("donation", "true");
   formdata.append("donation_goal", "1000");
   formdata.append("token", dev_secret);
@@ -231,7 +229,7 @@ describe("Post Test on specified test organisation, name '3103 Crisis Fund'", ()
     }
   });
 });
-describe("Donation Test, it tests /api/transaction/new", () => {
+describe("Donation Test, it tests input fields", () => {
   apiUrl = "http://localhost:4000/api/transaction/new";
   it("Unsuccessful Change payment info, CVC with One Digit", async () => {
     try {
@@ -506,10 +504,9 @@ describe("Cleanup, delete Reply,Comment,Post", () => {
   });
 });
 
-describe("Test if test Moderator is able to delete a post where the tester isn't a moderator of", () => {
+describe("Test if test MOD is able to delete a post where the tester isn't a moderator of", () => {
   it("Unsuccessfully DELETE post", async () => {
     const apiUrl = "http://localhost:4000/api/post";
-    const otherPostId = process.env.TEST_EXISTING_POST_1_ID;
     const finalUrl = `${apiUrl}/${otherPostId}`;
     try {
       const response = await fetch(finalUrl, {
