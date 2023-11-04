@@ -11,22 +11,25 @@ const storage = multer.diskStorage({
         cb(null, path)
     },
     filename: function (req, file, cb) {
-        const timestamp = moment().format('YYYYMMDDHHmmss');
-        const randomString = Math.random().toString(36).substring(2, 15); // Generate a random string
-        const originalName = path.parse(file.originalname).name; // Get the original filename without extension
-        const uniqueFilename = `${originalName}_${timestamp}_${randomString}${path.extname(file.originalname)}`;
-        const dateFilename = `${originalName}_${timestamp}${path.extname(file.originalname)}`;
+        const forbiddenCharacters = /[/?<>\\:*|"]/g
+
+        const timestamp = moment().format('YYYYMMDDHHmmss')
+        const randomString = Math.random().toString(36).substring(2, 15) // Generate a random string
+        const originalName = path.parse(file.originalname).name // Get the original filename without extension
+        const sanitisedFilename = originalName.replace(forbiddenCharacters, '_')
+        const uniqueFilename = `${sanitisedFilename}_${timestamp}_${randomString}${path.extname(file.originalname)}`
+        const dateFilename = `${sanitisedFilename}_${timestamp}${path.extname(file.originalname)}`
 
         if (!req.info)
-            req.info = { ...req.body };
+            req.info = { ...req.body }
 
         req.info[file.fieldname] = {
             filename: uniqueFilename,
             dateFilename: dateFilename,
-            originalFilename: file.originalname
+            originalFilename: `${sanitisedFilename}${path.extname(file.originalname)}`
         }
 
-        cb(null, uniqueFilename);
+        cb(null, uniqueFilename)
     }
 })
 
@@ -43,19 +46,19 @@ const fileFilter = async (req, file, cb) => {
 
 const checkUploadPath = (path, next) => {
     if (!fs.existsSync("uploads")) {
-        logger.info("New folder created: 'uploads'", { actor: "SERVER" });
+        logger.info("New folder created: 'uploads'", { actor: "SERVER" })
         try {
-            fs.mkdirSync("uploads");
+            fs.mkdirSync("uploads")
         } catch (err) {
-            next(err);
+            next(err)
         }
     }
     if (!fs.existsSync(path)) {
-        logger.info(`New path created: '${path}'`, { actor: "SERVER" });
+        logger.info(`New path created: '${path}'`, { actor: "SERVER" })
         try {
-            fs.mkdirSync(path);
+            fs.mkdirSync(path)
         } catch (err) {
-            next(err);
+            next(err)
         }
     }
 }

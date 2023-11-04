@@ -4,9 +4,9 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const zxcvbn = require('zxcvbn')
 const validator = require('validator')
-const { authenticator } = require("otplib");
-const qrcode = require("qrcode");
-const moment = require('moment');
+const { authenticator } = require("otplib")
+const qrcode = require("qrcode")
+const moment = require('moment')
 
 const sendEmail = require('../utils/sendEmail')
 const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
@@ -20,6 +20,7 @@ const {
     MissingFieldError,
     DataNotFoundError,
     DuplicateRequestError,
+    CaptchaValidationError
 } = require("../errors/customError")
 
 // Login account
@@ -110,7 +111,7 @@ const loginOTP = async (req, res) => {
         })
 
         res.cookie('csrf', csrfToken, {
-            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+            maxAge: process.env.CSRF_EXPIRE * 60 * 60 * 1000, // Set the expiration time
         })
 
         res.status(200).json({ _id, name, email, isAdmin, moderation, csrfToken })
@@ -133,7 +134,7 @@ const registerAccount = async (req, res) => {
 
         // reCAPTCHA verification
         const isTokenValid = token === process.env.DEV_SECRET || await verifyRecaptchaToken(token)
-        if (!isTokenValid) throw new ValidationError("Invalid token", req)
+        if (!isTokenValid) throw new CaptchaValidationError("Invalid token", req)
 
         // Sanitize and validate credentials
         const sanitizedName = validator.escape(validator.trim(name))
@@ -151,7 +152,7 @@ const registerAccount = async (req, res) => {
         if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
 
         // Hash password
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(12)
         const hash = await bcrypt.hash(password, salt)
 
         // Generate secret
@@ -207,7 +208,7 @@ const verify2FA = async (req, res) => {
         if (!account) throw new DataNotFoundError('Account not found', req)
 
         logger.http(`2FA successfully enabled`, { actor: "USER", req })
-        return res.status(200).json({ message: "2FA has been verified and enabled." });
+        return res.status(200).json({ message: "2FA has been verified and enabled." })
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -251,9 +252,9 @@ const updateAccount = async (req, res) => {
         }
 
         // Update the account details
-        account.name = sanitizedName;
-        account.email = sanitizedEmail;
-        await account.save();
+        account.name = sanitizedName
+        account.email = sanitizedEmail
+        await account.save()
 
         // Log event
         logger.http(`Update successful`, { actor: "USER", req })
@@ -282,23 +283,23 @@ const updatePassword = async (req, res) => {
         const account = await Account.findById(_id).select('password')
         if (!account) throw new DataNotFoundError('Account not found', req)
 
-        const validateOldPassword = await bcrypt.compare(oldPassword, account.password);
+        const validateOldPassword = await bcrypt.compare(oldPassword, account.password)
         if (!validateOldPassword) throw new ValidationError('Current password is incorrect', req)
 
         // Check if the new password matches the existing password
-        const isPasswordUnchanged = await bcrypt.compare(newPassword, account.password);
+        const isPasswordUnchanged = await bcrypt.compare(newPassword, account.password)
         if (isPasswordUnchanged) throw new ValidationError('Cannot change to an existing password', req)
 
         // Update the password
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(newPassword, salt);
+        const salt = await bcrypt.genSalt(12)
+        const hash = await bcrypt.hash(newPassword, salt)
 
         // Update the account password
-        account.password = hash;
-        await account.save();
+        account.password = hash
+        await account.save()
 
         logger.http(`Update successful`, { actor: "USER", req })
-        res.status(200).json({});
+        res.status(200).json({})
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
@@ -375,10 +376,10 @@ const validateCode = async (req, res) => {
         resetCode.attempts = resetCode.attempts - 1
         if (resetCode.code !== code) {
             if (resetCode.attempts <= 0) {
-                await ResetCode.deleteOne({ _id: resetCode._id });
+                await ResetCode.deleteOne({ _id: resetCode._id })
                 throw new ValidationError('Invalid code. Ran out of attempts, try again later.', req)
             }
-            await resetCode.save();
+            await resetCode.save()
             throw new ValidationError(`Invalid code. ${resetCode.attempts} attempts remaining`, req)
         }
 
@@ -412,7 +413,7 @@ const resetPassword = async (req, res) => {
                 await ResetCode.deleteOne({ _id: resetCode._id })
                 throw new ValidationError('Invalid code. Ran out of attempts, try again later.', req)
             }
-            await resetCode.save();
+            await resetCode.save()
             throw new ValidationError(`Invalid code. ${resetCode.attempts} attempts remaining`, req)
         }
 
@@ -423,7 +424,7 @@ const resetPassword = async (req, res) => {
         if (!account) throw new DataNotFoundError('Account not found', req)
 
         // Update the password
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(12)
         const hash = await bcrypt.hash(password, salt)
 
         // Generate secret
@@ -510,7 +511,7 @@ const setPaymentInfo = async (req, res) => {
         if (!timeFormatted.isValid()) throw new ValidationError("Invalid time format", req)
 
         const currentDate = moment().startOf('month').local()
-        if (!timeFormatted.isAfter(currentDate)) throw new ValidationError("Expiration must be in the future", req);
+        if (!timeFormatted.isAfter(currentDate)) throw new ValidationError("Expiration must be in the future", req)
 
         const encryptedPaymentInfo = CryptoJS.AES.encrypt(
             JSON.stringify({
@@ -552,8 +553,8 @@ const logoutAccount = async (req, res) => {
 }
 
 const generateRandomCode = () => {
-    const min = 100000; // Minimum 6-digit number
-    const max = 999999; // Maximum 6-digit number
+    const min = 100000 // Minimum 6-digit number
+    const max = 999999 // Maximum 6-digit number
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
 

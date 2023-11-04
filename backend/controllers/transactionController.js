@@ -1,15 +1,11 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const fs = require('fs')
-const moment = require('moment');
+const moment = require('moment')
 const CryptoJS = require("crypto-js")
 
 const Account = require('../models/accountModel')
 const Post = require('../models/postModel')
 const Transaction = require('../models/transactionModel')
-const Comment = require('../models/commentModel')
-const Like = require('../models/likeModel')
-const Reply = require('../models/replyModel')
 const logger = require("../utils/logger")
 
 const {

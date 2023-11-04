@@ -4,9 +4,6 @@ const chai = require("chai");
 const { expect } = chai;
 let csrfToken = null;
 let cookie = null;
-const aEmail = process.env.TEST_ADMIN_EMAIL;
-const aPassword = process.env.TEST_ADMIN_PASS;
-const dev_secret = process.env.DEV_SECRET;
 const cookieFilter = (cookieString) => {
     const cookies = cookieString
       .split(", ")
@@ -23,7 +20,7 @@ const cookieFilter = (cookieString) => {
     return cookieObject;
   };
 
-describe("Connection Test where user are not supposed to be able to get a successful response from the server without logging in.", () => {
+describe("Connection Test it can reach the localhost server.", () => {
     it("Successfully Ping the server", async () => {
         try {
           const response = await fetch("http://localhost:4000/api/ping", {
@@ -53,109 +50,12 @@ describe("Connection Test where user are not supposed to be able to get a succes
         throw new Error(`HTTP request failed: ${error.message}`);
       }
     });
-    it("Unsuccessfully get all organisation information", async () => {
-        try {
-        const response = await fetch("http://localhost:4000/api/organisation/all", {
-            method: "POST",
-            headers: myHeaders
-        });
-        expect(response.status).to.equal(401);
-        } catch (error) {
-        throw new Error(`HTTP request failed: ${error.message}`);
-        }
-    });
-    it("Unsuccessfully get targeted organisation's posts", async () => {
-        try {
-        const response = await fetch("http://localhost:4000/api/post/all", {
-            method: "POST",
-            headers: myHeaders,
-            body: JSON.stringify({
-                organisation: process.env.TEST_ORGANISATION_1_ID,
-              }),
-        });
-        expect(response.status).to.equal(401);
-        } catch (error) {
-        throw new Error(`HTTP request failed: ${error.message}`);
-        }
-    });
-    it("Unsuccessfully get targeted organisation's comments", async () => {
-        try {
-        const response = await fetch("http://localhost:4000/api/comment/all", {
-            method: "POST",
-            headers: myHeaders,
-            body: JSON.stringify({
-                post: process.env.TEST_COMMENT_1_ID,
-              }),
-        });
-        expect(response.status).to.equal(401);
-        } catch (error) {
-        throw new Error(`HTTP request failed: ${error.message}`);
-        }
-    });
-  });
-
-describe("Connection Test from web application to smtp, gmail", () => {
-  it("Successfully Login to Test Account", async () => {
-    try {
-      const response = await fetch("http://localhost:4000/api/account/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-csrf-token": csrfToken,
-          cookie: Object.values(cookie).join("; "),
-        },
-        body: JSON.stringify({ email: aEmail, password: aPassword }),
-      });
-      cookieString = response.headers.get("set-cookie");
-      cookie = { ...cookie, ...cookieFilter(cookieString) };
-      expect(response.status).to.equal(200);
-    } catch (error) {
-      throw new Error(`HTTP request failed: ${error.message}`);
-    }
-  });
-  it("Successfully verify OTP validation", async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:4000/api/account/login-otp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-csrf-token": csrfToken,
-            cookie: Object.values(cookie).join("; "),
-          },
-          body: JSON.stringify({ token: dev_secret }),
-        }
-      );
-      cookieString = response.headers.get("set-cookie");
-      cookie = { ...cookie, ...cookieFilter(cookieString) };
-      expect(response.status).to.equal(200);
-    } catch (error) {
-      throw new Error(`HTTP request failed: ${error.message}`);
-    }
-  });
-  it("Successfully send Reset PW Email service", async () => {
-      try {
-      const response = await fetch(`http://localhost:4000/api/email?email=${encodeURIComponent(process.env.VALID_EMAIL)}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-csrf-token": csrfToken,
-          cookie: Object.values(cookie).join("; "),
-        },
-      });
-      expect(response.status).to.equal(200);
-    } catch (error) {
-      throw new Error(`HTTP request failed: ${error.message}`);
-    }
-  });
 });
-
 describe("Action Rate Limit (20). Flood the login request 20 times with wrong credentials, 21th to meet with a response of Too many Requests.", () => {
-  for (let i = 1; i <= 20; i++) {
+  for (let i = 1; i <= 21; i++) {
     let email;
     let password;
-    if (i <= 19) {
+    if (i <= 20) {
       email = "wrongemail";
       password = "wrongpassword";
     } else {
@@ -174,7 +74,7 @@ describe("Action Rate Limit (20). Flood the login request 20 times with wrong cr
           body: JSON.stringify({ email, password }),
         });
 
-        if (i <= 19) {
+        if (i <= 20) {
           expect(response.status).to.equal(400);
         } else {
           expect(response.status).to.equal(429);

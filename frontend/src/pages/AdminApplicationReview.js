@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 // Components
+import { FormatDateTime, constructImgResourceURL } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import Table from "../components/Table";
@@ -10,7 +11,6 @@ import Popup from "../components/Popup";
 import { RectangleButton, StandardDropdown, Tabs } from "../components/Buttons";
 import { ApprovalType, Divider } from "../components/Miscellaneous";
 import { InputField, InputTextBox, SearchField } from "../components/Inputs";
-import { FormatDateTime } from "../components/componentUtils";
 
 // Assets
 import { NewspaperIcon, ClipboardIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
@@ -48,8 +48,8 @@ export default function AdminApplicationReview() {
                 filter: "",
             });
             const json = await response.json();
-    
-            if (response.ok) {            
+
+            if (response.ok) {
                 setAllOrganisations(json.organisations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
                 setAllOrganisationsFiltered(json.organisations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
                 setOrganisationSubmitted(false);
@@ -60,18 +60,29 @@ export default function AdminApplicationReview() {
         getAllApplications();
     }, [organisationSubmitted]);
 
+    function resetPopup() {
+        setApplicationName('');
+        setApplicationDescription('');
+        setApplicationImagePoster('');
+        setApplicationImageBanner('');
+        setApplicationOrganisationId('');
+        setApplicationApprovedStatus('');
+
+        setViewingApplicationMode(false);
+    }
+
     function GenerateReviews() {
         let tableData = [];
         allOrganisations ?
-        allOrganisations.map((item) => {
-            tableData.push({
-                date: FormatDateTime(item.createdAt),
-                organisationName: item.name,
-                approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
+            allOrganisations.map((item) => {
+                tableData.push({
+                    date: FormatDateTime(item.createdAt),
+                    organisationName: item.name,
+                    approvalStatus: <ApprovalType type={item.approved ? "approved" : "pending"} />
+                })
             })
-        })
-        :
-        tableData = [];
+            :
+            tableData = [];
 
         return tableData;
     }
@@ -80,7 +91,7 @@ export default function AdminApplicationReview() {
         const category = e.target.getAttribute('data-value');
         let tableData = [];
 
-        if(category != null) {
+        if (category != null) {
             const filteredReviews = allOrganisations.filter(item => {
                 if (category === "pending") {
                     setIsFiltered(true);
@@ -99,25 +110,25 @@ export default function AdminApplicationReview() {
                 tableData.push({
                     date: FormatDateTime(item.createdAt),
                     organisationName: item.name,
-                    approvalStatus: <ApprovalType type={item.approved ? "approved": "pending"}/>
+                    approvalStatus: <ApprovalType type={item.approved ? "approved" : "pending"} />
                 })
             });
 
             setAllOrganisationsFiltered(tableData);
         }
     }
-    
+
     function handleSorted(e) {
         let sortedTableData = [];
         setSortBy(e.target.value);
 
-        if(!isFiltered) {
+        if (!isFiltered) {
             if (e.target.value === "status") {
                 setIsSorted(true);
                 sortedTableData = GenerateReviews().slice().sort((a, b) => {
                     const typeA = a.approvalStatus.props.type;
                     const typeB = b.approvalStatus.props.type;
-                
+
                     if (typeA === 'pending' && typeB === 'approved') {
                         return -1;
                     } else if (typeA === 'approved' && typeB === 'pending') {
@@ -136,14 +147,14 @@ export default function AdminApplicationReview() {
                     return dateB - dateA;
                 });
             }
-        } 
+        }
 
         setAllOrganisationsFiltered(sortedTableData);
     }
 
     function HandleLoadApplication(e) {
         setApplicationName(allOrganisations[e].name);
-        setApplicationDescription(allOrganisations[e].description);  
+        setApplicationDescription(allOrganisations[e].description);
         setApplicationImagePoster(allOrganisations[e].imagePath.poster);
         setApplicationImageBanner(allOrganisations[e].imagePath.banner);
         setApplicationOrganisationId(allOrganisations[e]._id);
@@ -167,14 +178,14 @@ export default function AdminApplicationReview() {
         }
         const json = await response.json();
 
-        if(response.ok) {
+        if (response.ok) {
             approved ? toast.success("Organisation: " + applicationName + " has been approved!") : toast.success("Organisation: " + applicationName + " has been rejected!");
             setOrganisationSubmitted(true);
         } else {
             toast.error(json.error);
         }
 
-        setViewingApplicationMode(false);
+        resetPopup();
     }
 
     return (
@@ -183,29 +194,40 @@ export default function AdminApplicationReview() {
                 <Banner image={BannerImage} title="Application Review" />
 
                 <div className="flex flex-row items-center justify-between">
-                    <div className="w-1/5 my-2">
+                    {/* <div className="w-1/5 my-2">
                         <SearchField title="Search" bottomPadding={0} value={searchField} onChange={(e) => { setSearchField(e.target.value); }} />
-                    </div>
-                    <div className="w-1/5 my-2">
+                    </div> */}
+                    <Tabs title="Application Status" tabs={['all', 'pending', 'approved']} heroIconsArr={[<NewspaperIcon />, <ClipboardIcon />, <CheckIcon />]}
+                        onClick={(e) => handleCategoryFilter(e)} />
+                    <div className="w-1/5">
                         <StandardDropdown title="Sort By" bottomPadding={0} value={sortBy} options={['newest', 'status']} onChange={(e) => { handleSorted(e); }} />
                     </div>
                 </div>
 
-                <Tabs title="Application Status" tabs={['all', 'pending', 'approved']} heroIconsArr={[<NewspaperIcon />, <ClipboardIcon />, <CheckIcon />]}
-                    onClick={(e) => handleCategoryFilter(e)} />
-
                 <Divider padding={0} />
 
                 <div className="mt-2 w-full">
-                    { (allOrganisationsFiltered && allOrganisationsFiltered.length > 0 && (isFiltered || isSorted)) ?
-                    <Table rows={allOrganisationsFiltered} title="Applications" onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} nullData="Applications" />
-                        : <Table rows={GenerateReviews()} title="Applications" onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} nullData="Applications" /> }
+                    {allOrganisations && allOrganisationsFiltered && (
+                        allOrganisationsFiltered.length > 0 ?
+                            (
+                                isFiltered || isSorted ?
+                                    <Table rows={allOrganisationsFiltered}
+                                        title="Applications"
+                                        onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} />
+                                    :
+                                    <Table rows={GenerateReviews()}
+                                        title="Applications"
+                                        onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} />
+                            )
+                            :
+                            <h1 className="grow text-text-primary py-4 text-3xl text-center">🍍No Organisations Here🍍</h1>
+                    )}
                 </div>
             </section>
 
             <Popup title="Viewing Application" overrideButton
                 variableThatDeterminesIfPopupIsActive={viewingApplicationMode}
-                setVariableThatDeterminesIfPopupIsActive={setViewingApplicationMode} >
+                setVariableThatDeterminesIfPopupIsActive={resetPopup} >
 
                 <InputField title="Name of Organisation" type="text" width='full' active={false} value={applicationName} />
                 <InputTextBox title="Description" width='full' active={false} value={applicationDescription} />
@@ -215,21 +237,19 @@ export default function AdminApplicationReview() {
                         <span className="grow text-text-primary">Banner</span>
                         <img
                             id="image-banner"
-                            src={applicationImagePoster}
-                            height="256"></img>
+                            src={constructImgResourceURL(applicationImageBanner)}></img>
                     </div>
                     <div>
                         <span className="grow text-text-primary">Poster</span>
                         <img
                             id="image-poster"
-                            src={applicationImageBanner}
-                            height="256"></img>
+                            src={constructImgResourceURL(applicationImagePoster)}></img>
                     </div>
                 </div>
 
                 <div className="flex flex-row pt-4 space-x-2 self-start">
-                    { !applicationApprovedStatus && <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} /> }
-                    { !applicationApprovedStatus && <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} /> }
+                    {!applicationApprovedStatus && <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} />}
+                    {!applicationApprovedStatus && <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} />}
                 </div>
             </Popup>
         </Layout >

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const fs = require('fs')
-const moment = require('moment');
+const moment = require('moment')
 
 const { verifyRecaptchaToken } = require('../utils/recaptcha.js')
 
@@ -15,7 +15,8 @@ const logger = require("../utils/logger")
 const {
     ValidationError,
     MissingFieldError,
-    DataNotFoundError
+    DataNotFoundError,
+    CaptchaValidationError
 } = require("../errors/customError")
 const {
     POST_FILTERS,
@@ -68,7 +69,7 @@ const getAllPost = async (req, res) => {
         const postIds = posts.map(post => post._id)
         const userLiked = await Like.find({ post: { $in: postIds }, account: userId }).select("post value")
         const postsWithLikes = posts.map(post => {
-            const userLike = userLiked.find(like => like.post.equals(post._id));
+            const userLike = userLiked.find(like => like.post.equals(post._id))
             const liked = userLike ? userLike.value : 0
 
             return { ...post._doc, liked }
@@ -98,7 +99,7 @@ const createPost = async (req, res) => {
         // reCAPTCHA verification
         if (!token) throw new MissingFieldError("Missing token", req)
         const isTokenValid = isTester ? token === process.env.DEV_SECRET || await verifyRecaptchaToken(token) : await verifyRecaptchaToken(token)
-        if (!isTokenValid) throw new ValidationError("Invalid token", req)
+        if (!isTokenValid) throw new CaptchaValidationError("Invalid token", req)
 
         // Fields validation
         if (!title) throw new MissingFieldError("Missing title", req)
@@ -139,7 +140,7 @@ const createPost = async (req, res) => {
             if (!timeFormatted.isValid()) throw new ValidationError("Invalid date format", req)
 
             const currentDate = moment().local().add(8, 'hours')
-            if (!timeFormatted.isAfter(currentDate.add(1, 'day'))) throw new ValidationError("Time must be at least 1 day in the future", req);
+            if (!timeFormatted.isAfter(currentDate.add(1, 'day'))) throw new ValidationError("Time must be at least 1 day in the future", req)
 
             newOrg["event"]["time"] = timeFormatted.toDate()
         }
@@ -175,7 +176,7 @@ const createPost = async (req, res) => {
 
             // Create new path for image to be stored in
             if (!fs.existsSync(orgPath)) {
-                logger.info(`Created organisation folder: ${organisation}`, { actor: "SERVER" });
+                logger.info(`Created organisation folder: ${organisation}`, { actor: "SERVER" })
                 fs.mkdirSync(`public/${orgPath}/post/${_id}`, { recursive: true })
             }
             fs.renameSync(`uploads/attachment/${attachment.filename}`, `public/${attachmentPath}`)
@@ -283,7 +284,7 @@ const editPost = async (req, res) => {
                 if (!timeFormatted.isValid()) throw new ValidationError("Invalid date format", req)
 
                 const currentDate = moment().local().add(8, 'hours')
-                if (!timeFormatted.isAfter(currentDate.add(1, 'day'))) throw new ValidationError("Time must be at least 1 day in the future", req);
+                if (!timeFormatted.isAfter(currentDate.add(1, 'day'))) throw new ValidationError("Time must be at least 1 day in the future", req)
 
                 existingPost.event.time = timeFormatted.toDate()
             }
@@ -313,7 +314,7 @@ const editPost = async (req, res) => {
 
             // Create new path for image to be stored in
             if (!fs.existsSync(orgPath)) {
-                logger.info(`Created organisation folder: ${organisation}`, { actor: "SERVER" });
+                logger.info(`Created organisation folder: ${organisation}`, { actor: "SERVER" })
                 fs.mkdirSync(`public/${orgPath}/post/${_id}`, { recursive: true })
             }
             fs.renameSync(`uploads/attachment/${attachment.filename}`, `public/${attachmentPath}`)

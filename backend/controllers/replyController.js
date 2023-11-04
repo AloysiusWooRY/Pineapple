@@ -1,9 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const fs = require('fs')
-const moment = require('moment');
 
-const Post = require('../models/postModel')
 const Comment = require('../models/commentModel')
 const Like = require('../models/likeModel')
 const Reply = require('../models/replyModel')
@@ -15,9 +12,6 @@ const {
     DataNotFoundError
 } = require("../errors/customError")
 const {
-    POST_FILTERS,
-    POST_CATEGORIES,
-    MAX_TEXT_LEN,
     MAX_LONG_TEXT_LEN
 } = require("../utils/globalVars")
 

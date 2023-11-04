@@ -2,10 +2,10 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require("cors")
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
 
-const csurf = require('csurf');
+const csurf = require('csurf')
 const csrfErrorHandler = require('./middleware/csrfErrorHandler')
 
 const app = express()
@@ -22,14 +22,15 @@ const adminRoutes = require('./routes/admin')
 const logger = require("./utils/logger")
 
 app.use(express.json({ limit: '1mb' }))
-app.use(cookieParser());
+app.use(cookieParser())
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 3600000 }
-}));
+    rolling: true,
+    cookie: { httpOnly: true, maxAge: process.env.SESSION_EXPIRE * 60 * 60 * 1000 }
+}))
 
 const corsOptions = {
     origin: process.env.WEBPAGE_URL,
@@ -38,9 +39,10 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-const csrfProtection = csurf({ cookie: true });
+const csrfProtection = csurf({ cookie: true })
 app.use(csrfProtection)
 app.use(csrfErrorHandler)
+
 
 // Middleware: for logging
 app.use((req, res, next) => {
@@ -60,9 +62,9 @@ app.use('/api', miscellaneousRoutes)
 app.use(express.static(__dirname + '/public'))
 
 app.use((req, res) => {
-    logger.http(`Attempted access to non-existing route: ${req.url}`, { actor: "USER", req });
-    res.status(404).json({ error: 'Not Found' });
-});
+    logger.http(`Attempted access to non-existing route: ${req.url}`, { actor: "USER", req })
+    res.status(404).json({ error: 'Not Found' })
+})
 
 // DB Conn
 mongoose.connect(process.env.MONGO_URI)

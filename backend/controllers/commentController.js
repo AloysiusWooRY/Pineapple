@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const fs = require('fs')
-const moment = require('moment');
 
 const Post = require('../models/postModel')
 const Comment = require('../models/commentModel')

@@ -20,7 +20,7 @@ import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as Arr
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { postIdPOST, postIdDEL, postIdPATCH, postIdLike } from "../apis/exportedAPIs";
+import { postIdPOST, postIdDEL, postIdPATCH, postIdLike, transactionNew, replyId, replyIdDislike, replyIdLike, replyNew, commentAll, commentId, commentIdDislike, commentIdLike, commentNew } from "../apis/exportedAPIs";
 
 export default function Post() {
     const { user } = useAuthContext();

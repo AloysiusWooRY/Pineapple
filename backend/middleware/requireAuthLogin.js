@@ -9,7 +9,7 @@ const requireAuth = async (req, res, next) => {
         if (!req.session) throw new AuthenticationError("Unauthorized access", req)
         if (!req.cookies || !req.cookies.jwt_login) throw new AuthenticationError('Unauthorized access', req)
 
-        const token = req.cookies.jwt_login;
+        const token = req.cookies.jwt_login
 
         // Validate JWT
         const { _id } = jwt.verify(token, process.env.JWT_LOGIN_SECRET)

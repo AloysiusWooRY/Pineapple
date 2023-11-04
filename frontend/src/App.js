@@ -1,24 +1,23 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useAuthContext } from "./hooks/useAuthContext";
 import { Toaster } from 'react-hot-toast';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useAuthContext } from "./hooks/useAuthContext";
 
 // Pages
+import AdminApplicationReview from "./pages/AdminApplicationReview";
+import AdminModeration from './pages/AdminModeration';
+import ForgotPassword from "./pages/ForgotPassword";
+import Home from './pages/Home';
 import Login from "./pages/Login";
+import NewOrganisation from './pages/NewOrganisation';
+import NewPost from './pages/NewPost';
+import NotFound from "./pages/NotFound";
+import Organisation from './pages/Organisation';
+import OrganisationHome from './pages/OrganisationHome';
+import Post from './pages/Post';
+import Profile from './pages/Profile';
 import Register from "./pages/Register";
 import SetupAuthenticatorQR from "./pages/SetupAuthenticatorQR";
-import Profile from './pages/Profile';
-import Home from './pages/Home';
-import OrganisationHome from './pages/OrganisationHome';
-import Organisation from './pages/Organisation';
-import Post from './pages/Post';
-import NewPost from './pages/NewPost';
-import NewOrganisation from './pages/NewOrganisation';
-import AdminModeration from './pages/AdminModeration';
-import AdminApplicationReview from "./pages/AdminApplicationReview";
-import ForgotPassword from "./pages/ForgotPassword";
-import NotFound from "./pages/NotFound";
 
-import IdleTimerComponent from "./components/IdleTimerComponent";
 
 function App() {
   const { user } = useAuthContext();
@@ -32,69 +31,69 @@ function App() {
             position="top-center"
             reverseOrder={false}
           />
-            {user ? <IdleTimerComponent /> : null}
-            <Routes>
-              <Route
-                path="/"
-                element={user ? <Home /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="*"
-                element={<Navigate to="/not-found" />}
-              />
-              <Route
-                path="/not-found"
-                element={<NotFound />}
-              />
-              <Route
-                path="/login"
-                element={!user ? <Login /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/register"
-                element={!user ? <Register /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/forgot-password"
-                element={!user ? <ForgotPassword /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/setup-authenticator-qr"
-                element={!user ? <SetupAuthenticatorQR /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/profile"
-                element={user ? <Profile /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/organisation"
-                element={user ? <OrganisationHome /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/organisation/new"
-                element={user ? <NewOrganisation /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/organisation/:id/post/:id"
-                element={user ? <Post /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/organisation/:id"
-                element={user ? <Organisation /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/organisation/:id/post/new"
-                element={user ? <NewPost /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/admin/moderation"
-                element={user ? <AdminModeration /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/admin/application"
-                element={user ? <AdminApplicationReview /> : <Navigate to="/login" />}
-              />
-            </Routes>
+          {/* {user ? <IdleTimerComponent /> : null} */}
+          <Routes>
+            <Route
+              path="/"
+              element={user ? <Home /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to="/not-found" />}
+            />
+            <Route
+              path="/not-found"
+              element={<NotFound />}
+            />
+            <Route
+              path="/login"
+              element={!user ? <Login /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/register"
+              element={!user ? <Register /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/forgot-password"
+              element={!user ? <ForgotPassword /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/setup-authenticator-qr"
+              element={!user ? <SetupAuthenticatorQR /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/profile"
+              element={user ? <Profile /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation"
+              element={user ? <OrganisationHome /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/new"
+              element={user ? <NewOrganisation /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/:id/post/:id"
+              element={user ? <Post /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/:id"
+              element={user ? <Organisation /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/organisation/:id/post/new"
+              element={user ? <NewPost /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/admin/moderation"
+              element={user ? <AdminModeration /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/admin/application"
+              element={user ? <AdminApplicationReview /> : <Navigate to="/login" />}
+            />
+          </Routes>
         </div>
       </BrowserRouter>
     </div>

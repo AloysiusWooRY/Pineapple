@@ -1,8 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const zxcvbn = require('zxcvbn')
 const validator = require('validator')
-const moment = require('moment')
 const fs = require('fs')
 
 const Account = require('../models/accountModel')
@@ -49,7 +46,7 @@ const editRoleAccount = async (req, res) => {
         const existingAccount = await Account.findById(userId)
         if (!existingAccount) throw new DataNotFoundError("No such account", req)
 
-        if (_id === new mongoose.Types.ObjectId(userId)) throw new ValidationError("Invalid id", req)
+        if (_id.equals(new mongoose.Types.ObjectId(userId))) throw new ValidationError("Invalid id", req)
         if (!USER_ROLE.includes(role)) throw new ValidationError("Invalid role", req)
 
         switch (role) {
@@ -80,7 +77,7 @@ const editRoleAccount = async (req, res) => {
 
         await existingAccount.save()
 
-        const sanitizedAccount = existingAccount.toObject();
+        const sanitizedAccount = existingAccount.toObject()
         delete sanitizedAccount.password
         delete sanitizedAccount.twoFASecret
 
