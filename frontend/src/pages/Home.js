@@ -11,7 +11,7 @@ import { Divider } from "../components/Miscellaneous";
 
 // Assets
 import { NewspaperIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/home-banner.png";
+import BannerImage from "../assets/banner-home.png";
 
 // API
 import { postAll } from "../apis/exportedAPIs";

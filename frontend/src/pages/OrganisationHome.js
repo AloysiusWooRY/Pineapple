@@ -13,7 +13,7 @@ import { Divider } from "../components/Miscellaneous";
 
 // Assets
 import { PlusCircleIcon, NewspaperIcon, HeartIcon, BookOpenIcon, GlobeAsiaAustraliaIcon, HandRaisedIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/home-banner-org.png";
+import BannerImage from "../assets/banner-organisation-home.png";
 
 // API
 import { organisationCategories, organisationAll } from "../apis/exportedAPIs";
