@@ -34,7 +34,7 @@ const fileUploadErrorHandler = async (err, req, res, next) => {
             }
         }
     } else {
-        next();
+        next()
     }
 }
 

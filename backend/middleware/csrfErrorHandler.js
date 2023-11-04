@@ -7,7 +7,7 @@ const csrfErrorHandler = async (err, req, res, next) => {
         if (err && err.code === 'EBADCSRFTOKEN') {
             throw new SessionValidationError('Session forbidden', req)
         } else {
-            next();
+            next()
         }
     } catch (err) {
         if (err.statusCode === 403)

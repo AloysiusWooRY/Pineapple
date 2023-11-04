@@ -65,7 +65,7 @@ const applyOrganisation = async (req, res) => {
 
         // Create new path for image to be stored in
         if (!fs.existsSync(orgPath)) {
-            logger.info(`Created organisation folder: ${_id}`, { actor: "SERVER" });
+            logger.info(`Created organisation folder: ${_id}`, { actor: "SERVER" })
             fs.mkdirSync(`public/${orgPath}/banner`, { recursive: true })
             fs.mkdirSync(`public/${orgPath}/poster`, { recursive: true })
         }

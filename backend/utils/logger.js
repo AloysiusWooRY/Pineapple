@@ -1,7 +1,7 @@
 const moment = require('moment')
 const { createLogger, transports, format } = require('winston')
 const { combine, timestamp, printf, simple, json } = format
-const DailyRotateFile = require('winston-daily-rotate-file');
+const DailyRotateFile = require('winston-daily-rotate-file')
 
 const fileLogFormat = printf(({ level, message, timestamp, actor, req }) => {
     const formattedTimestamp = moment(timestamp).format('DD.MM HH:mm:ss')
@@ -23,11 +23,11 @@ const fileLogFormat = printf(({ level, message, timestamp, actor, req }) => {
         httprequest: req.originalUrl
     }
 
-    return JSON.stringify(logObject);
+    return JSON.stringify(logObject)
 })
 
 const consoleLogFormat = printf(({ level, message }) => {
-    return `${level.toUpperCase()}: ${message}`;
+    return `${level.toUpperCase()}: ${message}`
 })
 
 const logger = createLogger({

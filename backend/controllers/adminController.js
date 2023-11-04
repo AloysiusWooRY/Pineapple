@@ -77,7 +77,7 @@ const editRoleAccount = async (req, res) => {
 
         await existingAccount.save()
 
-        const sanitizedAccount = existingAccount.toObject();
+        const sanitizedAccount = existingAccount.toObject()
         delete sanitizedAccount.password
         delete sanitizedAccount.twoFASecret
 

@@ -22,7 +22,7 @@ const uploadFields = upload.fields([
 ])
 
 // POST: New org application
-router.post('/apply', requireAuth(isAdmin = false), uploadFields, fileUploadErrorHandler, applyOrganisation);
+router.post('/apply', requireAuth(isAdmin = false), uploadFields, fileUploadErrorHandler, applyOrganisation)
 
 // GET: Category
 router.post('/categories', rateLimit(10, 50), requireAuth(isAdmin = false), getAllCategories)
