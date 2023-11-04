@@ -10,7 +10,7 @@ const COOKIE = testenv.COOKIE;
 
 async function getCsrfToken() {
   return new Promise((resolve, reject) => {
-    exec(`curl --location "https://mystifying-swirles.cloud/api/get-csrf-token" --header "Cookie: ${COOKIE}"`, (error, stdout, stderr) => {
+    exec(`curl --location "http://localhost:4000/api/get-csrf-token" --header "Cookie: ${COOKIE}"`, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running curl: ${error}`);
         reject(error);
@@ -39,7 +39,7 @@ async function runLoginTest() {
   try {
     const csrfToken = await getCsrfToken();
 
-    driver.get('https://mystifying-swirles.cloud/login');
+    driver.get('http://localhost:4000/login');
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
