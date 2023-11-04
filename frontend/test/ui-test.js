@@ -34,7 +34,7 @@ async function runLoginTest() {
     .forBrowser('chrome')
     .setChromeOptions(chromeOptions)
     .build();
-
+  
   //login button testing
   try {
     const csrfToken = await getCsrfToken();
@@ -172,9 +172,18 @@ async function runLoginTest() {
     } catch (error) {
       console.log('Logout button unsuccessful.')
     }
-  } finally {
-    await driver.quit();
-  }
+
+    //connection fail test
+    try{
+      await driver.get('http://localhost:3000/database');
+      console.log("Connection Success when expected fail. Test Fail")
+    } catch (error){
+      console.log(error)
+      console.log('Connection failed. Test success.')
+    }
+    } finally {
+      await driver.quit();
+    }
 }
 
 runLoginTest();
