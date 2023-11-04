@@ -28,7 +28,7 @@ export default function AdminApplicationReview() {
     const [organisationSubmitted, setOrganisationSubmitted] = useState(false);
 
     const [sortBy, setSortBy] = useState('newest');
-    const [searchField, setSearchField] = useState('');
+    // const [searchField, setSearchField] = useState('');
     const [isFiltered, setIsFiltered] = useState(false);
     const [isSorted, setIsSorted] = useState(false);
 
@@ -147,9 +147,8 @@ export default function AdminApplicationReview() {
                     return dateB - dateA;
                 });
             }
-        }
-
-        setAllOrganisationsFiltered(sortedTableData);
+            setAllOrganisationsFiltered(sortedTableData);
+        }   
     }
 
     function HandleLoadApplication(e) {

@@ -145,13 +145,13 @@ const prepareRequest = (csrfToken, requestBody) => {
 }
 
 export const getCSRF = async () => {
-    const csrf = cookie.load('csrf')
+    const csrf = cookie.load('csrf');
     if (!csrf) {
         await fetch('/api/get-csrf-token')
             .catch(error => {
                 console.error('Failed to fetch CSRF token', error);
             });
-        return cookie.load('csrf')
+        return cookie.load('csrf');
     }
-    return csrf
+    return csrf;
 }

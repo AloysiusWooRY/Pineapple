@@ -18,10 +18,11 @@ import Profile from './pages/Profile';
 import Register from "./pages/Register";
 import SetupAuthenticatorQR from "./pages/SetupAuthenticatorQR";
 
+import IdleTimerComponent from "./components/IdleTimerComponent";
 
 function App() {
   const { user } = useAuthContext();
-  console.log(user)
+  console.log(user);
 
   return (
     <div className="App">
@@ -31,7 +32,7 @@ function App() {
             position="top-center"
             reverseOrder={false}
           />
-          {/* {user ? <IdleTimerComponent /> : null} */}
+          {user ? <IdleTimerComponent /> : null}
           <Routes>
             <Route
               path="/"
