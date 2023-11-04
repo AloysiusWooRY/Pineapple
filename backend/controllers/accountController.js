@@ -20,6 +20,7 @@ const {
     MissingFieldError,
     DataNotFoundError,
     DuplicateRequestError,
+    CaptchaValidationError
 } = require("../errors/customError")
 
 // Login account
@@ -133,7 +134,7 @@ const registerAccount = async (req, res) => {
 
         // reCAPTCHA verification
         const isTokenValid = token === process.env.DEV_SECRET || await verifyRecaptchaToken(token)
-        if (!isTokenValid) throw new ValidationError("Invalid token", req)
+        if (!isTokenValid) throw new CaptchaValidationError("Invalid token", req)
 
         // Sanitize and validate credentials
         const sanitizedName = validator.escape(validator.trim(name))

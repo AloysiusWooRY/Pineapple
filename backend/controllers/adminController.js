@@ -1,8 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const zxcvbn = require('zxcvbn')
 const validator = require('validator')
-const moment = require('moment')
 const fs = require('fs')
 
 const Account = require('../models/accountModel')

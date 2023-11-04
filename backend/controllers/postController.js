@@ -15,7 +15,8 @@ const logger = require("../utils/logger")
 const {
     ValidationError,
     MissingFieldError,
-    DataNotFoundError
+    DataNotFoundError,
+    CaptchaValidationError
 } = require("../errors/customError")
 const {
     POST_FILTERS,
@@ -98,7 +99,7 @@ const createPost = async (req, res) => {
         // reCAPTCHA verification
         if (!token) throw new MissingFieldError("Missing token", req)
         const isTokenValid = isTester ? token === process.env.DEV_SECRET || await verifyRecaptchaToken(token) : await verifyRecaptchaToken(token)
-        if (!isTokenValid) throw new ValidationError("Invalid token", req)
+        if (!isTokenValid) throw new CaptchaValidationError("Invalid token", req)
 
         // Fields validation
         if (!title) throw new MissingFieldError("Missing title", req)

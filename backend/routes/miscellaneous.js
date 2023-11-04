@@ -1,9 +1,7 @@
 const express = require('express')
 const {
     ping,
-    generateCSRF,
-    emailTest,
-    test
+    generateCSRF
 } = require('../controllers/miscellaneousController')
 const rateLimit = require('../utils/rateLimiter')
 const requireAuth = require('../middleware/requireAuth')

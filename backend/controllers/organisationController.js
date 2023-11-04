@@ -9,6 +9,7 @@ const {
     ValidationError,
     MissingFieldError,
     DataNotFoundError,
+    CaptchaValidationError
 } = require("../errors/customError")
 const { ORG_CATEGORIES, MAX_TEXT_LEN, MAX_LONG_TEXT_LEN } = require("../utils/globalVars")
 
@@ -30,7 +31,7 @@ const applyOrganisation = async (req, res) => {
         if (!category) throw new MissingFieldError("Missing category", req)
 
         const isTokenValid = isTester ? token === process.env.DEV_SECRET || await verifyRecaptchaToken(token) : await verifyRecaptchaToken(token)
-        if (!isTokenValid) throw new ValidationError("Invalid token", req)
+        if (!isTokenValid) throw new CaptchaValidationError("Invalid token", req)
 
         const sanitizedName = validator.escape(validator.trim(name))
         if (sanitizedName.length > MAX_TEXT_LEN) throw new ValidationError("Length of 'name' too long (Max: 256 characters)", req)
