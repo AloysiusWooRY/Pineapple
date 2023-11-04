@@ -21,22 +21,6 @@ const generateCSRF = async (req, res) => {
     res.status(200).json({ csrfToken })
 }
 
-// Email test
-const emailTest = async (req, res) => {
-    const { email } = req.body
-    await sendEmail("PasswordReset", email, {
-        code: "SUCCESS",
-        name: "Connection Test"
-    })
-    res.status(200).json({})
-}
-
-// Test
-const test = async (req, res) => {
-    const t = CryptoJS.lib.WordArray.random(32).toString()
-    res.status(200).json({ t })
-}
-
 module.exports = {
     ping,
     generateCSRF,
