@@ -23,4 +23,4 @@ export default function Layout(props) {
             </div>
         </div>
     );
-};
+}

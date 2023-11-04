@@ -15,9 +15,9 @@ export function InputHeader(props) {
     const { title, heroIcon = <QuestionMarkCircleIcon />, edit = false, active = true, onClick } = props;
 
     return (
-        <div 
-        className="flex items-end justify-between border-b pb-2 border-divider-color"
-        id={"input-header-" + textNerfer(title)}>
+        <div
+            className="flex items-end justify-between border-b pb-2 border-divider-color"
+            id={"input-header-" + textNerfer(title)}>
             <h3 className="flex w-fit text-text-primary text-3xl">
                 {heroIcon && React.cloneElement(heroIcon, { className: "h-8 w-8 mr-2" })}
                 {title}
@@ -130,19 +130,17 @@ export function InputDate(props) {
 }
 
 export function InputMonthYear(props) {
-    const { title, errorMsg, setFormattedValue, width = 'full', bottomPadding = 4, active = true, currentMonth, currentYear } = props;
-
-    const [selectedMonth, setSelectedMonth] = useState(null);
-    const [selectedYear, setSelectedYear] = useState(null);
+    const { title, errorMsg, setFormattedValue, width = 'full', bottomPadding = 4, active = true,
+        month, setMonth, year, setYear } = props;
 
     useEffect(() => {
-        setFormattedValue(`${selectedMonth ? selectedMonth : currentMonth}/${selectedYear ? selectedYear : currentYear}`);
-    }, [selectedMonth, selectedYear]);
+        setFormattedValue(`${month}/${year}`);
+    }, [month, year]);
 
     return (
         <div
-        className={`flex flex-row w-${width} space-x-2 pb-${bottomPadding}`}
-        value={`${selectedMonth}/${selectedYear}`}>
+            className={`flex flex-row w-${width} space-x-2 pb-${bottomPadding}`}
+            >
             <div className={`flex flex-col w-1/2`}>
                 <span className="min-w-fit grow-0 py-2 text-text-primary">{title + " Month"}</span>
                 <div className={`flex flex-row grow text-text-primary
@@ -151,10 +149,10 @@ export function InputMonthYear(props) {
                         'rounded-sm bg-input-background-neutral text-text-primary'}
                 rounded-sm`}>
                     <select id={"input-" + textNerfer(title) + "-month"}
-                        value={selectedMonth ? selectedMonth : currentMonth}
+                        value={month}
                         disabled={!active}
                         onChange={(e) => {
-                            setSelectedMonth(e.target.value);
+                            setMonth(e.target.value);
                         }}
                         className={`p-2 capitalize grow appearance-none bg-transparent
                         ${!active ?
@@ -194,9 +192,9 @@ export function InputMonthYear(props) {
                     min="23"
                     max="99"
                     disabled={!active}
-                    value={selectedYear ? selectedYear : currentYear}
+                    value={year}
                     onChange={(e) => {
-                        setSelectedYear(e.target.value);
+                        setYear(e.target.value);
                     }}
                     className={`p-2 placeholder:text-theme-placeholder 
                         ${!active ?
