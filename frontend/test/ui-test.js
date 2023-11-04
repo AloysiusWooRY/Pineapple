@@ -10,7 +10,7 @@ const COOKIE = testenv.COOKIE;
 
 async function getCsrfToken() {
   return new Promise((resolve, reject) => {
-    exec(`curl --location "http://localhost:4000/api/get-csrf-token" --header "Cookie: ${COOKIE}"`, (error, stdout, stderr) => {
+    exec(`curl --location "http://localhost:3000/api/get-csrf-token" --header "Cookie: ${COOKIE}"`, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running curl: ${error}`);
         reject(error);
@@ -39,7 +39,7 @@ async function runLoginTest() {
   try {
     const csrfToken = await getCsrfToken();
 
-    driver.get('http://localhost:4000/login');
+    driver.get('http://localhost:3000/login');
     await driver.sleep(10000);
     const pageSource = await driver.getPageSource();
     console.log(pageSource);
