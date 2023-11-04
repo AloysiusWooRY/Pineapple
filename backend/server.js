@@ -29,7 +29,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     rolling: true,
-    cookie: { httpOnly: true, maxAge: 3600000 }
+    cookie: { httpOnly: true, maxAge: process.env.SESSION_EXPIRE * 60 * 60 * 1000 }
 }))
 
 const corsOptions = {

@@ -111,7 +111,7 @@ const loginOTP = async (req, res) => {
         })
 
         res.cookie('csrf', csrfToken, {
-            maxAge: process.env.JWT_EXPIRE * 60 * 60 * 1000, // Set the expiration time (1 day)
+            maxAge: process.env.CSRF_EXPIRE * 60 * 60 * 1000, // Set the expiration time
         })
 
         res.status(200).json({ _id, name, email, isAdmin, moderation, csrfToken })
@@ -152,7 +152,7 @@ const registerAccount = async (req, res) => {
         if (zxcvbn(password).score < 2) throw new ValidationError('Password not strong', req)
 
         // Hash password
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(12)
         const hash = await bcrypt.hash(password, salt)
 
         // Generate secret
@@ -291,7 +291,7 @@ const updatePassword = async (req, res) => {
         if (isPasswordUnchanged) throw new ValidationError('Cannot change to an existing password', req)
 
         // Update the password
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(12)
         const hash = await bcrypt.hash(newPassword, salt)
 
         // Update the account password
@@ -424,7 +424,7 @@ const resetPassword = async (req, res) => {
         if (!account) throw new DataNotFoundError('Account not found', req)
 
         // Update the password
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(12)
         const hash = await bcrypt.hash(password, salt)
 
         // Generate secret
