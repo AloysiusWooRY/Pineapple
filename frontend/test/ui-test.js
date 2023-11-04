@@ -6,21 +6,6 @@ const { exec } = require('child_process');
 const email = testenv.TEST_USER_EMAIL;
 const password = testenv.TEST_USER_PASS;
 const authCode = testenv.AUTH_CODE;
-const COOKIE = testenv.COOKIE;
-
-async function getCsrfToken() {
-  return new Promise((resolve, reject) => {
-    exec(`curl --location "http://localhost:3000/api/get-csrf-token" --header "Cookie: ${COOKIE}"`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error running curl: ${error}`);
-        reject(error);
-      } else {
-        const csrfToken = JSON.parse(stdout).csrfToken;
-        resolve(csrfToken);
-      }
-    });
-  });
-}
 
 async function runLoginTest() {
   const chromeOptions = new Options();
@@ -28,49 +13,27 @@ async function runLoginTest() {
   chromeOptions.addArguments('--disable-gpu');
   chromeOptions.addArguments('--no-sandbox');
   chromeOptions.addArguments('--ignore-certificate-errors')
- 
+  chromeOptions.excludeSwitches('enable-logging'); // Disable logging
 
   const driver = new Builder()
     .forBrowser('chrome')
     .setChromeOptions(chromeOptions)
     .build();
-  
+
   //login button testing
   try {
-    const csrfToken = await getCsrfToken();
-
     driver.get('http://localhost:3000/login');
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
-    const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
-    const passwordField = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
+    const emailField = await driver.findElement(By.css('input[id="input-email-address"]'));
+    const passwordField = await driver.findElement(By.css('input[id="input-password"]'));
     const loginButton = await driver.findElement(By.css('button[id="button-log-in"]'));
-
-    // Include the CSRF token in the login request
-    const csrfHeader = { 'X-CSRF-TOKEN': csrfToken };
-    const headers = new Headers({
-      ...csrfHeader,
-      // Other headers, if needed
-    });
     
     await emailField.sendKeys(email);
     await passwordField.sendKeys(password);
     await loginButton.click();
     
-    // Include the CSRF token in the request headers
-    await driver.executeScript(function (headers,email,password) {
-      fetch('/login', {
-        method: 'POST', 
-        headers: headers,  // Include the CSRF token in the headers
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          // Include other login data as needed
-        }),
-      });
-    }, headers,email,password);
-    
-    try {
+      try {
       await driver.sleep(2000);
       await driver.findElement(By.css('input[id="input-authenticator-code"]'));
       console.log('Login button successful.');
@@ -78,7 +41,7 @@ async function runLoginTest() {
       console.error('Login button failed.');
     }
 
-    //auathentication button test
+    //Authentication button test
     try {
       const authInput = await driver.findElement(By.css('input[id="input-authenticator-code"]'));
       const authButton = await driver.findElement(By.css('button[id="button-submit-authenticator-code"]'));
@@ -176,7 +139,13 @@ async function runLoginTest() {
     //connection fail test
     try{
       await driver.get('http://localhost:3000/database');
-      console.log("Connection Success when expected fail. Test Fail")
+      const currentUrl = await driver.getCurrentUrl();
+      
+      if (currentUrl === 'http://localhost:3000/not-found') {
+        console.log('Connection success, redirected to /not-found. Test success.');
+      } else {
+        console.log('Connection success when expected fail. Test fail.');
+      }
     } catch (error){
       console.log(error)
       console.log('Connection failed. Test success.')
