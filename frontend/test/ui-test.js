@@ -40,8 +40,6 @@ async function runLoginTest() {
     const csrfToken = await getCsrfToken();
 
     driver.get('http://localhost:3000/login');
-    await driver.sleep(10000);
-    const pageSource = await driver.getPageSource();
     console.log(pageSource);
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
