@@ -82,7 +82,6 @@ async function runLoginTest() {
     try {
       const authInput = await driver.findElement(By.css('input[id="input-authenticator-code"]'));
       const authButton = await driver.findElement(By.css('button[id="button-submit-authenticator-code"]'));
-      console.log(authCode)
       await authInput.sendKeys(authCode);
       await authButton.click();
       await driver.sleep(2000);
