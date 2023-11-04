@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import ReCAPTCHA from "react-google-recaptcha";
 
 // Components
-import { getCaptchaSiteKey } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import { InputField, InputTextBox, InputFile } from "../components/Inputs";
@@ -13,7 +12,7 @@ import { RectangleButton, StandardDropdown } from "../components/Buttons";
 
 // Assets
 import { PaperAirplaneIcon, NoSymbolIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/org-banner.png";
+import BannerImage from "../assets/banner-organisation-home.png";
 
 // API
 import { organisationCategories, organisationApply } from "../apis/exportedAPIs";

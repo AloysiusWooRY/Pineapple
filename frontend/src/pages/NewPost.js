@@ -14,7 +14,6 @@ import { Divider } from "../components/Miscellaneous";
 
 // Assets
 import { CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/org-banner.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
