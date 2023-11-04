@@ -40,6 +40,8 @@ async function runLoginTest() {
     const csrfToken = await getCsrfToken();
 
     driver.get('http://localhost:4000/login');
+    const pageSource = await driver.getPageSource();
+    console.log(pageSource);
 
     // Use XPath or CSS selectors to locate the React-generated HTML elements
     const emailField = await driver.findElement(By.css('input[placeholder="Enter Email Address"]'));
