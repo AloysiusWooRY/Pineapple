@@ -80,15 +80,12 @@ async function runLoginTest() {
 
     //auathentication button test
     try {
-      const pageSource = await driver.getPageSource();
-      console.log(pageSource);
       const authInput = await driver.findElement(By.css('input[id="input-authenticator-code"]'));
       const authButton = await driver.findElement(By.css('button[id="button-submit-authenticator-code"]'));
+      console.log(authCode)
       await authInput.sendKeys(authCode);
       await authButton.click();
       await driver.sleep(2000);
-      const pageSource2 = await driver.getPageSource();
-      console.log(pageSource2);
       await driver.findElement(By.xpath('//h2[contains(text(),"Home")]'));
       console.log('Authentication button successful.');
     } catch (error) {
