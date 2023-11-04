@@ -14,7 +14,7 @@ import { InputField, InputTextBox, SearchField } from "../components/Inputs";
 
 // Assets
 import { NewspaperIcon, ClipboardIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/banner-admin-moderation.png";
+import BannerImage from "../assets/banner-application-review.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";

@@ -13,7 +13,7 @@ import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
 
 // Assets
 import { UserCircleIcon, CreditCardIcon, KeyIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
-import BannerImage from "../assets/post-banner.png";
+import BannerImage from "../assets/banner-profile.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
