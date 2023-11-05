@@ -25,14 +25,18 @@ export default function AdminModeration() {
 
     const [searchField, setSearchField] = useState('');
 
-    const [allOrganisations, setAllOrganisations] = useState(['Org-1', 'Org-2', 'Org-3']);
+    const [allOrganisations, setAllOrganisations] = useState(null);
+    const [allOrganisationNames, setAllOrganisationNames] = useState([]);
     const [allUsers, setAllUsers] = useState(null);
 
     const [viewingUserMode, setViewingUserMode] = useState(false);
+    const [userIndex, setUserIndex] = useState(null);
     const [userId, setUserId] = useState(null);
-    const [username, setUsername] = useState('John Xina');
-    const [userRole, setUserRole] = useState('administrator');
-    const [userModerates, setUserModerates] = useState(['Org-1', 'Org-3']);
+    const [username, setUsername] = useState(null);
+    const [userRole, setUserRole] = useState(null);
+
+    const [userModerates, setUserModerates] = useState([]);
+    const [newUserModerates, setNewUserModerates] = useState([]);
 
     useEffect(() => {
         async function fetchAllUsers() {
@@ -46,13 +50,16 @@ export default function AdminModeration() {
                 toast.error(json.error);
             }
         }
-
         async function fetchAllOrganisations() {
-            const response = await organisationAll();
-            const json = response.json();
+            const response = await organisationAll({
+                category: "",
+            });
+            const json = await response.json();
     
             if (response.ok) {
-                setAllUsers(json.organisations);
+                setAllOrganisations(json.organisations);
+                setAllOrganisationNames(json.organisations.map(item => item.name));
+                console.log(json.organisations);
             } else {
                 toast.error(json.error);
             }
@@ -83,6 +90,10 @@ export default function AdminModeration() {
         setUserRole(allUsers[e].isAdmin ? "administrator" : allUsers[e].moderation.length > 0 ? "moderator" : "user");
         setUserId(allUsers[e]._id);
 
+        const moderatedId = allUsers[e].moderation;
+        const moderatedNames = allOrganisations.filter(item => moderatedId.includes(item._id));
+        setUserModerates(moderatedNames);
+
         setViewingUserMode(true);
     }
 
@@ -92,25 +103,34 @@ export default function AdminModeration() {
         const foundUser = allUsers.find(item => item._id === userId);
         const foundUserRole = foundUser.isAdmin ? "administrator" : foundUser.moderation.length > 0 ? "moderator" : "user";
 
-        if (foundUserRole === userRole) {
+        if (foundUserRole === userRole && userRole !== "moderator") {
             toast.error("Same role selected!");
+            return;
+        }
+        
+        if (new Set(userModerates).size !== userModerates.length) {
+            toast.error("Please do not select the same organisation more than once!");
             return;
         }
 
         console.log(userRole);
-        const response = await adminAccountEditRole({
-            account: userId,
-            role: userRole,
-            moderation: userModerates,
-        });
+        console.log(userModerates);
+        // const response = await adminAccountEditRole({
+        //     account: userId,
+        //     role: userRole,
+        //     moderation: userModerates,
+        // });
 
-        const json = await response.json();
+        // const json = await response.json();
 
-        if (response.ok) {
-            toast.success(`The user ${username} has been given the new role of a ${userRole}!`);
-        } else {
-            toast.error(json.error);
-        }
+        // if (response.ok) {
+        //     toast.success(`The user ${username} has been given the new role of a ${userRole}!`);
+        //     if (userRole === "moderator") {
+        //         console.log(userModerates);
+        //     }
+        // } else {
+        //     toast.error(json.error);
+        // }
         setViewingUserMode(false);
     }
 
@@ -147,7 +167,8 @@ export default function AdminModeration() {
                             <button onClick={(e) => {
                                 e.preventDefault();
                                 let workingArray = [...userModerates];
-                                workingArray.push(allOrganisations[0]);
+                                workingArray.push(userModerates);
+                                console.log(workingArray);
                                 setUserModerates(workingArray);
                             }}><PlusCircleIcon className="h-8 w-8 text-text-primary" /></button>
                         </div>
@@ -155,15 +176,17 @@ export default function AdminModeration() {
                         {userModerates.map((organisation, i) => (
                             <div className="flex flex-row space-x-2 justify-center items-center">
                                 <div className="grow">
+                                {console.log(organisation)}
                                     <StandardDropdown
-                                        title={'moderator-' + i}
+                                        title={"moderator-" + i}
                                         value={organisation}
                                         titleLocation="none"
                                         bottomPadding={0}
-                                        options={allOrganisations}
+                                        options={allOrganisationNames}
                                         onChange={(e) => {
                                             let workingArray = [...userModerates];
                                             workingArray[i] = e.target.value;
+                                            console.log(i);
                                             setUserModerates(workingArray);
                                         }}
                                     />
