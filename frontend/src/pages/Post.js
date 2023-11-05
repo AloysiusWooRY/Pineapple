@@ -161,7 +161,7 @@ export default function Post() {
             allComments.map((comment) => {
                 comments.push(
                     <div key={"key-comment-" + comment._id}>
-                        <Comment commentId={comment._id} handlePutReply={handlePutReply} isReply={false} commentContent={{
+                        <Comment id={comment._id} handlePutReply={handlePutReply} isReply={false} commentContent={{
                             '_id': comment._id,
                             'owner': { 'name': comment.owner.name },
                             'createdAt': FormatDateTime(comment.updatedAt),
@@ -176,7 +176,7 @@ export default function Post() {
                     comment.replies.map(reply => {
                         comments.push(
                             <div key={"key-reply-" + reply._id}>
-                                <Comment commentId={comment._id} handlePutReply={handlePutReply} isReply={true} commentContent={{
+                                <Comment id={comment._id} handlePutReply={handlePutReply} isReply={true} commentContent={{
                                     '_id': reply._id,
                                     'owner': { 'name': reply.owner.name },
                                     'createdAt': FormatDateTime(reply.updatedAt),
@@ -404,26 +404,26 @@ export default function Post() {
 
         const sanitisedCVC = validator.escape(validator.trim(CVC));
         if (!validator.isInt(sanitisedCVC, {gt: 99, lt: 999})) {
-            toast.error("Please enter a valid CVC!");
+            setDonationError("Please enter a valid CVC!");
             return;
         }
 
         if (!donationAmount) {
-            toast.error("Please do not leave the donation goal blank!");
+            setDonationError("Please do not leave the donation goal blank!");
             return;
         }
 
         const sanitisedDonationAmount = validator.escape(validator.trim(donationAmount));
         if (!validator.isNumeric(sanitisedDonationAmount)) {
-            toast.error("Amount has be a value!");
+            setDonationError("Amount has be a value!");
             return;
         }
         if (!validator.isFloat(sanitisedDonationAmount, { gt: 0.00, lt: 1000000 })) {
-            toast.error("Invalid amount!");
+            setDonationError("Invalid amount!");
             return;
         }
         if (!validator.isCurrency(sanitisedDonationAmount, { digits_after_decimal: [0, 1, 2] })) {
-            toast.error("Invalid currency format!");
+            setDonationError("Invalid currency format!");
             return;
         }
 
@@ -440,6 +440,7 @@ export default function Post() {
             setCVC("");
             setDonationAmount("");
             setPostEdited(true);
+            setDonationError("");
         } else {
             toast.error(json.error);
         }

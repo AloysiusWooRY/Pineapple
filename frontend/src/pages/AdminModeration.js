@@ -104,7 +104,7 @@ export default function AdminModeration() {
             toast.error("Same role selected!");
             return;
         }
-        if (userModerates.length <= 0) {
+        if (userModerates.length <= 0 && userRole === "moderator") {
             toast.error("Please select an organisation to moderate!");
             return;
         }
