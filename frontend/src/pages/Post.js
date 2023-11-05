@@ -1,30 +1,30 @@
 // React / Packages
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Components
-import { FormatDateTime, databaseDateTimeToISO, timeAgo, constructDivResourceURL } from "../components/componentUtils";
-import Layout from "../layouts/Layout";
-import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
-import Comment from "../components/Comment";
-import Popup from "../components/Popup";
-import { InputField, InputTextBox, InputDate, InputFile } from '../components/Inputs';
-import { ToggleButton, RoundedButton, StandardDropdown, RectangleButton } from '../components/Buttons';
-import { Divider, PostType } from '../components/Miscellaneous';
-import { SmoothProgressBar } from "../components/CustomProgressBar";
 import validator from "validator";
+import { RectangleButton, StandardDropdown, ToggleButton } from '../components/Buttons';
+import Comment from "../components/Comment";
+import { SmoothProgressBar } from "../components/CustomProgressBar";
+import { InputDate, InputField, InputFile, InputTextBox } from '../components/Inputs';
+import { Divider, PostType } from '../components/Miscellaneous';
+import Popup from "../components/Popup";
+import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
+import { FormatDateTime, constructDivResourceURL, databaseDateTimeToISO, timeAgo } from "../components/componentUtils";
+import Layout from "../layouts/Layout";
 
 // Assets
-import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
-import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, CreditCardIcon, PencilIcon, TrashIcon, PaperAirplaneIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import { ArrowDownCircleIcon as ArrowDownCircleOutlineIcon, ArrowUpCircleIcon as ArrowUpCircleOutlineIcon } from "@heroicons/react/24/outline";
+import { ArrowDownCircleIcon as ArrowDownCircleSolidIcon, ArrowUpCircleIcon as ArrowUpCircleSolidIcon, CreditCardIcon, PaperAirplaneIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import DefaultDiscussion from "../assets/default-cat-discussion-icon.png";
 import DefaultDonation from "../assets/default-cat-donation-icon.png";
 import DefaultEvent from "../assets/default-cat-event-icon.png";
 
 // API
+import { accountPaymentInfoPOST, commentAll, commentIdDislike, commentIdLike, commentNew, postIdDEL, postIdDislike, postIdLike, postIdPATCH, postIdPOST, replyIdDislike, replyIdLike, replyNew, transactionNew } from "../apis/exportedAPIs";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { postIdPOST, postIdDEL, postIdPATCH, postIdLike, postIdDislike, transactionNew, replyNew, commentAll, commentNew, accountPaymentInfoPOST, replyIdLike, replyIdDislike, commentIdLike, commentIdDislike } from "../apis/exportedAPIs";
 
 export default function Post() {
     const { user } = useAuthContext();
@@ -111,7 +111,7 @@ export default function Post() {
         async function fetchComments() {
             const response = await commentAll({ post: id });
             const json = await response.json();
-    
+
             if (response.ok) {
                 setAllComments(json.comments.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
                 setCommentsOrRepliesHaveUpdates(false);
@@ -127,7 +127,7 @@ export default function Post() {
         async function getUserPaymentInfo() {
             const response = await accountPaymentInfoPOST();
             const json = await response.json();
-    
+
             if (response.ok) {
                 setCreditCardNumber(json.cardNumber);
                 setExpiryMonthYear(json.expirationDate);
@@ -157,7 +157,7 @@ export default function Post() {
     function PopulateComments() {
         let comments = [];
 
-        (allComments && allComments.length > 0) ? 
+        (allComments && allComments.length > 0) ?
             allComments.map((comment) => {
                 comments.push(
                     <div key={"key-comment-" + comment._id}>
@@ -185,7 +185,7 @@ export default function Post() {
                                     'userIsLiked': reply.liked,
                                 }} handleLike={handleLikeCommentOrReply} handleDislike={handleDisikeCommentOrReply} />
                             </div>
-        
+
                         );
                     });
                 }
@@ -207,7 +207,7 @@ export default function Post() {
         } else {
             toast.error(json.error);
         }
-        
+
     }
 
     async function handleEdit() {
@@ -225,7 +225,7 @@ export default function Post() {
                     toast.error("Please select a date within a year from now!");
                     return;
                 }
-                
+
                 const sanitisedCapacity = validator.escape(validator.trim(eventCapacity.toString()));
                 if (!validator.isNumeric(sanitisedCapacity)) {
                     toast.error("Capacity has be a value!");
@@ -235,7 +235,7 @@ export default function Post() {
                     toast.error("Please enter a capacity from 2 to 9999!");
                     return;
                 }
-    
+
                 const sanitisedLocation = validator.escape(validator.trim(eventLocation));
                 if (!sanitisedLocation) {
                     toast.error("Please do not leave the location blank!");
@@ -402,11 +402,28 @@ export default function Post() {
     async function handleLikeCommentOrReply(e, isReply, id) {
         e.preventDefault();
 
-        const response = isReply ? await replyIdLike({ id }) : await commentIdLike({ id }); 
+        const response = isReply ? await replyIdLike({ id }) : await commentIdLike({ id });
         const json = await response.json();
 
         if (response.ok) {
-            setCommentsOrRepliesHaveUpdates(true);
+            const newComments = isReply ? allComments.map(comment => {
+                const newReplies = comment.replies.map(reply => {
+                    if (reply._id !== id) return reply
+                    reply.liked = json.value
+                    reply.likes = json.total
+                    return reply
+                })
+                comment.replies = newReplies
+                return comment
+            }) : allComments.map(comment => {
+                if (comment._id !== id) return comment
+                comment.liked = json.value
+                comment.likes = json.total
+                return comment
+            })
+
+            setAllComments(newComments)
+
         } else {
             toast.error(json.error);
         }
@@ -415,11 +432,27 @@ export default function Post() {
     async function handleDisikeCommentOrReply(e, isReply, id) {
         e.preventDefault();
 
-        const response = isReply ? await replyIdDislike({ id }) : await commentIdDislike({ id }); 
+        const response = isReply ? await replyIdDislike({ id }) : await commentIdDislike({ id });
         const json = await response.json();
-        
+
         if (response.ok) {
-            setCommentsOrRepliesHaveUpdates(true);
+            const newComments = isReply ? allComments.map(comment => {
+                const newReplies = comment.replies.map(reply => {
+                    if (reply._id !== id) return reply
+                    reply.liked = json.value
+                    reply.likes = json.total
+                    return reply
+                })
+                comment.replies = newReplies
+                return comment
+            }) : allComments.map(comment => {
+                if (comment._id !== id) return comment
+                comment.liked = json.value
+                comment.likes = json.total
+                return comment
+            })
+
+            setAllComments(newComments)
         } else {
             toast.error(json.error);
         }
@@ -429,7 +462,7 @@ export default function Post() {
         e.preventDefault();
 
         const sanitisedCVC = validator.escape(validator.trim(CVC));
-        if (!validator.isInt(sanitisedCVC, {gt: 99, lt: 999})) {
+        if (!validator.isInt(sanitisedCVC, { gt: 99, lt: 999 })) {
             setDonationError("Please enter a valid CVC!");
             return;
         }
@@ -460,7 +493,7 @@ export default function Post() {
         });
         const json = await response.json();
 
-        if(response.ok) {
+        if (response.ok) {
             toast.success("Transaction completed successfully!");
             setDisplayDonationPopup(false);
             setCVC("");
@@ -471,26 +504,26 @@ export default function Post() {
             toast.error(json.error);
         }
     }
-    
+
     return (
         <Layout>
             <div className="flex flex-row items-start gap-2">
                 <div className="flex flex-none flex-col gap-2 p-2 text-text-primary text-sm">
-                { posterLiked !== null ? 
-                        (posterLiked === 1 ? 
-                        <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} /> 
-                        : 
-                        <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />)
-                        : 
-                        <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} /> }
-                <p className="text-center text-2xl">{postLikes}</p>
-                { posterLiked !== null ? 
-                    (posterLiked === -1 ? 
-                    <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} /> 
-                    : 
-                    <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />)
-                    : 
-                    <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} /> }
+                    {posterLiked !== null ?
+                        (posterLiked === 1 ?
+                            <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />
+                            :
+                            <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />)
+                        :
+                        <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />}
+                    <p className="text-center text-2xl">{postLikes}</p>
+                    {posterLiked !== null ?
+                        (posterLiked === -1 ?
+                            <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />
+                            :
+                            <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />)
+                        :
+                        <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />}
                 </div>
 
                 <div className="flex flex-col grow gap-2 p-2">
@@ -609,7 +642,7 @@ export default function Post() {
                     <div className="flex flex-row space-x-2 self-end">
                         <RectangleButton title="Submit" onClick={handlePutComment} heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
                     </div>
-                    
+
 
                     <Divider padding={2} />
 
@@ -618,7 +651,7 @@ export default function Post() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        { allComments && allComments.length > 0 && <PopulateComments /> }
+                        {allComments && allComments.length > 0 && <PopulateComments />}
                     </div>
                 </div>
 
