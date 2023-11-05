@@ -392,7 +392,8 @@ export default function Post() {
         const json = await response.json();
 
         if (response.ok) {
-            setCommentsOrRepliesHaveUpdates(true);
+            setPostLikes(json.total);
+            setPosterLiked(json.value);
         } else {
             toast.error(json.error);
         }
