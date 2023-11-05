@@ -99,7 +99,7 @@ const loginOTP = async (req, res) => {
         // Create JWT token
         const newToken = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE * 60 * 60 })
 
-        logger.http(`Login successful, token: ${newToken}`, { actor: "USER", req })
+        logger.http(`Login OTP successful`, { actor: "USER", req })
 
         // Create session with cookies
         req.session.isAuthenticated = true
