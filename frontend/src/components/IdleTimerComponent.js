@@ -7,20 +7,20 @@ import { useLogout } from "../hooks/useLogout";
 
 
 export default function IdleTimerComponent() {
-    const [remainingTime, setRemainingTime] = useState(0);
-    const [showModal, setShowModal] = useState(false);
     const { logout } = useLogout();
 
-    // Logout functions
+    const [remainingTime, setRemainingTime] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+    
     const handleLogout = () => {
         logout();
     };
 
-    // set states when user becomes idle
     const handleIdle = () => {
-        setShowModal(true); // Show modal only if not interacting with it
-        setRemainingTime(30); // Set 30 seconds as time remaining
+        setShowModal(true);
+        setRemainingTime(30);
     };
+    const { isIdle } = useIdle({ onIdle: handleIdle, idleTime: 30 });
 
     const handleStayLoggedIn = () => {
         setShowModal(false);
@@ -30,20 +30,14 @@ export default function IdleTimerComponent() {
         var minutes = Math.floor(millis / 60000);
         var seconds = ((millis % 60000) / 1000).toFixed(0);
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
-
-    // idleTime sets how long user idles before prompting that auto logout is imminent (time in minutes)
-    const { isIdle } = useIdle({ onIdle: handleIdle, idleTime: 30 });
+    }   
 
     useEffect(() => {
         let interval;
 
         if (isIdle && showModal) {
             interval = setInterval(() => {
-                setRemainingTime(
-                    (prevRemainingTime) =>
-                        prevRemainingTime > 0 ? prevRemainingTime - 1 : 0 //reduces the second by 1
-                );
+                setRemainingTime( (prevRemainingTime) => prevRemainingTime > 0 ? (prevRemainingTime - 1) : 0 );
             }, 1000);
         }
 
@@ -52,9 +46,7 @@ export default function IdleTimerComponent() {
             handleLogout();
         }
 
-        return () => {
-            clearInterval(interval);
-        };
+        return () => { clearInterval(interval) };
     }, [isIdle, remainingTime, showModal]);
 
     return (
@@ -65,7 +57,7 @@ export default function IdleTimerComponent() {
             setVariableThatDeterminesIfPopupIsActive={setShowModal}
         >
             <div className="text-text-primary text-m">
-                Time remaining: {millisToMinutesAndSeconds(remainingTime * 1000)}
+                Time remaining: { millisToMinutesAndSeconds(remainingTime * 1000) }
             </div>
         </Popup>
     )

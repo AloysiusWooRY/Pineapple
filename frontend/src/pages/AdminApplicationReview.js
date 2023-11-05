@@ -18,11 +18,13 @@ import BannerImage from "../assets/banner-application-review.png";
 
 // API
 import { adminApplication, adminApplicationIdApprove, adminApplicationIdReject } from "../apis/exportedAPIs";
+import { select } from "react-cookies";
 
 export default function AdminApplicationReview() {
     const [allOrganisations, setAllOrganisations] = useState(null);
     const [allOrganisationsFiltered, setAllOrganisationsFiltered] = useState([]);
     const [organisationSubmitted, setOrganisationSubmitted] = useState(false);
+    const [selectedOrganisation, setSelectedOrganisation] = useState(null);
 
     const [sortBy, setSortBy] = useState('newest');
     // const [searchField, setSearchField] = useState('');
@@ -101,6 +103,7 @@ export default function AdminApplicationReview() {
 
             filteredReviews.map((item) => {
                 tableData.push({
+                    id: item._id,
                     date: FormatDateTime(item.createdAt),
                     organisationName: item.name,
                     approvalStatus: <ApprovalType type={item.approved ? "approved" : "pending"} />
@@ -145,12 +148,9 @@ export default function AdminApplicationReview() {
     }
 
     function HandleLoadApplication(e) {
-        setApplicationName(allOrganisations[e].name);
-        setApplicationDescription(allOrganisations[e].description);
-        setApplicationImagePoster(allOrganisations[e].imagePath.poster);
-        setApplicationImageBanner(allOrganisations[e].imagePath.banner);
-        setApplicationOrganisationId(allOrganisations[e]._id);
-        setApplicationApprovedStatus(allOrganisations[e].approved);
+        const selectedOrg = allOrganisationsFiltered[e] ? allOrganisations.find(item => item._id === allOrganisationsFiltered[e].id) : allOrganisations[e];
+        setSelectedOrganisation(selectedOrg);
+        setApplicationApprovedStatus(selectedOrg.approved);
 
         setViewingApplicationMode(true);
     }
@@ -203,7 +203,7 @@ export default function AdminApplicationReview() {
                         allOrganisationsFiltered.length > 0 ?
                             (
                                 isFiltered || isSorted ?
-                                    <Table rows={allOrganisationsFiltered}
+                                    <Table rows={ allOrganisationsFiltered.map(({ ["id"]: removedKey, ...rest }) => rest) }
                                         title="Applications"
                                         onClick={(e) => HandleLoadApplication(e.target.parentElement.getAttribute('data-index'))} />
                                     :
@@ -221,8 +221,8 @@ export default function AdminApplicationReview() {
                 variableThatDeterminesIfPopupIsActive={viewingApplicationMode}
                 setVariableThatDeterminesIfPopupIsActive={resetPopup} >
 
-                <InputField title="Name of Organisation" type="text" width='full' active={false} value={applicationName} />
-                <InputTextBox title="Description" width='full' active={false} value={applicationDescription} />
+                <InputField title="Name of Organisation" type="text" width='full' active={false} value={selectedOrganisation ? selectedOrganisation.name : ""} />
+                <InputTextBox title="Description" width='full' active={false} value={selectedOrganisation ? selectedOrganisation.description : ""} />
 
                 <div className="flex flex-col pb-2 space-y-2 items-start justify-between">
                     <div>
@@ -230,20 +230,20 @@ export default function AdminApplicationReview() {
                         <img
                             id="image-banner"
                             alt="Organisation Banner"
-                            src={constructImgResourceURL(applicationImageBanner)}></img>
+                            src={constructImgResourceURL(selectedOrganisation ? selectedOrganisation.imagePath.banner : "")}></img>
                     </div>
                     <div>
                         <span className="grow text-text-primary">Poster</span>
                         <img
                             id="image-poster"
                             alt="Organisation Poster"
-                            src={constructImgResourceURL(applicationImagePoster)}></img>
+                            src={constructImgResourceURL(selectedOrganisation ? selectedOrganisation.imagePath.poster : "")}></img>
                     </div>
                 </div>
 
                 <div className="flex flex-row pt-4 space-x-2 self-start">
-                    {!applicationApprovedStatus && <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} />}
-                    {!applicationApprovedStatus && <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} />}
+                    { !applicationApprovedStatus  && <RectangleButton title="Approve" forForm heroIcon={<CheckIcon />} colour="bg-button-green" onClick={(e) => HandleJudgeApplication(e, true)} />}
+                    { !applicationApprovedStatus && <RectangleButton title="Reject" forForm heroIcon={<XMarkIcon />} colour="bg-button-red" onClick={(e) => HandleJudgeApplication(e, false)} />}
                 </div>
             </Popup>
         </Layout >
