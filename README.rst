@@ -38,7 +38,7 @@ Download and install `Node JS <https://nodejs.org/en/>`_.
 
 .. code-block:: console
 
-  setup_files.bat
+  setup_update.bat
 
 2. To launch both servers, run:
 
@@ -67,3 +67,25 @@ Download and install `Node JS <https://nodejs.org/en/>`_.
 .. code-block:: console
 
   ./start.sh
+
+|
+
+* **Production Server (Linux)**
+1. Install **tmux**.
+
+.. code-block:: bash
+
+  sudo apt-get update 
+  sudo apt-get install tmux
+
+2. To initialise packages and build the production build, run:
+
+.. code-block:: console
+
+  ./setup_deploy.sh
+
+3. To launch both servers, run:
+
+.. code-block:: console
+
+  ./start_deploy.sh
