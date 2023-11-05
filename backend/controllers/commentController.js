@@ -207,7 +207,7 @@ const dislikeComment = async (req, res) => {
 
         let value
         const existinglike = await Like.findOne({ comment: commentId, account: userId })
-        if (existinglike && existinglike.value === 1) {
+        if (existinglike && existinglike.value === -1) {
             await Like.deleteOne({ _id: existinglike._id })
             value = 0
         } else if (existinglike && existinglike.value === 1) {
