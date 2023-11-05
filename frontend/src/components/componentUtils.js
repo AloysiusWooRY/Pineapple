@@ -6,11 +6,11 @@ export const textNerfer = (input) => {
 }
 
 export function constructDivResourceURL(path) {
-    return `url(http://localhost:4000/${path})`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);
+    return `url(https://mystifying-swirles.cloud/${path})`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);
 }
 
 export function constructImgResourceURL(path) {
-    return `http://localhost:4000/${path}`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);
+    return `https://mystifying-swirles.cloud//${path}`.replace(/%([^ ]+)/g, (match, group) => `%25${group}`);
 }
 
 export function FormatDateTime(InputDateTime, FormatString = 'DD h:mma') {
