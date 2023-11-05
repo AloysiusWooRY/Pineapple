@@ -18,7 +18,7 @@ import { NewspaperIcon, ChatBubbleLeftRightIcon, CalendarDaysIcon, CurrencyDolla
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { organisationId, postAll } from "../apis/exportedAPIs";
+import { organisationId, postAll, postIdLike, postIdDislike } from "../apis/exportedAPIs";
 
 export default function Organisation() {
     const { user } = useAuthContext()
@@ -29,6 +29,7 @@ export default function Organisation() {
 
     const [allPosts, setAllPosts] = useState(null);
     const [categoryFilteredPosts, setCategoryFilteredPosts] = useState(null);
+    const [postUpdated, setPostUpdated] = useState(false);
 
     const [selectedOrganisation, setSelectedOrganisation] = useState(null);
 
@@ -68,12 +69,13 @@ export default function Organisation() {
             if (response.ok) {
                 setAllPosts(json.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
                 setCategoryFilteredPosts(json.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+                setPostUpdated(false);
             } else {
                 toast.error(json.error);
             }
         }
         fetchPosts();
-    }, []);
+    }, [postUpdated]);
 
     function OrganisationPosts() {
         let posts = [];
@@ -94,6 +96,7 @@ export default function Organisation() {
                             imagePath: item.imagePath,
                             organisationId: id,
                         }}
+                        handleLike={handleLike} handleDislike={handleDislike}
                     />
                 )
             ))
@@ -132,6 +135,28 @@ export default function Organisation() {
         }
         else if (sortByValue === "top") {
             setCategoryFilteredPosts(categoryFilteredPosts.sort((a, b) => b.likes - a.likes));
+        }
+    }
+
+    async function handleLike(id) {
+        const response = await postIdLike({ id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setPostUpdated(true);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handleDislike(id) {
+        const response = await postIdDislike({ id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setPostUpdated(true);
+        } else {
+            toast.error(json.error);
         }
     }
 

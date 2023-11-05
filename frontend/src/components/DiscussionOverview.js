@@ -19,12 +19,9 @@ import DefaultEvent from "../assets/default-cat-event-icon.png";
 import { postIdLike, postIdDislike } from "../apis/exportedAPIs";
 
 export default function DiscussionOverview(props) {
-    const { post } = props;
+    const { post, handleLike, handleDislike } = props;
 
     const navigate = useNavigate();
-
-    const [likeValues, setLikeValues] = useState(post.votes);
-    const [userUpvoted, setUserUpvoted] = useState(post.upvoted);
 
     function getDefaultImage() {
         switch (post.discussionType) {
@@ -45,29 +42,13 @@ export default function DiscussionOverview(props) {
     async function likeClick(e) {
         e.preventDefault();
 
-        const response = await postIdLike({ id: post.id });
-        const json = await response.json();
-
-        if (response.ok) {
-            setLikeValues(json.total);
-            setUserUpvoted(json.value);
-        } else {
-            toast.error(json.error);
-        }
+        await handleLike(post.id);
     }
 
     async function disLikeClick(e) {
         e.preventDefault();
 
-        const response = await postIdDislike({ id: post.id });
-        const json = await response.json();
-
-        if (response.ok) {
-            setLikeValues(json.total);
-            setUserUpvoted(json.value);
-        } else {
-            toast.error(json.error);
-        }
+        await handleDislike(post.id);
     }
 
     const handleDivClick = (e) => {
@@ -100,14 +81,14 @@ export default function DiscussionOverview(props) {
                 <PostType type={post.discussionType} />
 
                 <div className="flex mt-auto p-2 gap-2 w-fit text-text-primary items-center bg-background-blue rounded-xl cursor-default div-click-exclude">
-                    {userUpvoted !== null ? (userUpvoted === 1 ?
+                    {post.upvoted !== null ? (post.upvoted === 1 ?
                         <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />
                         :
                         <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />
                     )
                         : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />}
-                    {likeValues}
-                    {userUpvoted !== null ? (userUpvoted === -1 ?
+                    {post.votes}
+                    {post.upvoted !== null ? (post.upvoted === -1 ?
                         <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />
                         :
                         <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />

@@ -24,7 +24,7 @@ import DefaultEvent from "../assets/default-cat-event-icon.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { postIdPOST, postIdDEL, postIdPATCH, postIdLike, postIdDislike, transactionNew, replyNew, commentAll, commentNew, accountPaymentInfoPOST } from "../apis/exportedAPIs";
+import { postIdPOST, postIdDEL, postIdPATCH, postIdLike, postIdDislike, transactionNew, replyNew, commentAll, commentNew, accountPaymentInfoPOST, replyIdLike, replyIdDislike, commentIdLike, commentIdDislike } from "../apis/exportedAPIs";
 
 export default function Post() {
     const { user } = useAuthContext();
@@ -63,7 +63,7 @@ export default function Post() {
 
     const [comment, setComment] = useState('');
     const [allComments, setAllComments] = useState([]);
-    const [hasNewReplyOrComment, setHasNewReplyOrComment] = useState(false);
+    const [commentsOrRepliesHaveUpdates, setCommentsOrRepliesHaveUpdates] = useState(false);
 
     const [creditCardNumber, setCreditCardNumber] = useState(null);
     const [expiryMonthYear, setExpiryMonthYear] = useState(null);
@@ -114,14 +114,14 @@ export default function Post() {
     
             if (response.ok) {
                 setAllComments(json.comments.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-                setHasNewReplyOrComment(false);
+                setCommentsOrRepliesHaveUpdates(false);
             } else {
                 toast.error(json.error);
             }
         }
 
         fetchComments();
-    }, [hasNewReplyOrComment]);
+    }, [commentsOrRepliesHaveUpdates]);
 
     useEffect(() => {
         async function getUserPaymentInfo() {
@@ -168,7 +168,7 @@ export default function Post() {
                             'content': comment.content,
                             'likeValue': comment.likes,
                             'userIsLiked': comment.liked,
-                        }} />
+                        }} handleLike={handleLikeCommentOrReply} handleDislike={handleDisikeCommentOrReply} />
                     </div>
 
                 );
@@ -183,7 +183,7 @@ export default function Post() {
                                     'content': reply.content,
                                     'likeValue': reply.likes,
                                     'userIsLiked': reply.liked,
-                                }} />
+                                }} handleLike={handleLikeCommentOrReply} handleDislike={handleDisikeCommentOrReply} />
                             </div>
         
                         );
@@ -303,7 +303,7 @@ export default function Post() {
         if (response.ok) {
             toast.success("Commented!");
             setComment("");
-            setHasNewReplyOrComment(true);
+            setCommentsOrRepliesHaveUpdates(true);
         } else {
             toast.error(json.error);
         }
@@ -319,7 +319,7 @@ export default function Post() {
         if (response.ok) {
             toast.success("Commented a reply!");
             setComment("");
-            setHasNewReplyOrComment(true);
+            setCommentsOrRepliesHaveUpdates(true);
         } else {
             toast.error(json.error);
         }
@@ -392,8 +392,33 @@ export default function Post() {
         const json = await response.json();
 
         if (response.ok) {
-            setPostLikes(json.total);
-            setPosterLiked(json.value);
+            setCommentsOrRepliesHaveUpdates(true);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handleLikeCommentOrReply(e, isReply, id) {
+        e.preventDefault();
+
+        const response = isReply ? await replyIdLike({ id }) : await commentIdLike({ id }); 
+        const json = await response.json();
+
+        if (response.ok) {
+            setCommentsOrRepliesHaveUpdates(true);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handleDisikeCommentOrReply(e, isReply, id) {
+        e.preventDefault();
+
+        const response = isReply ? await replyIdDislike({ id }) : await commentIdDislike({ id }); 
+        const json = await response.json();
+        
+        if (response.ok) {
+            setCommentsOrRepliesHaveUpdates(true);
         } else {
             toast.error(json.error);
         }
