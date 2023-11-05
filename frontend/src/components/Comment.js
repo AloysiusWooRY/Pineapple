@@ -1,5 +1,6 @@
 // React / Packages
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 // Components
 // ~
@@ -14,10 +15,13 @@ import { RectangleButton, RoundedButton } from "./Buttons";
 import { InputTextBox } from "./Inputs";
 
 // API
-// ~
+import { commentIdLike, commentIdDislike, replyIdLike, replyIdDislike } from "../apis/exportedAPIs";
 
 export default function Comment(props) {
-    const { commentId, handlePutReply, commentContent, isReply } = props;
+    const { id, handlePutReply, commentContent, isReply } = props;
+
+    const [likeValues, setLikeValues] = useState(commentContent.likeValue);
+    const [userUpvoted, setUserUpvoted] = useState(commentContent.userIsLiked);
 
     const [replyEnabled, setReplyEnabled] = useState(false);
     const [replyText, setReplyText] = useState('');
@@ -29,10 +33,66 @@ export default function Comment(props) {
 
     async function handleReply() {
         try {
-            await handlePutReply(commentId, replyText);
+            await handlePutReply(id, replyText);
         } catch (error) {
         }
-    };
+    }
+
+    async function handleLikeComment(e) {
+        e.preventDefault();
+        
+        const response = await commentIdLike({ id: commentContent._id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setLikeValues(json.total);
+            setUserUpvoted(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handleDisikeComment(e) {
+        e.preventDefault();
+        
+        const response = await commentIdDislike({ id: commentContent._id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setLikeValues(json.total);
+            setUserUpvoted(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handleLikeReply(e) {
+        e.preventDefault();
+        
+        const response = await replyIdLike({ id: commentContent._id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setLikeValues(json.total);
+            setUserUpvoted(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handleDislikeReply(e) {
+        e.preventDefault();
+        
+        const response = await replyIdDislike({ id: commentContent._id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setLikeValues(json.total);
+            setUserUpvoted(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
 
     return (
         <div
@@ -56,13 +116,13 @@ export default function Comment(props) {
                 </p>
 
                 <div className="flex mt-auto gap-2 text-text-primary items-center">
-                    {commentContent.userIsLiked !== null ?
-                        (commentContent.userIsLiked ? <ArrowUpCircleSolidIcon className="h-7" /> : <ArrowUpCircleOutlineIcon className="h-7" />)
-                        : <ArrowUpCircleOutlineIcon className="h-7" />}
-                    {commentContent.likeValue}
-                    {commentContent.userIsLiked !== null ?
-                        (!commentContent.userIsLiked ? <ArrowDownCircleSolidIcon className="h-7" /> : <ArrowDownCircleOutlineIcon className="h-7" />)
-                        : <ArrowDownCircleOutlineIcon className="h-7" />}
+                    {userUpvoted !== null ?
+                        (userUpvoted === 1 ? <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={ isReply ? (e) => handleLikeReply(e) : (e) => handleLikeComment(e) } /> : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={ isReply ? (e) => handleLikeReply(e) : (e) => handleLikeComment(e) } />)
+                        : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={ isReply ? (e) => handleLikeReply(e) : (e) => handleLikeComment(e) } />}
+                    {likeValues}
+                    {userUpvoted !== null ?
+                        (userUpvoted === -1 ? <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={ isReply ? (e) => handleDislikeReply(e) : (e) => handleDisikeComment(e) } /> : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={ isReply ? (e) => handleDislikeReply(e) : (e) => handleDisikeComment(e) } />)
+                        : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={ isReply ? (e) => handleDislikeReply(e) : (e) => handleDisikeComment(e) } />}
                     <div className="px-2 py-2">
                         <RoundedButton title="Reply" colour="bg-background-transparent" onClick={() => setReplyEnabled(true)} />
                     </div>

@@ -7,18 +7,6 @@ function useIdle({ onIdle, idleTime }) {
   const handleOnIdle = (event) => {
     
     setIsIdle(true);
-    const currentTime = new Date();
-    const formattedCurrentTime = currentTime.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-      timeZoneName: "short",
-    });
-
-    console.log("user is idle", event);
-    console.log("Last Active time", getLastActiveTime());
-    console.log("Current time", formattedCurrentTime);
-    
     onIdle();
   };
 

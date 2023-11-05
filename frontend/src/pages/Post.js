@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Components
-import { FormatDateTime, databaseDateTimeToISO } from "../components/componentUtils";
+import { FormatDateTime, databaseDateTimeToISO, timeAgo, constructDivResourceURL } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
 import Comment from "../components/Comment";
@@ -13,14 +13,18 @@ import { InputField, InputTextBox, InputDate, InputFile } from '../components/In
 import { ToggleButton, RoundedButton, StandardDropdown, RectangleButton } from '../components/Buttons';
 import { Divider, PostType } from '../components/Miscellaneous';
 import { SmoothProgressBar } from "../components/CustomProgressBar";
+import validator from "validator";
 
 // Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
-import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, CreditCardIcon, PencilIcon, TrashIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, CreditCardIcon, PencilIcon, TrashIcon, PaperAirplaneIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import DefaultDiscussion from "../assets/default-cat-discussion-icon.png";
+import DefaultDonation from "../assets/default-cat-donation-icon.png";
+import DefaultEvent from "../assets/default-cat-event-icon.png";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
-import { postIdPOST, postIdDEL, postIdPATCH, postIdLike, transactionNew, replyId, replyIdDislike, replyIdLike, replyNew, commentAll, commentId, commentIdDislike, commentIdLike, commentNew } from "../apis/exportedAPIs";
+import { postIdPOST, postIdDEL, postIdPATCH, postIdLike, postIdDislike, transactionNew, replyNew, commentAll, commentNew, accountPaymentInfoPOST } from "../apis/exportedAPIs";
 
 export default function Post() {
     const { user } = useAuthContext();
@@ -28,6 +32,7 @@ export default function Post() {
 
     const navigate = useNavigate();
 
+    const [organisationId, setOrganisationId] = useState(null);
     const [organisationName, setOrganisationName] = useState('');
     const [organisationDetails, setOrganisationDetails] = useState(null);
 
@@ -35,7 +40,10 @@ export default function Post() {
     const [postTime, setPostTime] = useState('');
     const [postTitle, setPostTitle] = useState('');
     const [postContent, setPostContent] = useState('');
+    const [postImage, setPostImage] = useState('');
     const [postType, setPostType] = useState('');
+    const [postLikes, setPostLikes] = useState(0);
+    const [posterLiked, setPosterLiked] = useState(0);
     const [sortBy, setSortBy] = useState('newest');
 
     const [eventLocation, setEventLocation] = useState('');
@@ -57,6 +65,11 @@ export default function Post() {
     const [allComments, setAllComments] = useState([]);
     const [hasNewReplyOrComment, setHasNewReplyOrComment] = useState(false);
 
+    const [creditCardNumber, setCreditCardNumber] = useState(null);
+    const [expiryMonthYear, setExpiryMonthYear] = useState(null);
+
+    const [postEdited, setPostEdited] = useState(false);
+
     // This is to load the post and organisation details for the selected post
     useEffect(() => {
         async function fetchData() {
@@ -64,17 +77,21 @@ export default function Post() {
             const json = await response.json();
 
             if (response.ok) {
+                setOrganisationId(json.post.organisation._id);
                 setOrganisationName(json.post.organisation.name);
                 setOrganisationDetails(json.post.organisation);
 
                 setPostContent(json.post.description);
                 setPostTitle(json.post.title);
                 setPoster(json.post.owner.name);
+                setPostImage(json.post.imagePath);
                 setPostType(json.post.donation ? "donation" : json.post.event ? "event" : "discussion");
-                setPostTime(json.post.updatedAt);
+                setPostTime(timeAgo(json.post.updatedAt));
+                setPosterLiked(json.post.liked);
+                setPostLikes(json.post.likes);
 
                 if (json.post.donation) {
-                    setDonationCurrent(json.post.donation.amoount);
+                    setDonationCurrent(json.post.donation.amount);
                     setDonationGoal(json.post.donation.goal);
                 }
                 if (json.post.event) {
@@ -82,12 +99,13 @@ export default function Post() {
                     setEventCapacity(json.post.event.capacity);
                     setEventStartDateTime(json.post.event.time);
                 }
+                setPostEdited(false);
             } else {
                 toast.error(json.error);
             }
         }
         fetchData();
-    }, []);
+    }, [postEdited]);
 
     useEffect(() => {
         async function fetchComments() {
@@ -95,8 +113,7 @@ export default function Post() {
             const json = await response.json();
     
             if (response.ok) {
-                setAllComments(json.comments);
-                console.log(json.comments);
+                setAllComments(json.comments.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
                 setHasNewReplyOrComment(false);
             } else {
                 toast.error(json.error);
@@ -105,6 +122,37 @@ export default function Post() {
 
         fetchComments();
     }, [hasNewReplyOrComment]);
+
+    useEffect(() => {
+        async function getUserPaymentInfo() {
+            const response = await accountPaymentInfoPOST();
+            const json = await response.json();
+    
+            if (response.ok) {
+                setCreditCardNumber(json.cardNumber);
+                setExpiryMonthYear(json.expirationDate);
+            }
+        }
+        getUserPaymentInfo();
+    }, []);
+
+    function validateDate() {
+        // Calculate the current date
+        const currentDate = new Date();
+        const givenDate = new Date(eventStartDateTime);
+
+        // Calculate the difference in milliseconds
+        const timeDifference = givenDate - currentDate;
+
+        // Calculate the number of milliseconds in a year
+        const millisecondsInYear = 365 * 24 * 60 * 60 * 1000;
+
+        // Check if the date is within 1 year in the future
+        const isWithinOneYear = timeDifference >= 0 && timeDifference <= millisecondsInYear;
+
+        if (isWithinOneYear) return true;
+        else return false;
+    }
 
     function PopulateComments() {
         let comments = [];
@@ -119,7 +167,7 @@ export default function Post() {
                             'createdAt': FormatDateTime(comment.updatedAt),
                             'content': comment.content,
                             'likeValue': comment.likes,
-                            'userIsLiked': true,
+                            'userIsLiked': comment.liked,
                         }} />
                     </div>
 
@@ -134,7 +182,7 @@ export default function Post() {
                                     'createdAt': FormatDateTime(reply.updatedAt),
                                     'content': reply.content,
                                     'likeValue': reply.likes,
-                                    'userIsLiked': true,
+                                    'userIsLiked': reply.liked,
                                 }} />
                             </div>
         
@@ -147,34 +195,102 @@ export default function Post() {
         return comments;
     }
 
-    function handleDelete() {
-        console.log("handle delete!");
-        setEditMode(!editMode);
+    async function handleDelete() {
+        const response = await postIdDEL({
+            id,
+        });
+        const json = await response.json();
+
+        if (response.ok) {
+            navigate(`/organisation/${organisationId}`, { replace: true });
+            toast.success("Post has been deleted!");
+        } else {
+            toast.error(json.error);
+        }
+        
     }
 
     async function handleEdit() {
+        let response = null;
         if (editMode) {
-            const response = await postIdPATCH({
-                id,
-                title: postTitle,
-                description: postContent,
-                event: (postType === 'event' ? true : false),
-                event_time: databaseDateTimeToISO(eventStartDateTime),
-                event_capacity: eventCapacity,
-                event_location: eventLocation,
-                donation: (postType === 'donation' ? true : false),
-                attachment: newImage,
-            });
+
+            const sanitisdDescription = validator.escape(validator.trim(postContent));
+            if (!sanitisdDescription) {
+                toast.error("Please do not leave the location blank!");
+                return false;
+            }
+
+            if (postType === "event") {
+                if (!validateDate()) {
+                    toast.error("Please select a date within a year from now!");
+                    return;
+                }
+                
+                const sanitisedCapacity = validator.escape(validator.trim(eventCapacity.toString()));
+                if (!validator.isNumeric(sanitisedCapacity)) {
+                    toast.error("Capacity has be a value!");
+                    return;
+                }
+                if (!validator.isInt(sanitisedCapacity, { gt: 1, lt: 10000 })) {
+                    toast.error("Please enter a capacity from 2 to 9999!");
+                    return;
+                }
+    
+                const sanitisedLocation = validator.escape(validator.trim(eventLocation));
+                if (!sanitisedLocation) {
+                    toast.error("Please do not leave the location blank!");
+                    return false;
+                }
+
+                response = await postIdPATCH({
+                    id,
+                    title: postTitle,
+                    description: sanitisdDescription,
+                    event: true,
+                    donation: false,
+                    event_time: databaseDateTimeToISO(eventStartDateTime),
+                    event_capacity: sanitisedCapacity,
+                    event_location: sanitisedLocation,
+                    attachment: newImage,
+                });
+            }
+            if (postType === "donation") {
+                response = await postIdPATCH({
+                    id,
+                    title: postTitle,
+                    description: sanitisdDescription,
+                    event: false,
+                    donation: true,
+                    attachment: newImage,
+                });
+            }
+            if (postType === "discussion") {
+                response = await postIdPATCH({
+                    id,
+                    title: postTitle,
+                    description: sanitisdDescription,
+                    event: false,
+                    donation: false,
+                    attachment: newImage,
+                });
+            }
             const json = await response.json();
 
             if (response.ok) {
                 toast.success("Post has been successfully changed!");
+                setPostEdited(true);
             } else {
                 toast.error(json.error);
+                return;
             }
         }
 
         setEditMode(!editMode);
+    }
+
+    function handleCancel() {
+        setEditMode(false);
+        setPostEdited(true);
     }
 
     async function handlePutComment() {
@@ -208,14 +324,146 @@ export default function Post() {
             toast.error(json.error);
         }
     }
+
+    function isAllowedToDelete() {
+        if (user.isAdmin === true) {
+            return true;
+        }
+        else if (user.name === poster) {
+            return true;
+        }
+        else if (user.moderation.includes(organisationId)) {
+            return true;
+        }
+    }
+
+    function handleSort(e) {
+        const sortByValue = e.target.value;
+        setSortBy(sortByValue);
+
+        if (sortByValue === "newest") {
+            setAllComments(allComments.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+        }
+        else if (sortByValue === "top") {
+            setAllComments(allComments.sort((a, b) => b.likes - a.likes));
+        }
+    }
+
+    function getDefaultImage() {
+        switch (postContent.type) {
+            case 'discussion':
+                return DefaultDiscussion;
+
+            case 'donation':
+                return DefaultDonation;
+
+            case 'event':
+                return DefaultEvent;
+
+            default:
+                return '';
+        }
+    }
+
+    function handleDeleteImage(e) {
+        e.preventDefault();
+        setPostImage('');
+        setNewImage('');
+    }
+
+    async function likeClick(e) {
+        e.preventDefault();
+
+        const response = await postIdLike({ id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setPostLikes(json.total);
+            setPosterLiked(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function disLikeClick(e) {
+        e.preventDefault();
+
+        const response = await postIdDislike({ id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setPostLikes(json.total);
+            setPosterLiked(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function newTransaction(e) {
+        e.preventDefault();
+
+        const sanitisedCVC = validator.escape(validator.trim(CVC));
+        if (!validator.isInt(sanitisedCVC, {gt: 99, lt: 999})) {
+            toast.error("Please enter a valid CVC!");
+            return;
+        }
+
+        if (!donationAmount) {
+            toast.error("Please do not leave the donation goal blank!");
+            return;
+        }
+
+        const sanitisedDonationAmount = validator.escape(validator.trim(donationAmount));
+        if (!validator.isNumeric(sanitisedDonationAmount)) {
+            toast.error("Amount has be a value!");
+            return;
+        }
+        if (!validator.isFloat(sanitisedDonationAmount, { gt: 0.00, lt: 1000000 })) {
+            toast.error("Invalid amount!");
+            return;
+        }
+        if (!validator.isCurrency(sanitisedDonationAmount, { digits_after_decimal: [0, 1, 2] })) {
+            toast.error("Invalid currency format!");
+            return;
+        }
+
+        const response = await transactionNew({
+            post: id,
+            amount: sanitisedDonationAmount,
+            cvc: sanitisedCVC,
+        });
+        const json = await response.json();
+
+        if(response.ok) {
+            toast.success("Transaction completed successfully!");
+            setDisplayDonationPopup(false);
+            setCVC("");
+            setDonationAmount("");
+            setPostEdited(true);
+        } else {
+            toast.error(json.error);
+        }
+    }
     
     return (
         <Layout>
             <div className="flex flex-row items-start gap-2">
                 <div className="flex flex-none flex-col gap-2 p-2 text-text-primary text-sm">
-                    <ArrowUpCircleSolidIcon className="h-7" />
-                    <p className="text-center text-2xl">{69}</p>
-                    <ArrowDownCircleOutlineIcon className="h-7" />
+                { posterLiked !== null ? 
+                        (posterLiked === 1 ? 
+                        <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} /> 
+                        : 
+                        <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />)
+                        : 
+                        <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} /> }
+                <p className="text-center text-2xl">{postLikes}</p>
+                { posterLiked !== null ? 
+                    (posterLiked === -1 ? 
+                    <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} /> 
+                    : 
+                    <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />)
+                    : 
+                    <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} /> }
                 </div>
 
                 <div className="flex flex-col grow gap-2 p-2">
@@ -311,17 +559,20 @@ export default function Post() {
                                     <InputFile title="Upload Image" width='full' accept=".png,.jpeg,.jpg" onChange={(e) => { setNewImage(e.target.files[0]) }} />
                                 </div>
                                 <div className="pt-4">
-                                    <RectangleButton title="Remove Current Image" onClick={handleDelete} heroIcon={<TrashIcon />} colour="bg-button-red" />
+                                    <RectangleButton title="Remove Current Image" onClick={(e) => handleDeleteImage(e)} heroIcon={<TrashIcon />} colour="bg-button-red" />
                                 </div>
                             </div>
                         </>
                     }
+                    <div className="h-36 w-36 shrink-0 bg-cover bg-center rounded"
+                        style={{ backgroundImage: postImage ? constructDivResourceURL(postImage) : `url(${getDefaultImage()})` }}></div>
 
                     <div className="py-2"></div>
 
                     <div className="flex flex-row space-x-2 self-start">
                         {(user.name === poster) && <ToggleButton title="Edit" active={editMode} onClick={(e) => { handleEdit() }} />}
-                        {editMode && <RectangleButton title="Delete" onClick={handleDelete} heroIcon={<TrashIcon />} colour="bg-button-red" />}
+                        {editMode && <RectangleButton title="Cancel" onClick={handleCancel} heroIcon={<XCircleIcon />} colour="bg-yellow-500" />}
+                        {isAllowedToDelete() && <RectangleButton title="Delete" onClick={handleDelete} heroIcon={<TrashIcon />} colour="bg-button-red" />}
                     </div>
 
                     <Divider padding={2} />
@@ -336,7 +587,7 @@ export default function Post() {
                     <Divider padding={2} />
 
                     <div className="w-1/5">
-                        <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => setSortBy(e.target.value)} />
+                        <StandardDropdown title="Sort By" value={sortBy} options={['newest', 'top']} onChange={(e) => handleSort(e)} />
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -360,13 +611,13 @@ export default function Post() {
             <Popup title="Make Donation"
                 variableThatDeterminesIfPopupIsActive={displayDonationPopup}
                 setVariableThatDeterminesIfPopupIsActive={setDisplayDonationPopup}
-                onSubmit={undefined}
+                onSubmit={newTransaction}
             >
                 <InputField title="Card Number" type="text" width='full' active={false}
-                    value={'12781298367918236'} />
+                    value={creditCardNumber ? creditCardNumber : ""} />
 
                 <InputField title="Card Expiry" type="text" width='full' active={false}
-                    value={'12/24'} />
+                    value={expiryMonthYear ? expiryMonthYear : ""} />
 
                 <InputField title="CVC" placeholder="Enter CVC" type="number" width='full' additionalProps={{ min: '1', max: '999', step: '1' }}
                     value={CVC} onChange={(e) => setCVC(e.target.value)} />
