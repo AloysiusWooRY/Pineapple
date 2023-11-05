@@ -221,6 +221,9 @@ const getPostById = async (req, res) => {
             filteredPost.event.members = filteredPost.event.members.filter(memberId => memberId.equals(userObjId))
         }
 
+        const userLiked = await Like.findOne({ post: id, account: userId }).select("post value")
+        filteredPost['liked'] = userLiked ? userLiked.value : 0
+
         logger.http(`Post retrieved successfully, (ID: ${id})`, { actor: "USER", req })
         res.status(200).json({ post: filteredPost })
     } catch (err) {

@@ -113,7 +113,7 @@ const likeReply = async (req, res) => {
         }
 
         const getSum = await Like.aggregate([
-            { $match: { comment: new mongoose.Types.ObjectId(replyId) } },
+            { $match: { reply: new mongoose.Types.ObjectId(replyId) } },
             { $group: { _id: null, totalValue: { $sum: '$value' } } }
         ])
         const sum = getSum[0]?.totalValue ?? 0
@@ -163,7 +163,7 @@ const dislikeReply = async (req, res) => {
         }
 
         const getSum = await Like.aggregate([
-            { $match: { comment: new mongoose.Types.ObjectId(replyId) } },
+            { $match: { reply: new mongoose.Types.ObjectId(replyId) } },
             { $group: { _id: null, totalValue: { $sum: '$value' } } }
         ])
         const sum = getSum[0]?.totalValue ?? 0

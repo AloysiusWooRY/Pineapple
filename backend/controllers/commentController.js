@@ -34,17 +34,36 @@ const getCommentByPost = async (req, res) => {
 
         const sort = {}
         if (filter === "top") sort["likes"] = -1
+
         const replies = await Reply.find({ comment: { $in: commentIds } })
             .sort(sort)
             .populate("owner", "name")
+
+        const replyIds = replies.map(reply => reply._id)
+        const userReplyLiked = await Like.find({ reply: { $in: replyIds }, account: userId }).select("reply value")
+        const repliesWithLikes = replies.map(reply => {
+            const userLike = userReplyLiked.find(like => like.reply.equals(reply._id))
+            const liked = userLike ? userLike.value : 0
+
+            return { ...reply._doc, liked }
+        })
+
         const commentsWithReplies = comments.map(comment => {
             return {
-                ...comment._doc, replies: replies.filter(reply => reply.comment.toString() === comment._id.toString())
+                ...comment._doc, replies: repliesWithLikes.filter(reply => reply.comment.toString() === comment._id.toString())
             }
         })
 
+        const userCommentLiked = await Like.find({ comment: { $in: commentIds }, account: userId }).select("comment value")
+        const commentsWithLikes = commentsWithReplies.map(comment => {
+            const userLike = userCommentLiked.find(like => like.comment.equals(comment._id))
+            const liked = userLike ? userLike.value : 0
+
+            return { ...comment, liked }
+        })
+
         logger.http(`Got all comments successful`, { actor: "USER", req })
-        res.status(200).json({ comments: commentsWithReplies })
+        res.status(200).json({ comments: commentsWithLikes })
     } catch (err) {
         if (err.statusCode === 400 || err.statusCode === 404)
             res.status(err.statusCode).json({ error: err.message })
