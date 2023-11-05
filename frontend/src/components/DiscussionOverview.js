@@ -1,6 +1,7 @@
 // React / Packages
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 // Components
 import { constructDivResourceURL } from "./componentUtils";
@@ -19,6 +20,9 @@ import { postIdLike, postIdDislike } from "../apis/exportedAPIs";
 
 export default function DiscussionOverview(props) {
     const { post } = props;
+
+    const navigate = useNavigate();
+
     const [likeValues, setLikeValues] = useState(post.votes);
     const [userUpvoted, setUserUpvoted] = useState(post.upvoted);
 
@@ -40,7 +44,7 @@ export default function DiscussionOverview(props) {
 
     async function likeClick(e) {
         e.preventDefault();
-        
+
         const response = await postIdLike({ id: post.id });
         const json = await response.json();
 
@@ -54,7 +58,7 @@ export default function DiscussionOverview(props) {
 
     async function disLikeClick(e) {
         e.preventDefault();
-        
+
         const response = await postIdDislike({ id: post.id });
         const json = await response.json();
 
@@ -66,30 +70,56 @@ export default function DiscussionOverview(props) {
         }
     }
 
+    const handleDivClick = (e) => {
+        let target = e.target;
+        let shouldNavigate = true;
+
+        while (target.classList !== undefined && !target.classList.contains('div-click-constrain')) {
+            console.log(target)
+            if (target.classList.contains('div-click-exclude')) {
+                shouldNavigate = false;
+                break;
+            }
+            target = target.parentNode;
+        }
+
+        if (shouldNavigate) {
+            navigate(`../organisation/${post.organisationId}/post/${post.id}`);
+        }
+    };
+
     return (
         <div
-            className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor"
+            className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor div-click-constrain"
+            onClick={(e) => handleDivClick(e)}
             id={post.id}>
-            <a className="w-full flex flex-col justify-start gap-1 flex-shrink"
-                href={`/organisation/${post.organisationId}/post/${post.id}`}>
+            <div className="w-full flex flex-col justify-start gap-1 flex-shrink">
                 <span className="w-full text-text-primary text-2xl overflow-hidden text-ellipsis whitespace">
                     {post.title}
                 </span>
 
                 <PostType type={post.discussionType} />
 
-                <div className="flex mt-auto p-2 gap-2 w-fit text-text-primary items-center bg-background-blue rounded-xl cursor-default">
-                    {userUpvoted !== null ? (userUpvoted === 1? <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} /> : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />)
+                <div className="flex mt-auto p-2 gap-2 w-fit text-text-primary items-center bg-background-blue rounded-xl cursor-default div-click-exclude">
+                    {userUpvoted !== null ? (userUpvoted === 1 ?
+                        <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />
+                        :
+                        <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />
+                    )
                         : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />}
                     {likeValues}
-                    {userUpvoted !== null ? (userUpvoted === -1 ? <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} /> : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />)
+                    {userUpvoted !== null ? (userUpvoted === -1 ?
+                        <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />
+                        :
+                        <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />
+                    )
                         : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />}
                     •
                     <div className="flex text-sm text-text-secondary">
                         Posted by {post.username} • {timeAgo(post.createdAt)} ago
                     </div>
                 </div>
-            </a>
+            </div>
 
             <div className="h-36 w-36 shrink-0 bg-cover bg-center rounded"
                 style={{ backgroundImage: post.imagePath ? constructDivResourceURL(post.imagePath) : `url(${getDefaultImage()})` }}></div>

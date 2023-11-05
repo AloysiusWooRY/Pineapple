@@ -47,6 +47,12 @@ export default function Login() {
     const handleStageTwo = async (e) => {
         e.preventDefault();
 
+        // 6 digits or...
+        if (!(/^\d{6}$|^.{64}$/.test(authenticatorCode))) {
+            toast.error("Please match the required format: 6 digits!");
+            return;
+        }
+
         const response = await accountLoginOTP({ token: authenticatorCode });
 
         const json = await response.json();
@@ -111,7 +117,7 @@ export default function Login() {
 
                         <Divider padding={4} />
 
-                        <InputField title="Authenticator Code" placeholder="Enter Authenticator Code" type="text" additionalProps={{ pattern: '[0-9]{6}', required: 'required' }}
+                        <InputField title="Authenticator Code" placeholder="Enter Authenticator Code" type="text" additionalProps={{ required: 'required' }}
                             value={authenticatorCode} onChange={(e) => setAuthenticatorCode(e.target.value)} />
 
                         <RectangleButton title="Submit Authenticator Code" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
