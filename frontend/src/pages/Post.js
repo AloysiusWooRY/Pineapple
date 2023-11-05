@@ -16,7 +16,7 @@ import { SmoothProgressBar } from "../components/CustomProgressBar";
 
 // Assets
 import { ArrowUpCircleIcon as ArrowUpCircleOutlineIcon, ArrowDownCircleIcon as ArrowDownCircleOutlineIcon } from "@heroicons/react/24/outline";
-import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, CreditCardIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowUpCircleIcon as ArrowUpCircleSolidIcon, ArrowDownCircleIcon as ArrowDownCircleSolidIcon, CreditCardIcon, PencilIcon, TrashIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 // API
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -54,6 +54,8 @@ export default function Post() {
     const [newImage, setNewImage] = useState(null);
 
     const [comment, setComment] = useState('');
+    const [allComments, setAllComments] = useState([]);
+    const [hasNewReplyOrComment, setHasNewReplyOrComment] = useState(false);
 
     // This is to load the post and organisation details for the selected post
     useEffect(() => {
@@ -87,46 +89,67 @@ export default function Post() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        async function fetchComments() {
+            const response = await commentAll({ post: id });
+            const json = await response.json();
+    
+            if (response.ok) {
+                setAllComments(json.comments);
+                console.log(json.comments);
+                setHasNewReplyOrComment(false);
+            } else {
+                toast.error(json.error);
+            }
+        }
+
+        fetchComments();
+    }, [hasNewReplyOrComment]);
+
     function PopulateComments() {
         let comments = [];
 
-        for (let i = 0; i < 10; i++) {
-            if (i % 2 === 0) {
+        (allComments && allComments.length > 0) ? 
+            allComments.map((comment) => {
                 comments.push(
-                    <div key={"key-comment-" + i}>
-                        <Comment isReply={false} commentContent={{
-                            '_id': i,
-                            'owner': { 'name': 'Ho Li' },
-                            'createdAt': '01-01-1970',
-                            'content': 'Get em\', boys!',
-                            'likeValue': i * 2,
+                    <div key={"key-comment-" + comment._id}>
+                        <Comment commentId={comment._id} handlePutReply={handlePutReply} isReply={false} commentContent={{
+                            '_id': comment._id,
+                            'owner': { 'name': comment.owner.name },
+                            'createdAt': FormatDateTime(comment.updatedAt),
+                            'content': comment.content,
+                            'likeValue': comment.likes,
                             'userIsLiked': true,
                         }} />
                     </div>
 
                 );
-            }
-            else {
-                comments.push(
-                    <div key={"key-comment-" + i}>
-                        <Comment isReply={true} commentContent={{
-                            '_id': i,
-                            'owner': { 'name': 'Bang Ding' },
-                            'createdAt': '01-01-1980',
-                            'content': 'Seeing Triple?',
-                            'likeValue': i * 2,
-                            'userIsLiked': false,
-                        }} />
-                    </div>
-                );
-            }
-        }
+                if (comment.replies.length > 0) {
+                    comment.replies.map(reply => {
+                        comments.push(
+                            <div key={"key-reply-" + reply._id}>
+                                <Comment commentId={comment._id} handlePutReply={handlePutReply} isReply={true} commentContent={{
+                                    '_id': reply._id,
+                                    'owner': { 'name': reply.owner.name },
+                                    'createdAt': FormatDateTime(reply.updatedAt),
+                                    'content': reply.content,
+                                    'likeValue': reply.likes,
+                                    'userIsLiked': true,
+                                }} />
+                            </div>
+        
+                        );
+                    });
+                }
+            })
+            : comments = [];
 
         return comments;
     }
 
     function handleDelete() {
         console.log("handle delete!");
+        setEditMode(!editMode);
     }
 
     async function handleEdit() {
@@ -152,6 +175,38 @@ export default function Post() {
         }
 
         setEditMode(!editMode);
+    }
+
+    async function handlePutComment() {
+        const response = await commentNew({
+            post: id,
+            content: comment,
+        });
+        const json = await response.json();
+
+        if (response.ok) {
+            toast.success("Commented!");
+            setComment("");
+            setHasNewReplyOrComment(true);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function handlePutReply(commentId, replyContent) {
+        const response = await replyNew({
+            comment: commentId,
+            content: replyContent,
+        });
+        const json = await response.json();
+
+        if (response.ok) {
+            toast.success("Commented a reply!");
+            setComment("");
+            setHasNewReplyOrComment(true);
+        } else {
+            toast.error(json.error);
+        }
     }
     
     return (
@@ -273,6 +328,10 @@ export default function Post() {
 
                     <InputTextBox title="Your Message" placeholder="Write your thoughts here"
                         value={comment} width='full' onChange={(e) => setComment(e.target.value)} />
+                    <div className="flex flex-row space-x-2 self-end">
+                        <RectangleButton title="Submit" onClick={handlePutComment} heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
+                    </div>
+                    
 
                     <Divider padding={2} />
 
@@ -281,7 +340,7 @@ export default function Post() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <PopulateComments />
+                        { allComments && allComments.length > 0 && <PopulateComments /> }
                     </div>
                 </div>
 

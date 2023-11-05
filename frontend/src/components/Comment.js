@@ -17,7 +17,7 @@ import { InputTextBox } from "./Inputs";
 // ~
 
 export default function Comment(props) {
-    const { commentContent, isReply } = props;
+    const { commentId, handlePutReply, commentContent, isReply } = props;
 
     const [replyEnabled, setReplyEnabled] = useState(false);
     const [replyText, setReplyText] = useState('');
@@ -27,9 +27,12 @@ export default function Comment(props) {
         setReplyEnabled(false);
     }
 
-    async function submitComment() {
-        console.log(replyText);
-    }
+    async function handleReply() {
+        try {
+            await handlePutReply(commentId, replyText);
+        } catch (error) {
+        }
+    };
 
     return (
         <div
@@ -76,7 +79,7 @@ export default function Comment(props) {
 
                         <div className="flex flex-row gap-2 items-center">
                             <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={() => {
-                                submitComment();
+                                handleReply();
                                 cleanupReply();
                             }} />
                             <RectangleButton title="Cancel" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={() => {
