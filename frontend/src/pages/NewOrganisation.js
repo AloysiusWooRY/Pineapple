@@ -121,7 +121,7 @@ export default function NewOrganisation() {
                 </div>
 
                 <div className="flex flex-row gap-2 py-4 items-center">
-                    <RectangleButton title="Submit" width="fit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={(e) => { console.log("Submit me!") }} />
+                    <RectangleButton title="Submit" width="fit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" />
                     <RectangleButton title="Cancel" width="fit" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={handleCancel} />
                     <label id="error-new-organsation" className="text-text-warn">
                         {error ?? ''}

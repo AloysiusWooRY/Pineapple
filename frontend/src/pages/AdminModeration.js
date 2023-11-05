@@ -100,6 +100,11 @@ export default function AdminModeration() {
         const ogUser = allUsers.find(item => item._id === userId);
         const ogUserRole = ogUser.isAdmin ? "administrator" : ogUser.moderation.length > 0 ? "moderator" : "user";
 
+        if (userId === user._id) {
+            toast.error("Can modify your own role!");
+            return;
+        }
+
         if (ogUserRole === userRole && userRole !== "moderator") {
             toast.error("Same role selected!");
             return;

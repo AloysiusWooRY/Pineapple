@@ -75,7 +75,6 @@ export default function DiscussionOverview(props) {
         let shouldNavigate = true;
 
         while (target.classList !== undefined && !target.classList.contains('div-click-constrain')) {
-            console.log(target)
             if (target.classList.contains('div-click-exclude')) {
                 shouldNavigate = false;
                 break;

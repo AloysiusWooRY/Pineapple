@@ -57,7 +57,6 @@ export default function ForgotPassword() {
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
-        console.log(recoveryCode);
         const response = await accountResetPassword({ email: email, password: password, code: recoveryCode });
 
         const json = await response.json();

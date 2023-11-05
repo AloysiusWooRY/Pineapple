@@ -32,10 +32,7 @@ export default function Comment(props) {
     }
 
     async function handleReply() {
-        try {
-            await handlePutReply(id, replyText);
-        } catch (error) {
-        }
+        await handlePutReply(id, replyText);
     }
 
     async function handleLikeComment(e) {

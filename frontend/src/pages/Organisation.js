@@ -48,7 +48,6 @@ export default function Organisation() {
 
             if (response.ok) {
                 const json = await response.json();
-                console.log(json);
                 setSelectedOrganisation(json.organisation);
             }
         }
@@ -136,12 +135,9 @@ export default function Organisation() {
         }
     }
 
-    async function handleOrganisationEdit(e) {
-        e.preventDefault();
-
-        console.log("handle edit org!");
-        console.log(selectedOrganisation);
-    }
+    // async function handleOrganisationEdit(e) {
+    //     e.preventDefault();
+    // }
 
     return (
         <Layout>
@@ -183,7 +179,7 @@ export default function Organisation() {
                 />}
             </div>
 
-            <Popup title="Edit Organisation"
+            {/* <Popup title="Edit Organisation"
                 variableThatDeterminesIfPopupIsActive={editOrganisationMode}
                 setVariableThatDeterminesIfPopupIsActive={setEditOrganisationMode}
                 onSubmit={handleOrganisationEdit}
@@ -202,7 +198,7 @@ export default function Organisation() {
                 <label id="error-edit-organisation" className="text-text-warn">
                     {editOrganisation.error ?? ''}
                 </label>
-            </Popup>
+            </Popup> */}
         </Layout>
     );
 }

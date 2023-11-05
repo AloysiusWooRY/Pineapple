@@ -158,8 +158,6 @@ export default function NewPost() {
                 return;
             }
 
-            console.log(image);
-
             // DEV TOKEN HERE
             response = await postNew({
                 title: sanitisedTitle,
