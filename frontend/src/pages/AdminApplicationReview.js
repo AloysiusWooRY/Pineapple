@@ -18,7 +18,6 @@ import BannerImage from "../assets/banner-application-review.png";
 
 // API
 import { adminApplication, adminApplicationIdApprove, adminApplicationIdReject } from "../apis/exportedAPIs";
-import { select } from "react-cookies";
 
 export default function AdminApplicationReview() {
     const [allOrganisations, setAllOrganisations] = useState(null);
@@ -35,9 +34,6 @@ export default function AdminApplicationReview() {
 
     const [applicationName, setApplicationName] = useState('');
     const [applicationOrganisationId, setApplicationOrganisationId] = useState('');
-    const [applicationDescription, setApplicationDescription] = useState('');
-    const [applicationImagePoster, setApplicationImagePoster] = useState('');
-    const [applicationImageBanner, setApplicationImageBanner] = useState('');
     const [applicationApprovedStatus, setApplicationApprovedStatus] = useState(false);
 
     useEffect(() => {
@@ -61,9 +57,6 @@ export default function AdminApplicationReview() {
 
     function resetPopup() {
         setApplicationName('');
-        setApplicationDescription('');
-        setApplicationImagePoster('');
-        setApplicationImageBanner('');
         setApplicationOrganisationId('');
         setApplicationApprovedStatus('');
 
@@ -160,13 +153,9 @@ export default function AdminApplicationReview() {
 
         let response = null;
         if (approved) {
-            response = await adminApplicationIdApprove({
-                id: applicationOrganisationId
-            });
+            response = await adminApplicationIdApprove({ id: applicationOrganisationId });
         } else {
-            response = await adminApplicationIdReject({
-                id: applicationOrganisationId
-            });
+            response = await adminApplicationIdReject({ id: applicationOrganisationId });
         }
         const json = await response.json();
 

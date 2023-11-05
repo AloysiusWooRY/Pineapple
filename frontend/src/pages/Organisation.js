@@ -17,14 +17,12 @@ import { InputField, InputTextBox, InputFile } from "../components/Inputs";
 import { NewspaperIcon, ChatBubbleLeftRightIcon, CalendarDaysIcon, CurrencyDollarIcon, PencilIcon } from "@heroicons/react/24/solid";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
 import { organisationId, postAll, postIdLike, postIdDislike } from "../apis/exportedAPIs";
 
 export default function Organisation() {
-    const { user } = useAuthContext()
     const { id } = useParams()
 
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    // const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('newest');
 
     const [allPosts, setAllPosts] = useState(null);
@@ -33,14 +31,14 @@ export default function Organisation() {
 
     const [selectedOrganisation, setSelectedOrganisation] = useState(null);
 
-    const [editOrganisationMode, setEditOrganisationMode] = useState(false);
-    const [editOrganisation, setEditOrganisation] = useState({
-        name: '',
-        description: '',
-        bannerImage: null,
-        posterImage: null,
-        error: null,
-    });
+    // const [editOrganisationMode, setEditOrganisationMode] = useState(false);
+    // const [editOrganisation, setEditOrganisation] = useState({
+    //     name: '',
+    //     description: '',
+    //     bannerImage: null,
+    //     posterImage: null,
+    //     error: null,
+    // });
 
     // Loads the organisation by id
     useEffect(() => {
