@@ -1,5 +1,6 @@
 // React / Packages
-import React from "react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 // Components
 import { constructDivResourceURL } from "./componentUtils";
@@ -14,10 +15,12 @@ import DefaultDonation from "../assets/default-cat-donation-icon.png";
 import DefaultEvent from "../assets/default-cat-event-icon.png";
 
 // API
-// ~
+import { postIdLike, postIdDislike } from "../apis/exportedAPIs";
 
 export default function DiscussionOverview(props) {
     const { post } = props;
+    const [likeValues, setLikeValues] = useState(post.votes);
+    const [userUpvoted, setUserUpvoted] = useState(post.upvoted);
 
     function getDefaultImage() {
         switch (post.discussionType) {
@@ -35,6 +38,34 @@ export default function DiscussionOverview(props) {
         }
     }
 
+    async function likeClick(e) {
+        e.preventDefault();
+        
+        const response = await postIdLike({ id: post.id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setLikeValues(json.total);
+            setUserUpvoted(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
+    async function disLikeClick(e) {
+        e.preventDefault();
+        
+        const response = await postIdDislike({ id: post.id });
+        const json = await response.json();
+
+        if (response.ok) {
+            setLikeValues(json.total);
+            setUserUpvoted(json.value);
+        } else {
+            toast.error(json.error);
+        }
+    }
+
     return (
         <div
             className="w-full h-full flex rounded outline-none gap-2 p-4 no-underline cursor-pointer bg-background-minor"
@@ -48,11 +79,11 @@ export default function DiscussionOverview(props) {
                 <PostType type={post.discussionType} />
 
                 <div className="flex mt-auto p-2 gap-2 w-fit text-text-primary items-center bg-background-blue rounded-xl cursor-default">
-                    {post.upvoted !== null ? (post.upvoted ? <ArrowUpCircleSolidIcon className="h-7" /> : <ArrowUpCircleOutlineIcon className="h-7" />)
-                        : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" />}
-                    {post.votes}
-                    {post.upvoted !== null ? (!post.upvoted ? <ArrowDownCircleSolidIcon className="h-7" /> : <ArrowDownCircleOutlineIcon className="h-7" />)
-                        : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" />}
+                    {userUpvoted !== null ? (userUpvoted === 1? <ArrowUpCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} /> : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />)
+                        : <ArrowUpCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => likeClick(e)} />}
+                    {likeValues}
+                    {userUpvoted !== null ? (userUpvoted === -1 ? <ArrowDownCircleSolidIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} /> : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />)
+                        : <ArrowDownCircleOutlineIcon className="h-7 cursor-pointer" onClick={(e) => disLikeClick(e)} />}
                     •
                     <div className="flex text-sm text-text-secondary">
                         Posted by {post.username} • {timeAgo(post.createdAt)} ago

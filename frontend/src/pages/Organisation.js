@@ -91,7 +91,7 @@ export default function Organisation() {
                             votes: item.likes,
                             createdAt: item.createdAt,
                             username: item.owner.name,
-                            upvoted: null,
+                            upvoted: item.liked,
                             imagePath: item.imagePath,
                             organisationId: id,
                         }}
