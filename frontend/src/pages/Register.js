@@ -6,7 +6,6 @@ import validator from "validator";
 import ReCAPTCHA from "react-google-recaptcha";
 
 // Components
-import { getCaptchaSiteKey } from "../components/componentUtils";
 import { InputField } from "../components/Inputs";
 import { RectangleButton } from "../components/Buttons";
 import CustomPasswordStrengthBar from '../components/CustomPasswordStrengthBar';
@@ -27,14 +26,11 @@ export default function Register() {
     const [passwordScore, setPasswordScore] = useState(0);
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const ERR_MISSING_FIELDS = "Missing fields";
     const ERR_GENERIC = "Something went wrong, try again later!";
     const ERR_EMAIL_INVALID = "Invalid email";
-    const ERR_EMAIL_DUPLICATE = "Email already exist";
     const ERR_PASSWORD_WEAK = "Password not strong";
     const ERR_PASSWORD_MISMATCH = "Passwords do not match";
 
-    const [isLoading, setIsLoading] = useState(false);
     const [emailErr, setEmailErr] = useState(null);
     const [passwordErr, setPasswordErr] = useState(null);
     const [confirmPasswordErr, setConfirmPasswordErr] = useState(null);

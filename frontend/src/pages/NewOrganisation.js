@@ -21,7 +21,6 @@ import { organisationCategories, organisationApply } from "../apis/exportedAPIs"
 export default function NewOrganisation() {
     const navigate = useNavigate();
 
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [allCategories, setAllCategories] = useState([]);
@@ -49,7 +48,7 @@ export default function NewOrganisation() {
         }
 
         fetchAllCategories();
-    }, []);
+    }, [allCategories]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -57,8 +56,6 @@ export default function NewOrganisation() {
         const toastId = toast.loading('Loading...');
 
         try {
-            setIsLoading(true);
-
             // DEV TOKEN HERE
             const response = await organisationApply({
                 name: organisationName,
@@ -83,8 +80,6 @@ export default function NewOrganisation() {
             const errorMsg = "Something went wrong, try again later!";
             toast.error(errorMsg, { id: toastId });
             setError(errorMsg);
-        } finally {
-            setIsLoading(false);
         }
     }
 

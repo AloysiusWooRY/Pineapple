@@ -12,15 +12,12 @@ import { InputDate, InputField, InputFile, InputTextBox } from '../components/In
 import { Divider, PostType } from '../components/Miscellaneous';
 import Popup from "../components/Popup";
 import SideBarOrganisationInfo from '../components/SidebarOrganisationInfo';
-import { FormatDateTime, constructDivResourceURL, databaseDateTimeToISO, timeAgo } from "../components/componentUtils";
+import { FormatDateTime, constructImgResourceURL, databaseDateTimeToISO, timeAgo } from "../components/componentUtils";
 import Layout from "../layouts/Layout";
 
 // Assets
 import { ArrowDownCircleIcon as ArrowDownCircleOutlineIcon, ArrowUpCircleIcon as ArrowUpCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { ArrowDownCircleIcon as ArrowDownCircleSolidIcon, ArrowUpCircleIcon as ArrowUpCircleSolidIcon, CreditCardIcon, PaperAirplaneIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import DefaultDiscussion from "../assets/default-cat-discussion-icon.png";
-import DefaultDonation from "../assets/default-cat-donation-icon.png";
-import DefaultEvent from "../assets/default-cat-event-icon.png";
 
 // API
 import { accountPaymentInfoPOST, commentAll, commentIdDislike, commentIdLike, commentNew, postIdDEL, postIdDislike, postIdLike, postIdPATCH, postIdPOST, replyIdDislike, replyIdLike, replyNew, transactionNew } from "../apis/exportedAPIs";
@@ -70,7 +67,7 @@ export default function Post() {
 
     const [postEdited, setPostEdited] = useState(false);
 
-    // This is to load the post and organisation details for the selected post
+    // Load the post and organisation details for the selected post
     useEffect(() => {
         async function fetchData() {
             const response = await postIdPOST({ id });
@@ -105,8 +102,9 @@ export default function Post() {
             }
         }
         fetchData();
-    }, [postEdited]);
+    }, [id, postEdited]);
 
+    // Fetches comments, runs on startup or on comment submission
     useEffect(() => {
         async function fetchComments() {
             const response = await commentAll({ post: id });
@@ -121,7 +119,7 @@ export default function Post() {
         }
 
         fetchComments();
-    }, [commentsOrRepliesHaveUpdates]);
+    }, [id, commentsOrRepliesHaveUpdates]);
 
     useEffect(() => {
         async function getUserPaymentInfo() {
@@ -196,9 +194,11 @@ export default function Post() {
     }
 
     async function handleDelete() {
-        const response = await postIdDEL({
-            id,
-        });
+        if (!window.confirm("This action cannot be undone!\nAre you sure you want to delete this post?")) {
+            return;
+        }
+
+        const response = await postIdDEL({ id, });
         const json = await response.json();
 
         if (response.ok) {
@@ -346,22 +346,6 @@ export default function Post() {
         }
         else if (sortByValue === "top") {
             setAllComments(allComments.sort((a, b) => b.likes - a.likes));
-        }
-    }
-
-    function getDefaultImage() {
-        switch (postContent.type) {
-            case 'discussion':
-                return DefaultDiscussion;
-
-            case 'donation':
-                return DefaultDonation;
-
-            case 'event':
-                return DefaultEvent;
-
-            default:
-                return '';
         }
     }
 
@@ -543,10 +527,10 @@ export default function Post() {
 
                     <PostType type={postType} />
 
-                    <div className="py-2"></div>
-
                     {postType === 'event' ?
                         <>
+                            <Divider padding={2} />
+
                             {!editMode ?
                                 <div className="flex flex-col flex-wrap">
                                     <div className="w-1/5 min-w-fit">
@@ -583,17 +567,27 @@ export default function Post() {
 
                     {postType === 'donation' ?
                         <>
+                            <Divider padding={2} />
+
                             <div className="text-text-primary text-xl">
                                 Donation Goal
                             </div>
                             <div className="flex flex-row items-center space-x-4 text-text-primary">
-                                <div className="flex flex-row items-center gap-x-4 grow">
+                                <div className="flex flex-col px-8 py-2 items-center space-y-4 text-text-primary bg-background-minor rounded-xl">
+                                    <p className="font-bold underline">
+                                        Current
+                                    </p>
                                     ${donationCurrent}
+                                </div>
+
+                                <div className="flex flex-row items-center gap-x-4 grow">
+                                    $0
                                     <div className="grow">
                                         <SmoothProgressBar title='Donation' floorValue={donationCurrent} ceilingValue={donationGoal} />
                                     </div>
                                     ${donationGoal}
                                 </div>
+
                                 <div className="grow-0">
                                     <RectangleButton title="Donate" onClick={() => setDisplayDonationPopup(!displayDonationPopup)}
                                         heroIcon={<CreditCardIcon />} colour="bg-button-green" />
@@ -605,6 +599,17 @@ export default function Post() {
                         :
                         <></>
                     }
+
+                    {postImage ?
+                        <div className="bg-background-minor rounded-3xl">
+                            <img
+                                src={constructImgResourceURL(postImage)}
+                                alt={postTitle}
+                                className="h-72 w-full object-contain max-h-72 rounded"
+                            />
+                        </div>
+                        :
+                        <></>}
 
                     {!editMode ?
                         <div className="text-text-primary whitespace-pre-wrap">
@@ -624,10 +629,9 @@ export default function Post() {
                             </div>
                         </>
                     }
-                    <div className="h-36 w-36 shrink-0 bg-cover bg-center rounded"
-                        style={{ backgroundImage: postImage ? constructDivResourceURL(postImage) : `url(${getDefaultImage()})` }}></div>
 
                     <div className="py-2"></div>
+
 
                     <div className="flex flex-row space-x-2 self-start">
                         {(user.name === poster) && <ToggleButton title="Edit" active={editMode} onClick={(e) => { handleEdit() }} />}

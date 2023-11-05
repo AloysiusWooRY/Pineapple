@@ -16,12 +16,9 @@ import { Divider } from "../components/Miscellaneous";
 import { CalendarDaysIcon, ChatBubbleLeftRightIcon, CurrencyDollarIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
 import { postNew, organisationId } from "../apis/exportedAPIs";
 
 export default function NewPost() {
-    const { user } = useAuthContext();
-
     const navigate = useNavigate();
 
     const [selectedElement, setSelectedElement] = useState('discussion');
@@ -40,6 +37,7 @@ export default function NewPost() {
 
     const [recaptchaToken, setRecaptchaToken] = useState(null);
 
+    // Called on page start to fetch organisation information
     useEffect(() => {
         async function fetchOrganisation() {
             const response = await organisationId({id: id});
@@ -54,7 +52,7 @@ export default function NewPost() {
         }
 
         fetchOrganisation();
-    }, []);
+    }, [id]);
 
     function handlePostCreated() {
         navigate(`../organisation/${id}`);

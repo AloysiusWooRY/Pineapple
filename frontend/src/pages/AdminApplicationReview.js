@@ -10,19 +10,16 @@ import Table from "../components/Table";
 import Popup from "../components/Popup";
 import { RectangleButton, StandardDropdown, Tabs } from "../components/Buttons";
 import { ApprovalType, Divider } from "../components/Miscellaneous";
-import { InputField, InputTextBox, SearchField } from "../components/Inputs";
+import { InputField, InputTextBox } from "../components/Inputs";
 
 // Assets
 import { NewspaperIcon, ClipboardIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import BannerImage from "../assets/banner-application-review.png";
 
 // API
-import { useAuthContext } from "../hooks/useAuthContext";
 import { adminApplication, adminApplicationIdApprove, adminApplicationIdReject } from "../apis/exportedAPIs";
 
 export default function AdminApplicationReview() {
-    const { user } = useAuthContext();
-
     const [allOrganisations, setAllOrganisations] = useState(null);
     const [allOrganisationsFiltered, setAllOrganisationsFiltered] = useState([]);
     const [organisationSubmitted, setOrganisationSubmitted] = useState(false);
@@ -72,19 +69,15 @@ export default function AdminApplicationReview() {
     }
 
     function GenerateReviews() {
-        let tableData = [];
-        allOrganisations ?
-            allOrganisations.map((item) => {
-                tableData.push({
-                    date: FormatDateTime(item.createdAt),
-                    organisationName: item.name,
-                    approvalStatus: <ApprovalType type={item.approved ? "approved" : "pending"} />
-                })
-            })
-            :
-            tableData = [];
+        if (!allOrganisations) {
+            return [];
+        }
 
-        return tableData;
+        return allOrganisations.map((item) => ({
+            date: FormatDateTime(item.createdAt),
+            organisationName: item.name,
+            approvalStatus: <ApprovalType type={item.approved ? "approved" : "pending"} />
+        }));
     }
 
     function handleCategoryFilter(e) {
@@ -148,7 +141,7 @@ export default function AdminApplicationReview() {
                 });
             }
             setAllOrganisationsFiltered(sortedTableData);
-        }   
+        }
     }
 
     function HandleLoadApplication(e) {
@@ -236,12 +229,14 @@ export default function AdminApplicationReview() {
                         <span className="grow text-text-primary">Banner</span>
                         <img
                             id="image-banner"
+                            alt="Organisation Banner"
                             src={constructImgResourceURL(applicationImageBanner)}></img>
                     </div>
                     <div>
                         <span className="grow text-text-primary">Poster</span>
                         <img
                             id="image-poster"
+                            alt="Organisation Poster"
                             src={constructImgResourceURL(applicationImagePoster)}></img>
                     </div>
                 </div>

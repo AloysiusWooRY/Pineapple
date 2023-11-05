@@ -1,6 +1,5 @@
 // React / Packages
 import React, { useState } from "react";
-import toast from "react-hot-toast";
 
 // Components
 // ~
@@ -84,11 +83,11 @@ export default function Comment(props) {
                         />
 
                         <div className="flex flex-row gap-2 items-center">
-                            <RectangleButton title="Submit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={() => {
+                            <RectangleButton title="Submit" width="fit" forForm heroIcon={<PaperAirplaneIcon />} colour="bg-button-green" onClick={() => {
                                 handleReply();
                                 cleanupReply();
                             }} />
-                            <RectangleButton title="Cancel" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={() => {
+                            <RectangleButton title="Cancel" width="fit" heroIcon={<NoSymbolIcon />} colour="bg-button-red" onClick={() => {
                                 cleanupReply();
                             }} />
                         </div>

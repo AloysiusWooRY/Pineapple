@@ -7,10 +7,8 @@ import Layout from "../layouts/Layout";
 import Banner from "../components/Banner";
 import Table from "../components/Table";
 import Popup from "../components/Popup";
-import { RoundedButton, StandardDropdown } from "../components/Buttons";
-import { SearchField } from "../components/Inputs";
+import { StandardDropdown } from "../components/Buttons";
 import { UserType } from "../components/Miscellaneous";
-import { FormatDateTime } from "../components/componentUtils";
 
 // Assets
 import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/solid";
@@ -22,8 +20,6 @@ import { adminAccountAll, adminAccountEditRole, organisationAll } from "../apis/
 
 export default function AdminModeration() {
     const { user } = useAuthContext();
-
-    const [searchField, setSearchField] = useState('');
 
     const [allOrganisations, setAllOrganisations] = useState(null);
     const [allOrganisationOptions, setAllOrganisationOptions] = useState([]);
@@ -66,20 +62,31 @@ export default function AdminModeration() {
     }, []);
 
     // Returns user data for population of table
-    function GenerateUsers() {
-        let tableData = [];
-        allUsers ?
-            allUsers.map((item) => {
-                tableData.push({
-                    name: item.name,
-                    email: item.email,
-                    role: <UserType type={item.isAdmin ? "administrator" : item.moderation.length > 0 ? "moderator" : "user"} />
-                });
-            })
-            :
-            tableData = [];
+    // function GenerateUsers() {
+    //     let tableData = [];
+    //     allUsers ?
+    //         allUsers.map((item) => {
+    //             tableData.push({
+    //                 name: item.name,
+    //                 email: item.email,
+    //                 role: <UserType type={item.isAdmin ? "administrator" : item.moderation.length > 0 ? "moderator" : "user"} />
+    //             });
+    //         })
+    //         :
+    //         tableData = [];
 
-        return tableData;
+    //     return tableData;
+    // }
+    function GenerateUsers() {
+        if (!allUsers) {
+            return [];
+        }
+
+        return allUsers.map((item) => ({
+            name: item.name,
+            email: item.email,
+            role: <UserType type={item.isAdmin ? "administrator" : item.moderation.length > 0 ? "moderator" : "user"} />,
+        }));
     }
 
     // User clicked handler
@@ -101,7 +108,7 @@ export default function AdminModeration() {
         const ogUserRole = ogUser.isAdmin ? "administrator" : ogUser.moderation.length > 0 ? "moderator" : "user";
 
         if (userId === user._id) {
-            toast.error("Can modify your own role!");
+            toast.error("Cannot modify your own role!");
             return;
         }
 

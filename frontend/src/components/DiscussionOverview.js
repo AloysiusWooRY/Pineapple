@@ -1,6 +1,5 @@
 // React / Packages
-import React, { useState } from "react";
-import toast from "react-hot-toast";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 // Components
@@ -16,7 +15,7 @@ import DefaultDonation from "../assets/default-cat-donation-icon.png";
 import DefaultEvent from "../assets/default-cat-event-icon.png";
 
 // API
-import { postIdLike, postIdDislike } from "../apis/exportedAPIs";
+// ~
 
 export default function DiscussionOverview(props) {
     const { post, handleLike, handleDislike } = props;
