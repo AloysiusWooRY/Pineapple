@@ -1,10 +1,6 @@
-Pineapple
+Pineapple 🍍
 ==============
-🍍
-
-ℹ️ Description
---------------
-An online forum website implemented as a MERN stack.
+An online forum website implemented as a MERN stack using tailwind.css for styling. Inspired in part by `Reddit <https://www.reddit.com/>`_.
 
 👥 Team Members
 ----------------
@@ -27,6 +23,38 @@ An online forum website implemented as a MERN stack.
      - 2102238
    * - `Yap Jia Hao <https://github.com/YapJiaHao>`_
      - 2100958
+
+🔐 Security Features
+--------------------
+.. list-table::
+   :header-rows: 1
+
+   * - Backend
+     - Frontend
+   * - Email and Password Authentication
+     - Masking of Sensitive Information
+   * - OTP Configuration & Validation
+     - User Input Sanitisation and Validation
+   * - Hashing and Encryption of Important Data
+     - Automatic Idle Timeout
+   * - Anti-CSRF Token
+     - Redirect User
+   * - JSON Web Tokens
+     - Google reCAPTCHA
+   * - Session IDs
+     - 
+   * - Action Rate Limit
+     - 
+   * - Google reCAPTCHA
+     - 
+   * - Cross-Origin Resource Sharing (CORS)
+     - 
+   * - Error Handling
+     - 
+   * - Logging
+     - 
+   * - Referential Integrity
+     - 
 
 🖥️ Quick Start
 ---------------
