@@ -24,6 +24,24 @@ An online forum website implemented as a MERN stack using tailwind.css for styli
    * - `Yap Jia Hao <https://github.com/YapJiaHao>`_
      - 2100958
 
+📷 Gallery
+-----------
+.. image:: https://github.com/AloysiusWooRY/Pineapple/blob/main/resources/login.png
+  :width: 512px
+  :alt: Login Page
+
+.. image:: https://github.com/AloysiusWooRY/Pineapple/blob/main/resources/home.png
+  :width: 512px
+  :alt: Home Screen
+
+.. image:: https://github.com/AloysiusWooRY/Pineapple/blob/main/resources/organisations.png
+  :width: 512px
+  :alt: Organisation Screen
+
+.. image:: https://github.com/AloysiusWooRY/Pineapple/blob/main/resources/post.png
+  :width: 512px
+  :alt: Post Page
+
 🔐 Security Features
 --------------------
 .. list-table::
